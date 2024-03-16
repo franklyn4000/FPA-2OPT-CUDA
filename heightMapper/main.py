@@ -49,17 +49,18 @@ def visualize_height_maps(height_map):
 
 
 def save_height_map(height_map, filename):
-    np.save(filename, height_map)
+    np.save(filename + ".npy", height_map)
+    np.savetxt(filename + ".csv", height_map, delimiter=',')
 
 
 def load_height_map(filename):
     return np.load(filename)
 
 
-filename = "height_map.npy"
+filename = "height_map"
 
 # if not os.path.exists(filename):
-height_map = generate_terrain(400)
+height_map = generate_terrain(10000)
 save_height_map(height_map, filename)
 # else:
 #    height_map = load_height_map(filename)
