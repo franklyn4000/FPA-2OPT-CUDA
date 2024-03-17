@@ -60,7 +60,7 @@ def load_height_map(filename):
 filename = "height_map"
 
 # if not os.path.exists(filename):
-height_map = generate_terrain(10000)
+height_map = generate_terrain(150)
 save_height_map(height_map, filename)
 # else:
 #    height_map = load_height_map(filename)

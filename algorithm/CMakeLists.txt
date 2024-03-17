@@ -9,7 +9,8 @@ find_package(OpenMP REQUIRED)
 
 
 add_executable(algorithm main.cu
-        iolib.cu)
+        iolib.cu
+        fpa.cu)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

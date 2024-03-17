@@ -1,7 +1,7 @@
 //
 // Created by franklyn on 3/15/24.
 //
-#include "iolib.h"
+#include "iolib.cuh"
 #include <fstream>
 #include <vector>
 #include <string>

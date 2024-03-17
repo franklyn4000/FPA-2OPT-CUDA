@@ -46,3 +46,4 @@ cmake-build-*/
 
 heightMapper/height_map.csv
 heightMapper/height_map.npy
+algorithm/CMakeFiles/

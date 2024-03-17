@@ -129,6 +129,30 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
+fpa.o: fpa.cu.o
+.PHONY : fpa.o
+
+# target to build an object file
+fpa.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.o
+.PHONY : fpa.cu.o
+
+fpa.i: fpa.cu.i
+.PHONY : fpa.i
+
+# target to preprocess a source file
+fpa.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.i
+.PHONY : fpa.cu.i
+
+fpa.s: fpa.cu.s
+.PHONY : fpa.s
+
+# target to generate assembly for a file
+fpa.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.s
+.PHONY : fpa.cu.s
+
 iolib.o: iolib.cu.o
 .PHONY : iolib.o
 
@@ -186,6 +210,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
+	@echo "... fpa.o"
+	@echo "... fpa.i"
+	@echo "... fpa.s"
 	@echo "... iolib.o"
 	@echo "... iolib.i"
 	@echo "... iolib.s"
