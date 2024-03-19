@@ -20,7 +20,7 @@ int main() {
     std::string filename = "../heightMapper/height_map.csv";
     auto height_map = load_height_map(filename);
 
-    double time_taken = omp_get_wtime() - start_time;
+
 /*
     // Print the height map
     for(const auto &row : height_map) {
@@ -32,6 +32,10 @@ int main() {
 */
 
     std::vector<std::vector<float>> result = computeFPA(height_map, iter_max, population, p_switch, epsilon_init, epsilon_final, two_opt_freq);
+    double time_taken = omp_get_wtime() - start_time;
+
+
+    save_to_csv(result, "../heightMapper/paths.csv");
     for(const auto & vec : result){
         for (const float e : vec) {
             std::cout << e << " ";

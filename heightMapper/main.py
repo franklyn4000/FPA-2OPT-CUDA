@@ -5,16 +5,40 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.colors as mcolors
 import os
 import random
+import csv
+
+
+def read_paths_from_csv(filename):
+    paths = []
+    with open(filename, 'r') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            path = []
+            for i in range(0, len(row), 3):  # group by three (x, y, z)
+                if i + 2 < len(row):  # to avoid index out of bound error
+                    path.append((row[i], row[i + 1], row[i + 2]))
+            paths.append(path)
+    return paths
+
+
+def read_fitnesses_from_csv(filename):
+    fitnesses = []
+    with open(filename, 'r') as file:
+        csv_reader = csv.reader(file)
+        for row in csv_reader:
+            if row:  # check if row is not empty
+                fitnesses.append(float(row[0]))  # convert string to float
+    return fitnesses
 
 
 def generate_terrain(size, min_val=-500, max_val=600):
     raw_noise = np.random.uniform(-1, 1, size=(size, size))
 
-    half = round(size/2)
-    min = round(size/12)
+    half = round(size / 2)
+    min = round(size / 12)
 
-    raw_noise[0:size, half-min:half+min] -= random.randint(1, 40) / 40
-    raw_noise[half-min:half+min, half+min:size] -= random.randint(1, 13) / 13
+    raw_noise[0:size, half - min:half + min] -= random.randint(1, 40) / 40
+    raw_noise[half - min:half + min, half + min:size] -= random.randint(1, 13) / 13
     raw_noise[0:size, 0:min] += random.randint(1, 50) / 50
     terrain = gaussian_filter(raw_noise, sigma=size // 50)
 
@@ -27,23 +51,66 @@ def generate_terrain(size, min_val=-500, max_val=600):
     return terrain
 
 
-def visualize_height_maps(height_map):
+def visualize_height_maps(height_map, paths, fitnesses):
     cmap = mcolors.LinearSegmentedColormap.from_list("", ["red", "yellow", "green", "blue", "purple", "white"])
 
-    fig = plt.figure(figsize=(14, 6))
+    # Create subplots
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(16, 12))
+    ax1, ax2, ax3, ax4 = ax.flatten()
 
-    # 2D plot
-    ax1 = fig.add_subplot(121)
+    min_fitness_idx = fitnesses.index(max(fitnesses))  # get the index of path with lowest fitness
+
+    # 2D Plot from top
     img = ax1.imshow(height_map, cmap=cmap, vmin=-1000, vmax=2000)
     fig.colorbar(img, ax=ax1, shrink=0.5, aspect=5, label='Height')
+    for idx, path in enumerate(paths):
+        path_x = [float(point[0]) for point in path]
+        path_y = [float(point[1]) for point in path]
+        if idx == min_fitness_idx:
+            ax1.plot(path_x, path_y, color='blue', linewidth=1)  # highlight path with lowest fitness with blue color
+        else:
+            ax1.plot(path_x, path_y, color='red', linewidth=0.5)
+
+    # 2D Plot from the side (Y-axis)
+    ax2.plot(range(len(height_map)), height_map[len(height_map) // 2, :])
+    for idx, path in enumerate(paths):
+        path_x = [float(point[0]) for point in path]
+        path_z = [float(point[2]) for point in path]
+        if idx == min_fitness_idx:
+            ax2.plot(path_x, path_z, color='blue')  # highlight path with lowest fitness in blue color
+        else:
+            ax2.plot(path_x, path_z, color='red')
+    ax2.set_title('Side View (Y-axis)')
+
+    # 2D Plot from the side (X-axis)
+    ax3.plot(range(len(height_map)), height_map[:, len(height_map[0]) // 2])
+    for idx, path in enumerate(paths):
+        path_y = [float(point[1]) for point in path]
+        path_z = [float(point[2]) for point in path]
+        if idx == min_fitness_idx:
+            ax3.plot(path_y, path_z, color='blue')  # highlight path with lowest fitness in blue color
+        else:
+            ax3.plot(path_y, path_z, color='red')
+    ax3.set_title('Side View (X-axis)')
 
     # 3D plot
-    ax2 = fig.add_subplot(122, projection='3d')
     x = np.arange(0, height_map.shape[1])
     y = np.arange(0, height_map.shape[0])
     X, Y = np.meshgrid(x, y)
-    surf = ax2.plot_surface(X, Y, height_map, cmap=cmap, vmin=-1000, vmax=2000, linewidth=0)
-    fig.colorbar(surf, ax=ax2, shrink=0.5, aspect=5, label='Height')
+    ax4 = fig.add_subplot(224, projection='3d')
+    surf = ax4.plot_surface(X, Y, height_map, cmap=cmap, vmin=-1000, vmax=2000, linewidth=0)
+    fig.colorbar(surf, ax=ax4, shrink=0.5, aspect=5, label='Height')
+    for idx, path in enumerate(paths):
+        path_x = [float(point[0]) for point in path]
+        path_y = [float(point[1]) for point in path]
+        path_z = [float(point[2]) for point in path]
+        ax4.invert_yaxis()
+        if idx == min_fitness_idx:
+            ax4.plot(path_x, path_y, path_z, color='blue')  # highlight path with lowest fitness in blue color
+            ax4.scatter(path_x, path_y, path_z, color='blue', s=20)
+        else:
+            ax4.plot(path_x, path_y, path_z, color='red')
+            ax4.scatter(path_x, path_y, path_z, color='red', s=20)
 
     plt.show()
 
@@ -54,15 +121,17 @@ def save_height_map(height_map, filename):
 
 
 def load_height_map(filename):
-    return np.load(filename)
+    return np.load(filename + ".npy")
 
 
 filename = "height_map"
-
-# if not os.path.exists(filename):
-height_map = generate_terrain(150)
-save_height_map(height_map, filename)
-# else:
-#    height_map = load_height_map(filename)
-
-visualize_height_maps(height_map)
+paths_csv_filename = 'paths.csv'
+fitnesses_csv_filename = 'fitnesses.csv'
+if not os.path.exists(filename + ".npy"):
+    height_map = generate_terrain(150)
+    save_height_map(height_map, filename)
+else:
+    height_map = load_height_map(filename)
+paths = read_paths_from_csv(paths_csv_filename)
+fitnesses = read_fitnesses_from_csv(fitnesses_csv_filename)
+visualize_height_maps(height_map, paths, fitnesses)

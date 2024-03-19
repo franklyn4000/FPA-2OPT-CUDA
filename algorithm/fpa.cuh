@@ -16,4 +16,6 @@ std::vector <std::vector<float>> computeFPA(
         float epsilon_final,
         int two_opt_freq);
 
+
+
 #endif //ALGORITHM_FPA_CUH
