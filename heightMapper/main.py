@@ -67,7 +67,7 @@ def visualize_height_maps(height_map, paths, fitnesses):
         path_x = [float(point[0]) for point in path]
         path_y = [float(point[1]) for point in path]
         if idx == min_fitness_idx:
-            ax1.plot(path_x, path_y, color='blue', linewidth=1)  # highlight path with lowest fitness with blue color
+            ax1.plot(path_x, path_y, color='blue', linewidth=1.5)  # highlight path with lowest fitness with blue color
         else:
             ax1.plot(path_x, path_y, color='red', linewidth=0.5)
 
@@ -77,9 +77,9 @@ def visualize_height_maps(height_map, paths, fitnesses):
         path_x = [float(point[0]) for point in path]
         path_z = [float(point[2]) for point in path]
         if idx == min_fitness_idx:
-            ax2.plot(path_x, path_z, color='blue')  # highlight path with lowest fitness in blue color
+            ax2.plot(path_x, path_z, color='blue', linewidth=1.5)  # highlight path with lowest fitness in blue color
         else:
-            ax2.plot(path_x, path_z, color='red')
+            ax2.plot(path_x, path_z, color='red', linewidth=0.5)
     ax2.set_title('Side View (Y-axis)')
 
     # 2D Plot from the side (X-axis)
@@ -88,9 +88,9 @@ def visualize_height_maps(height_map, paths, fitnesses):
         path_y = [float(point[1]) for point in path]
         path_z = [float(point[2]) for point in path]
         if idx == min_fitness_idx:
-            ax3.plot(path_y, path_z, color='blue')  # highlight path with lowest fitness in blue color
+            ax3.plot(path_y, path_z, color='blue',  linewidth=1.5)  # highlight path with lowest fitness in blue color
         else:
-            ax3.plot(path_y, path_z, color='red')
+            ax3.plot(path_y, path_z, color='red', linewidth=0.5)
     ax3.set_title('Side View (X-axis)')
 
     # 3D plot

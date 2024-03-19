@@ -261,7 +261,7 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
 
                 printf("X: %i, Y: %i \n", pointX, pointY);
 
-                underground = heightMap[pointX][pointY] >= P1[2] + interval_z * i;
+                underground = heightMap[pointY][pointX] >= P1[2] + interval_z * i;
                 if(underground && undergroundLast) {
                     d_ug += step_length_P1P2;
                 } else if (underground != undergroundLast) {
@@ -278,7 +278,7 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
             int p2X = static_cast<int>(std::round(P2[0]));
             int p2Y = static_cast<int>(std::round(P2[1]));
 
-            underground = heightMap[p2X][p2Y] >= P2[2];
+            underground = heightMap[p2Y][p2X] >= P2[2];
             if(underground && undergroundLast) {
                 d_ug += step_length_P1P2;
             } else if (underground != undergroundLast) {
@@ -345,22 +345,57 @@ std::vector <std::vector<float>> computeFPA(
     }
 
     std::vector <std::vector<float>> smoothedPaths;
-    smoothedPaths = smoothPaths(outputVector, 4.0f, 32);
+    smoothedPaths = smoothPaths(outputVector, 12.0f, 52);
 
     std::vector <std::vector<float>> testPaths;
+
     std::vector<float> test;
 
-    test.push_back(50);
-    test.push_back(50);
+    test.push_back(10);
+    test.push_back(10);
     test.push_back(1000);
 
-
-    test.push_back(50);
-    test.push_back(50);
+    test.push_back(10);
+    test.push_back(10);
     test.push_back(-1000);
 
-
     testPaths.push_back(test);
+
+    std::vector<float> test3;
+
+    test3.push_back(10);
+    test3.push_back(140);
+    test3.push_back(1000);
+
+    test3.push_back(10);
+    test3.push_back(140);
+    test3.push_back(-1000);
+
+    testPaths.push_back(test3);
+
+    std::vector<float> test1;
+
+    test1.push_back(140);
+    test1.push_back(10);
+    test1.push_back(1000);
+
+    test1.push_back(140);
+    test1.push_back(10);
+    test1.push_back(-1000);
+
+    testPaths.push_back(test1);
+
+    std::vector<float> test2;
+
+    test2.push_back(140);
+    test2.push_back(140);
+    test2.push_back(1000);
+
+    test2.push_back(140);
+    test2.push_back(140);
+    test2.push_back(-1000);
+
+    testPaths.push_back(test2);
 
 
     std::vector<float> fitnesses;
