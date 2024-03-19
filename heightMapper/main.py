@@ -72,7 +72,7 @@ def visualize_height_maps(height_map, paths, fitnesses):
             ax1.plot(path_x, path_y, color='red', linewidth=0.5)
 
     # 2D Plot from the side (Y-axis)
-    ax2.plot(range(len(height_map)), height_map[len(height_map) // 2, :])
+    ax2.plot(range(len(height_map)), height_map[len(height_map) // 2, :],  color='black',  linewidth=3)
     for idx, path in enumerate(paths):
         path_x = [float(point[0]) for point in path]
         path_z = [float(point[2]) for point in path]
@@ -83,7 +83,7 @@ def visualize_height_maps(height_map, paths, fitnesses):
     ax2.set_title('Side View (Y-axis)')
 
     # 2D Plot from the side (X-axis)
-    ax3.plot(range(len(height_map)), height_map[:, len(height_map[0]) // 2])
+    ax3.plot(range(len(height_map)), height_map[:, len(height_map[0]) // 2],  color='black',  linewidth=3)
     for idx, path in enumerate(paths):
         path_y = [float(point[1]) for point in path]
         path_z = [float(point[2]) for point in path]
