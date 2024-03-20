@@ -14,7 +14,7 @@ generateVector(float x1, float y1, float z1, float xn, float yn, float zn, float
     // Generate a random size for the vector
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(5, 5); // replace 10 with maximum possible value of n
+    std::uniform_int_distribution<> distr(8, 8); // replace 10 with maximum possible value of n
 
     std::uniform_real_distribution<> distrX(x_min, x_max);
     std::uniform_real_distribution<> distrY(y_min, y_max);
@@ -29,10 +29,14 @@ generateVector(float x1, float y1, float z1, float xn, float yn, float zn, float
     vector[1] = y1;
     vector[2] = z1;
 
+    printf("\nVECTOR\n");
     for (int i = 1; i < n - 1; ++i) {
         vector[3 * i] = distrX(gen);
         vector[3 * i + 1] = distrY(gen);
         vector[3 * i + 2] = distrZ(gen);
+        printf("test.push_back(%f);\n", vector[3 * i]);
+        printf("test.push_back(%f);\n", vector[3 * i + 1]);
+        printf("test.push_back(%f);\n", vector[3 * i + 2]);
     }
 
     // Set final values
@@ -43,11 +47,16 @@ generateVector(float x1, float y1, float z1, float xn, float yn, float zn, float
     return vector;
 }
 
-std::vector <std::vector<float>> smoothPaths(std::vector <std::vector<float>> paths, float turnRadius, int n_pi) {
+std::vector <std::vector<float>>
+smoothPaths(std::vector <std::vector<float>> paths, float turnRadius, int n_pi, std::vector<float> *N_wps) {
     std::vector <std::vector<float>> smoothedPaths;
+    float prevCPath = 0.0f;
+
+    // std::vector<float> N_wps;
 
     for (const std::vector<float> &path: paths) {
         std::vector<float> smoothedPath;
+        float unsmoothedVertices = 0;
 
         smoothedPath.push_back(path[0]);
         smoothedPath.push_back(path[1]);
@@ -106,6 +115,8 @@ std::vector <std::vector<float>> smoothPaths(std::vector <std::vector<float>> pa
                 C[j] = P[j] + turnRadius * (1 / sin(alpha)) * (tau_2[j] - tau_1[j]);
                 printf("\ncalculating C %f: %f + %f * %f * (%f - %f)  \n", C[j], P[j], turnRadius, (1 / sin(alpha)),
                        tau_2[j], tau_1[j]);
+
+
             }
 
 
@@ -116,12 +127,18 @@ std::vector <std::vector<float>> smoothPaths(std::vector <std::vector<float>> pa
                     (P[2] - C[2]) * (P[2] - C[2])
             );
 
-            printf("\n dist1: %f dist2: %f distC: %f \n", mag_1, mag_2, distance_PC);
-            if (distance_PC > min(mag_1, mag_2)) {
+            float c_path = distance_PC * cos(alpha / 2);
+
+            printf("\n dist1: %f dist2: %f distC: %f cPath: %f\n", mag_1, mag_2, distance_PC, c_path + prevCPath);
+
+            if (distance_PC > min(mag_1, mag_2) ||
+                c_path + prevCPath > mag_1) {
                 //cannot smooth trajectory
                 smoothedPath.push_back(P[0]);
                 smoothedPath.push_back(P[1]);
                 smoothedPath.push_back(P[2]);
+                unsmoothedVertices++;
+                prevCPath = c_path;
                 continue;
             }
 
@@ -172,20 +189,25 @@ std::vector <std::vector<float>> smoothPaths(std::vector <std::vector<float>> pa
             smoothedPath.push_back(path[3 * i]);
             smoothedPath.push_back(path[3 * i + 1]);
             smoothedPath.push_back(path[3 * i + 2]);*/
+            prevCPath = c_path;
         }
 
         smoothedPath.push_back(path[3 * n - 3]);
         smoothedPath.push_back(path[3 * n - 2]);
         smoothedPath.push_back(path[3 * n - 1]);
 
-
+        (*N_wps).push_back(unsmoothedVertices / n);
         smoothedPaths.push_back(smoothedPath);
     }
+
+    // save_to_csv(N_wps, "../heightMapper/N_wps.csv");
 
     return smoothedPaths;
 }
 
-std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std::vector<double>> &heightMap) {
+std::vector<float>
+computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std::vector<double>> &heightMap,
+                 std::vector<float> N_wps, float max_asc_angle, float max_desc_angle) {
     std::vector<float> fitnesses;
 
     //penalty term
@@ -205,13 +227,12 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
 
     }
 
-
+    int index = 0;
     for (const std::vector<float> &path: paths) {
         float d_ug = 0.0;
         float d_dz = 0.0;
         float d_ea = 0.0;
-        float N_wp_unsmoothed = 0.0;
-        float N_wp = 50.0;
+        float N_wp = 0.0;
         float l_traj = 0.0;
 
         int n = path.size() / 3;
@@ -237,6 +258,10 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
             int steps_P1P2 = static_cast<int>(std::floor(distance_P1P2 / interval));
             float step_length_P1P2 = steps_P1P2 > 0 ? distance_P1P2 / steps_P1P2 : distance_P1P2;
 
+
+
+
+
             printf("\ndistance: %f steps: %i length: %f \n", distance_P1P2, steps_P1P2, step_length_P1P2);
 
             float diff_x = P2[0] - P1[0];
@@ -247,13 +272,20 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
             float interval_y = steps_P1P2 > 0 ? diff_y / steps_P1P2 : 0;
             float interval_z = steps_P1P2 > 0 ? diff_z / steps_P1P2 : 0;
 
+
+            double horizontal_length = std::sqrt(diff_x * diff_x + diff_y * diff_y);
+
+            double angle_radians =   std::atan2(diff_z, horizontal_length);
+
+
             printf("\nSUBPATH\n");
             for (int i = 1; i < steps_P1P2; i++) {
                 printf("x: %f y: %f z:%f\n", P1[0] + interval_x * i, P1[1] + interval_y * i, P1[2] + interval_z * i);
 
                 printf("distance since last: %f\n", step_length_P1P2);
 
-
+                printf("DEBUG %f\n", P1[0] + interval_x * i);
+                printf("DEBUG %f\n", P1[1] + interval_y * i);
 
                 int pointX = static_cast<int>(std::round(P1[0] + interval_x * i));
                 int pointY = static_cast<int>(std::round(P1[1] + interval_y * i));
@@ -262,14 +294,13 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
                 printf("X: %i, Y: %i \n", pointX, pointY);
 
                 underground = heightMap[pointY][pointX] >= P1[2] + interval_z * i;
-                if(underground && undergroundLast) {
+                if (underground && undergroundLast) {
                     d_ug += step_length_P1P2;
                 } else if (underground != undergroundLast) {
                     d_ug += step_length_P1P2 / 2;
                 }
                 undergroundLast = underground;
-
-
+                l_traj += step_length_P1P2;
 
             }
             printf("x: %f y: %f z:%f\n", P2[0], P2[1], P2[2]);
@@ -279,31 +310,42 @@ std::vector<float> computeFitnesses(std::vector <std::vector<float>> paths, cons
             int p2Y = static_cast<int>(std::round(P2[1]));
 
             underground = heightMap[p2Y][p2X] >= P2[2];
-            if(underground && undergroundLast) {
+            if (underground && undergroundLast) {
                 d_ug += step_length_P1P2;
             } else if (underground != undergroundLast) {
                 d_ug += step_length_P1P2 / 2;
             }
             undergroundLast = underground;
+            l_traj += step_length_P1P2;
+
+
+            printf("current angle %f°\n", angle_radians * (180.0 / M_PI));
+
+            if(angle_radians > max_asc_angle || angle_radians < max_desc_angle) {
+                d_ea += distance_P1P2;
+            }
+
+
 
         }
+        printf("total excessive flight path distance: %f\n", d_ea);
         printf("total underground  distance: %f\n", d_ug);
 
+        N_wp = N_wps[index];
         //Penaly term P
-        float P = d_ug + d_dz + d_ea + (N_wp_unsmoothed / N_wp * l_traj);
+        float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
         //Fitness function F
         float F;
-        if(P == 0) {
-            F = 1 + 1 / (1+ 0/*C*/);
+        if (P == 0) {
+            F = 1 + 1 / (1 + 0/*C*/);
         } else {
             F = 0 + 1 / (1 + P);
         }
 
 
-
         fitnesses.push_back(F);
-
+        index++;
     }
 
 
@@ -323,9 +365,9 @@ std::vector <std::vector<float>> computeFPA(
     size_t y_mid = (heightMap.empty()) ? 0 : heightMap[0].size() / 2;
 
     float x_min = 0.0f;
-    float x_max = heightMap.size();
+    float x_max = heightMap.size() - 1;
     float y_min = 0.0f;
-    float y_max = heightMap[0].size();
+    float y_max = heightMap[0].size() - 1;
     float z_min = -500.0f;
     float z_max = 500.0f;
     float x1 = 5.0f;
@@ -336,6 +378,10 @@ std::vector <std::vector<float>> computeFPA(
     float zn = heightMap[yn][xn] + 10;
 
 
+    float max_asc_angle_deg = 10.0f;
+    float max_desc_angle_deg = -30.0f;
+    float max_asc_angle = max_asc_angle_deg * M_PI / 180;
+    float max_desc_angle = max_desc_angle_deg * M_PI / 180;
 
     //Objective min or max f(x), x = (x1, x2, ..., xd)
     //Initialize a population of n flowers/pollen gametes with random solutions
@@ -344,62 +390,29 @@ std::vector <std::vector<float>> computeFPA(
         outputVector.push_back(generateVector(x1, y1, z1, xn, yn, zn, x_min, x_max, y_min, y_max, z_min, z_max));
     }
 
-    std::vector <std::vector<float>> smoothedPaths;
-    smoothedPaths = smoothPaths(outputVector, 12.0f, 52);
 
     std::vector <std::vector<float>> testPaths;
 
     std::vector<float> test;
 
-    test.push_back(10);
-    test.push_back(10);
-    test.push_back(1000);
+    test.push_back(50);
+    test.push_back(100);
+    test.push_back(0);
 
     test.push_back(10);
+    test.push_back(126);
     test.push_back(10);
-    test.push_back(-1000);
 
     testPaths.push_back(test);
 
-    std::vector<float> test3;
-
-    test3.push_back(10);
-    test3.push_back(140);
-    test3.push_back(1000);
-
-    test3.push_back(10);
-    test3.push_back(140);
-    test3.push_back(-1000);
-
-    testPaths.push_back(test3);
-
-    std::vector<float> test1;
-
-    test1.push_back(140);
-    test1.push_back(10);
-    test1.push_back(1000);
-
-    test1.push_back(140);
-    test1.push_back(10);
-    test1.push_back(-1000);
-
-    testPaths.push_back(test1);
-
-    std::vector<float> test2;
-
-    test2.push_back(140);
-    test2.push_back(140);
-    test2.push_back(1000);
-
-    test2.push_back(140);
-    test2.push_back(140);
-    test2.push_back(-1000);
-
-    testPaths.push_back(test2);
+    std::vector <std::vector<float>> smoothedPaths;
+    std::vector<float> N_wps;
+    smoothedPaths = smoothPaths(outputVector, 25.58f, 82, &N_wps);
+    save_to_csv(N_wps, "../heightMapper/N_wps.csv");
 
 
     std::vector<float> fitnesses;
-    fitnesses = computeFitnesses(smoothedPaths, heightMap);
+    fitnesses = computeFitnesses(smoothedPaths, heightMap, N_wps, max_asc_angle, max_desc_angle);
     for (float fitness: fitnesses) {
         printf("\nfitness: %f", fitness);
     }
