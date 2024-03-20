@@ -8,19 +8,19 @@
 int main() {
 
     int iter_max = 10;
-    int population = 25000;
+    int population = 1000;
     float p_switch = 0.8;
     float epsilon_init = 0.25;
     float epsilon_final = 0.02;
     int two_opt_freq = 20;
 
 
-    double start_time = omp_get_wtime();
+
 
     std::string filename = "../heightMapper/height_map.csv";
     auto height_map = load_height_map(filename);
 
-
+    double start_time = omp_get_wtime();
 /*
     // Print the height map
     for(const auto &row : height_map) {
@@ -36,16 +36,9 @@ int main() {
 
 
     save_to_csv(result, "../heightMapper/paths.csv");
-    for(const auto & vec : result){
-        for (const float e : vec) {
-            std::cout << e << " ";
-        }
-        std::cout << std::endl;  // end of each inner vector
-    }
 
 
-
-    std::cout << "Execution time: " << time_taken << " seconds.\n";
+    std::cout << "\nTotal Execution time: " << time_taken << " seconds.\n";
 
     return 0;
 }

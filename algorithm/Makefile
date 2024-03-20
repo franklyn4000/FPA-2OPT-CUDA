@@ -129,6 +129,30 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
+fitnessComputer.o: fitnessComputer.cu.o
+.PHONY : fitnessComputer.o
+
+# target to build an object file
+fitnessComputer.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.o
+.PHONY : fitnessComputer.cu.o
+
+fitnessComputer.i: fitnessComputer.cu.i
+.PHONY : fitnessComputer.i
+
+# target to preprocess a source file
+fitnessComputer.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.i
+.PHONY : fitnessComputer.cu.i
+
+fitnessComputer.s: fitnessComputer.cu.s
+.PHONY : fitnessComputer.s
+
+# target to generate assembly for a file
+fitnessComputer.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.s
+.PHONY : fitnessComputer.cu.s
+
 fpa.o: fpa.cu.o
 .PHONY : fpa.o
 
@@ -152,6 +176,30 @@ fpa.s: fpa.cu.s
 fpa.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.s
 .PHONY : fpa.cu.s
+
+initialSolutionGenerator.o: initialSolutionGenerator.cu.o
+.PHONY : initialSolutionGenerator.o
+
+# target to build an object file
+initialSolutionGenerator.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/initialSolutionGenerator.cu.o
+.PHONY : initialSolutionGenerator.cu.o
+
+initialSolutionGenerator.i: initialSolutionGenerator.cu.i
+.PHONY : initialSolutionGenerator.i
+
+# target to preprocess a source file
+initialSolutionGenerator.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/initialSolutionGenerator.cu.i
+.PHONY : initialSolutionGenerator.cu.i
+
+initialSolutionGenerator.s: initialSolutionGenerator.cu.s
+.PHONY : initialSolutionGenerator.s
+
+# target to generate assembly for a file
+initialSolutionGenerator.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/initialSolutionGenerator.cu.s
+.PHONY : initialSolutionGenerator.cu.s
 
 iolib.o: iolib.cu.o
 .PHONY : iolib.o
@@ -201,6 +249,54 @@ main.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/main.cu.s
 .PHONY : main.cu.s
 
+pathSmoother.o: pathSmoother.cu.o
+.PHONY : pathSmoother.o
+
+# target to build an object file
+pathSmoother.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.o
+.PHONY : pathSmoother.cu.o
+
+pathSmoother.i: pathSmoother.cu.i
+.PHONY : pathSmoother.i
+
+# target to preprocess a source file
+pathSmoother.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.i
+.PHONY : pathSmoother.cu.i
+
+pathSmoother.s: pathSmoother.cu.s
+.PHONY : pathSmoother.s
+
+# target to generate assembly for a file
+pathSmoother.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.s
+.PHONY : pathSmoother.cu.s
+
+utils.o: utils.cu.o
+.PHONY : utils.o
+
+# target to build an object file
+utils.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/utils.cu.o
+.PHONY : utils.cu.o
+
+utils.i: utils.cu.i
+.PHONY : utils.i
+
+# target to preprocess a source file
+utils.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/utils.cu.i
+.PHONY : utils.cu.i
+
+utils.s: utils.cu.s
+.PHONY : utils.s
+
+# target to generate assembly for a file
+utils.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/utils.cu.s
+.PHONY : utils.cu.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -210,15 +306,27 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
+	@echo "... fitnessComputer.o"
+	@echo "... fitnessComputer.i"
+	@echo "... fitnessComputer.s"
 	@echo "... fpa.o"
 	@echo "... fpa.i"
 	@echo "... fpa.s"
+	@echo "... initialSolutionGenerator.o"
+	@echo "... initialSolutionGenerator.i"
+	@echo "... initialSolutionGenerator.s"
 	@echo "... iolib.o"
 	@echo "... iolib.i"
 	@echo "... iolib.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... pathSmoother.o"
+	@echo "... pathSmoother.i"
+	@echo "... pathSmoother.s"
+	@echo "... utils.o"
+	@echo "... utils.i"
+	@echo "... utils.s"
 .PHONY : help
 
 

@@ -10,7 +10,11 @@ find_package(OpenMP REQUIRED)
 
 add_executable(algorithm main.cu
         iolib.cu
-        fpa.cu)
+        fpa.cu
+        initialSolutionGenerator.cu
+        pathSmoother.cu
+        fitnessComputer.cu
+        utils.cu)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)
