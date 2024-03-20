@@ -207,12 +207,18 @@ smoothPaths(std::vector <std::vector<float>> paths, float turnRadius, int n_pi, 
 
 std::vector<float>
 computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std::vector<double>> &heightMap,
-                 std::vector<float> N_wps, float max_asc_angle, float max_desc_angle) {
+                 std::vector<float> N_wps, float max_asc_angle, float max_desc_angle, float a_utopia, float f_utopia) {
     std::vector<float> fitnesses;
 
     //penalty term
 
     //P = d_ug + d_dz + d_ea + (N_wp_unsmoothed / N_wp * l_traj)
+    float w1 = 0.5;
+    float w2 = 0.5;
+
+    float f_cum = 0;
+
+
 
 
 
@@ -234,6 +240,11 @@ computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std:
         float d_ea = 0.0;
         float N_wp = 0.0;
         float l_traj = 0.0;
+
+
+
+        float a_avg = 0;
+        float f_avg = 0;
 
         int n = path.size() / 3;
         bool underground = false;
@@ -306,8 +317,14 @@ computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std:
             printf("x: %f y: %f z:%f\n", P2[0], P2[1], P2[2]);
             printf("distance since last: %f\n", step_length_P1P2);
 
+            int p1X = static_cast<int>(std::round(P1[0]));
+            int p1Y = static_cast<int>(std::round(P1[1]));
+
             int p2X = static_cast<int>(std::round(P2[0]));
             int p2Y = static_cast<int>(std::round(P2[1]));
+
+            int p1Z = static_cast<int>(std::round(P1[2]));
+            int p2Z = static_cast<int>(std::round(P2[2]));
 
             underground = heightMap[p2Y][p2X] >= P2[2];
             if (underground && undergroundLast) {
@@ -318,6 +335,10 @@ computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std:
             undergroundLast = underground;
             l_traj += step_length_P1P2;
 
+            float height1 = p1Z - heightMap[p1Y][p1X];
+            float height2 = p2Z - heightMap[p2Y][p2X];
+
+            f_cum += (height1 + height2) / 2;
 
             printf("current angle %f°\n", angle_radians * (180.0 / M_PI));
 
@@ -335,10 +356,15 @@ computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std:
         //Penaly term P
         float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
+        f_avg = f_cum / n;
+
+        //Cost term C
+        float C = w1 * (l_traj/a_utopia) + w2 * (f_avg/f_utopia);
+
         //Fitness function F
         float F;
         if (P == 0) {
-            F = 1 + 1 / (1 + 0/*C*/);
+            F = 1 + 1 / (1 + C);
         } else {
             F = 0 + 1 / (1 + P);
         }
@@ -350,6 +376,26 @@ computeFitnesses(std::vector <std::vector<float>> paths, const std::vector <std:
 
 
     return fitnesses;
+}
+
+float calculateFUtopia(float x1, float y1, float z1, float xn, float yn, float zn) {
+    std::vector<float> start;
+    std::vector<float> end;
+    start.push_back(x1);
+    start.push_back(y1);
+    start.push_back(z1);
+
+    end.push_back(xn);
+    end.push_back(yn);
+    end.push_back(zn);
+
+    float distance_P1P2 = sqrt(
+            (end[0] - start[0]) * (end[0] - start[0]) +
+            (end[1] - start[1]) * (end[1] - start[1]) +
+            (end[2] - start[2]) * (end[2] - start[2])
+    );
+
+    return distance_P1P2;
 }
 
 std::vector <std::vector<float>> computeFPA(
@@ -368,14 +414,19 @@ std::vector <std::vector<float>> computeFPA(
     float x_max = heightMap.size() - 1;
     float y_min = 0.0f;
     float y_max = heightMap[0].size() - 1;
-    float z_min = -500.0f;
-    float z_max = 500.0f;
     float x1 = 5.0f;
     float y1 = (float) y_mid;
     float z1 = heightMap[y1][x1] + 10;
     float xn = heightMap.size() - 5.0f;
     float yn = (float) y_mid;
-    float zn = heightMap[yn][xn] + 10;
+    float zn = heightMap[y1][x1] + 10;
+
+    float z_min =  heightMap[y1][x1] + 10 -10.0f;
+    float z_max = heightMap[y1][x1] + 10 +10.0f;
+
+    float a_utopia = 1.0f;
+
+    float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
 
 
     float max_asc_angle_deg = 10.0f;
@@ -397,22 +448,26 @@ std::vector <std::vector<float>> computeFPA(
 
     test.push_back(50);
     test.push_back(100);
-    test.push_back(0);
+    test.push_back(550);
 
     test.push_back(10);
     test.push_back(126);
+    test.push_back(552);
+
     test.push_back(10);
+    test.push_back(56);
+    test.push_back(552);
 
     testPaths.push_back(test);
 
     std::vector <std::vector<float>> smoothedPaths;
     std::vector<float> N_wps;
-    smoothedPaths = smoothPaths(outputVector, 25.58f, 82, &N_wps);
+    smoothedPaths = smoothPaths(outputVector, 8.0f, 82, &N_wps);
     save_to_csv(N_wps, "../heightMapper/N_wps.csv");
 
 
     std::vector<float> fitnesses;
-    fitnesses = computeFitnesses(smoothedPaths, heightMap, N_wps, max_asc_angle, max_desc_angle);
+    fitnesses = computeFitnesses(smoothedPaths, heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
     for (float fitness: fitnesses) {
         printf("\nfitness: %f", fitness);
     }
