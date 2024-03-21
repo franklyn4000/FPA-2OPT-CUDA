@@ -4,6 +4,7 @@
 
 #include "fitnessComputer.cuh"
 #include <iostream>
+#include "omp.h"
 
 float computeFitnesses(
         std::vector <std::vector<float>> paths,
@@ -14,23 +15,15 @@ float computeFitnesses(
         std::vector<float> N_wps, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia) {
 
-//std::vector<float> fittestPath;
-   // float bestFitness = -1;
-
-    //penalty term
-
-    //P = d_ug + d_dz + d_ea + (N_wp_unsmoothed / N_wp * l_traj)
     float w1 = 0.4;
     float w2 = 0.6;
 
-
-
     float cumulative_fitness = 0;
 
-
-    float interval = 20.0f;
+    float interval = 1 / 30.0f;
 
     int index = 0;
+
     for (const std::vector<float> &path: paths) {
         float d_ug = 0.0;
         float d_dz = 0.0;
@@ -48,20 +41,24 @@ float computeFitnesses(
         bool outOfBounds = false;
         bool outOfBoundsLast = false;
 
+        float P1[3];
+        float P2[3];
+
+        float interval_x;
+        float interval_y;
+        float interval_z;
+
         for (int i = 0; i < n - 1; i++) {
-            std::vector<float> P1;
-            std::vector<float> P2;
-            P1.push_back(path[3 * i]);
-            P1.push_back(path[3 * i + 1]);
-            P1.push_back(path[3 * i + 2]);
-            P2.push_back(path[3 * (i + 1)]);
-            P2.push_back(path[3 * (i + 1) + 1]);
-            P2.push_back(path[3 * (i + 1) + 2]);
+            P1[0] = path[3 * i];
+            P1[1] = path[3 * i + 1];
+            P1[2] = path[3 * i + 2];
+            P2[0] = path[3 * (i + 1)];
+            P2[1] = path[3 * (i + 1) + 1];
+            P2[2] = path[3 * (i + 1) + 2];
 
             float diff_x = P2[0] - P1[0];
             float diff_y = P2[1] - P1[1];
             float diff_z = P2[2] - P1[2];
-
 
             float distance_P1P2 = sqrt(
                     diff_x * diff_x +
@@ -69,22 +66,22 @@ float computeFitnesses(
                     diff_z * diff_z
             );
 
-            float steps_P1P2 = std::floor(distance_P1P2 / interval);
+            float steps_P1P2 = std::floor(distance_P1P2 * interval);
             float step_length_P1P2 = steps_P1P2 > 0 ? distance_P1P2 / steps_P1P2 : distance_P1P2;
+            float inv_steps = 1 / steps_P1P2;
 
-
-            //printf("\ndistance: %f steps: %i length: %f \n", distance_P1P2, steps_P1P2, step_length_P1P2);
-
-
-            float interval_x = steps_P1P2 > 0 ? diff_x / steps_P1P2 : 0;
-            float interval_y = steps_P1P2 > 0 ? diff_y / steps_P1P2 : 0;
-            float interval_z = steps_P1P2 > 0 ? diff_z / steps_P1P2 : 0;
-
+            if(steps_P1P2 > 0) {
+                interval_x = diff_x * inv_steps;
+                interval_y = diff_y * inv_steps;
+                interval_z = diff_z * inv_steps;
+            } else {
+                interval_x = 0;
+                interval_y = 0;
+                interval_z = 0;
+            }
 
             float horizontal_length = std::sqrt(diff_x * diff_x + diff_y * diff_y);
-
             float angle_radians = std::atan2(diff_z, horizontal_length);
-
 
             // printf("\nSUBPATH\n");
             for (int i = 1; i < steps_P1P2; i++) {
@@ -126,18 +123,15 @@ float computeFitnesses(
                 l_traj += step_length_P1P2;
 
             }
-            //printf("x: %f y: %f z:%f\n", P2[0], P2[1], P2[2]);
-            //printf("distance since last: %f\n", step_length_P1P2);
-
+/*
             int p1X = static_cast<int>(std::round(P1[0]));
             int p1Y = static_cast<int>(std::round(P1[1]));
-
+            int p1Z = static_cast<int>(std::round(P1[2]));
+*/
             int p2X = static_cast<int>(std::round(P2[0]));
             int p2Y = static_cast<int>(std::round(P2[1]));
-
-            int p1Z = static_cast<int>(std::round(P1[2]));
             int p2Z = static_cast<int>(std::round(P2[2]));
-
+/*
             float height1;
             if (
                     p1Y > heightMap.size() - 1 ||
@@ -148,7 +142,7 @@ float computeFitnesses(
                 height1 = 999999;
             } else {
                 height1 = p1Z - heightMap[p1Y][p1X];
-            }
+            }*/
 
             float height2;
             if (
@@ -180,7 +174,7 @@ float computeFitnesses(
             l_traj += step_length_P1P2;
 
 
-            a_cum += (height1 + height2) / 2;
+            a_cum += height2;
 
             //printf("current angle %f°\n", angle_radians * (180.0 / M_PI));
 
@@ -189,7 +183,10 @@ float computeFitnesses(
             }
 
 
+
         }
+
+
         //printf("total excessive flight path distance: %f\n", d_ea);
         //printf("total underground  distance: %f\n", d_ug);
 
@@ -198,7 +195,7 @@ float computeFitnesses(
         float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
         a_avg = a_cum / n;
-       // printf("a_avg: %f, a_utopia: %f, l_traj: %f, f_utopia: %f \n", a_avg, a_utopia, l_traj, f_utopia);
+        // printf("a_avg: %f, a_utopia: %f, l_traj: %f, f_utopia: %f \n", a_avg, a_utopia, l_traj, f_utopia);
         //Cost term C
         float C = w1 * (a_avg / a_utopia) + w2 * (l_traj / f_utopia);
 
@@ -220,8 +217,8 @@ float computeFitnesses(
         index++;
     }
 
-    printf("avg fitness: %f %f %i",  cumulative_fitness / paths.size(), cumulative_fitness, paths.size());
-   // printf("best fitness: %f\n", bestFitness);
+    printf("avg fitness: %f %f %i", cumulative_fitness / paths.size(), cumulative_fitness, paths.size());
+    // printf("best fitness: %f\n", bestFitness);
 
     return bestFitness;
 }
