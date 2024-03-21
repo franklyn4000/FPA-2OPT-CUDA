@@ -122,6 +122,12 @@ std::vector <std::vector<float>> computeFPA(
         fitness_time_taken = omp_get_wtime() - smoothing_start_time;
 
         printf("fitnessed - %f - best fitness: %f\n", fitness_time_taken, bestFitness);
+
+
+        if(i % two_opt_freq == 0) {
+
+        }
+
     }
 
 

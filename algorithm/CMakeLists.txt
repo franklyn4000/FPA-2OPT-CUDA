@@ -3,7 +3,7 @@ project(algorithm CXX CUDA)
 
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
 set(CMAKE_CUDA_STANDARD 17)
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ggdb")
 
 find_package(OpenMP REQUIRED)
 
