@@ -13,7 +13,7 @@ float computeFitnesses(
         float bestFitness,
         std::vector <std::vector<float>> unsmoothedPaths,
         const std::vector <std::vector<double>> &heightMap,
-        std::vector<float> N_wps, float max_asc_angle,
+        float* N_wps, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia);
 
 #endif //ALGORITHM_FITNESSCOMPUTER_CUH

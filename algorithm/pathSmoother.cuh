@@ -9,10 +9,10 @@
 
 std::vector <std::vector<float>> smoothPaths(
         std::vector <std::vector<float>> paths,
-        float turnRadius, int n_pi, std::vector<float> *N_wps);
+        float turnRadius, int n_pi, float* N_wps);
 
 std::vector <float> smoothPathSingle(
         std::vector<float> path,
-        float turnRadius, int n_pi, std::vector<float> *N_wps);
+        float turnRadius, int n_pi, float* N_wps);
 
 #endif //ALGORITHM_PATHSMOOTHER_CUH

@@ -43,7 +43,7 @@ std::vector <std::vector<float>> computeFPA(
     float yn = (float) y_mid;
     float zn = heightMap[yn][xn] + 10;
 
-    int path_length = 10;
+    int path_length = 7;
 
     float turn_radius = 36.0f;
 
@@ -76,11 +76,11 @@ std::vector <std::vector<float>> computeFPA(
     double smoothing_start_time = omp_get_wtime();
 
     std::vector <std::vector<float>> smoothedPaths;
-    std::vector<float> N_wps;
-    smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, &N_wps);
+    float N_wps[population];
+    smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
 
     double smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
-    save_to_csv(N_wps, "../heightMapper/N_wps.csv");
+    //save_to_csv(N_wps, "../heightMapper/N_wps.csv");
 
     double fitness_start_time = omp_get_wtime();
 
@@ -89,7 +89,7 @@ std::vector <std::vector<float>> computeFPA(
 
     double fitness_time_taken = omp_get_wtime() - smoothing_start_time;
 
-    std::vector<float> smoothPath1 = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, &N_wps);
+    std::vector<float> smoothPath1 = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, N_wps);
 
     save_to_csv(smoothPath1, "../heightMapper/fittest.csv");
 
@@ -107,7 +107,7 @@ std::vector <std::vector<float>> computeFPA(
 
         smoothing_start_time = omp_get_wtime();
 
-        smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, &N_wps);
+        smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
 
         smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
 
@@ -129,7 +129,7 @@ std::vector <std::vector<float>> computeFPA(
     }
 
 
-    std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, &N_wps);
+    std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, N_wps);
 
 
     save_to_csv(smoothPath, "../heightMapper/fittest2.csv");

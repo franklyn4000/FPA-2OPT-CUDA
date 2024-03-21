@@ -7,13 +7,13 @@
 
 std::vector <std::vector<float>> smoothPaths(
         std::vector <std::vector<float>> paths,
-        float turnRadius, int n_pi, std::vector<float> *N_wps) {
+        float turnRadius, int n_pi, float* N_wps) {
 
     std::vector <std::vector<float>> smoothedPaths;
     float prevCPath = 0.0f;
 
     // std::vector<float> N_wps;
-
+    int pathIndex = 0;
     for (const std::vector<float> &path: paths) {
         std::vector<float> smoothedPath;
         float unsmoothedVertices = 0;
@@ -127,7 +127,8 @@ std::vector <std::vector<float>> smoothPaths(
         smoothedPath.push_back(path[3 * n - 2]);
         smoothedPath.push_back(path[3 * n - 1]);
 
-        (*N_wps).push_back(unsmoothedVertices / n);
+        N_wps[pathIndex] = unsmoothedVertices / n;
+        pathIndex++;
         smoothedPaths.push_back(smoothedPath);
     }
 
@@ -138,7 +139,7 @@ std::vector <std::vector<float>> smoothPaths(
 
 std::vector<float> smoothPathSingle(
         std::vector<float> path,
-        float turnRadius, int n_pi, std::vector<float> *N_wps) {
+        float turnRadius, int n_pi, float* N_wps) {
     float prevCPath = 0.0f;
 
     // std::vector<float> N_wps;
