@@ -9,7 +9,7 @@ int main() {
 
     int iter_max = 150;
 
-    int population = 14000;
+    int population = 20000;
     float p_switch = 0.8;
     float epsilon_init = 0.25;
     float epsilon_final = 0.02;

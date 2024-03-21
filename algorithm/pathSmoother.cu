@@ -24,61 +24,58 @@ std::vector <std::vector<float>> smoothPaths(
 
         int n = path.size() / 3;
 
+        float P[3];
+        float P1[3];
+        float P2[3];
+
+        float C[3];
+
+        float tau_1[3];
+        float tau_2[3];
+
         for (int i = 1; i < n - 1; i++) {
-            std::vector<float> P1;
-            std::vector<float> P;
-            std::vector<float> P2;
-            P1.push_back(path[3 * (i - 1)]);
-            P1.push_back(path[3 * (i - 1) + 1]);
-            P1.push_back(path[3 * (i - 1) + 2]);
-            P.push_back(path[3 * i]);
-            P.push_back(path[3 * i + 1]);
-            P.push_back(path[3 * i + 2]);
-            P2.push_back(path[3 * (i + 1)]);
-            P2.push_back(path[3 * (i + 1) + 1]);
-            P2.push_back(path[3 * (i + 1) + 2]);
+            P1[0] = path[3 * (i - 1)];
+            P1[1] = path[3 * (i - 1) + 1];
+            P1[2] = path[3 * (i - 1) + 2];
 
+            P[0] = path[3 * i];
+            P[1] = path[3 * i + 1];
+            P[2] = path[3 * i + 2];
 
+            P2[0] = path[3 * (i + 1)];
+            P2[1] = path[3 * (i + 1) + 1];
+            P2[2] = path[3 * (i + 1) + 2];
 
             //unit vector from P1 to P
-            std::vector<float> tau_1;
             float mag_1 = sqrt(
                     (P[0] - P1[0]) * (P[0] - P1[0]) +
                     (P[1] - P1[1]) * (P[1] - P1[1]) +
                     (P[2] - P1[2]) * (P[2] - P1[2])
             );
-            tau_1.push_back((P[0] - P1[0]) / mag_1);
-            tau_1.push_back((P[1] - P1[1]) / mag_1);
-            tau_1.push_back((P[2] - P1[2]) / mag_1);
+            tau_1[0] = (P[0] - P1[0]) / mag_1;
+            tau_1[1] = (P[1] - P1[1]) / mag_1;
+            tau_1[2] = (P[2] - P1[2]) / mag_1;
 
             //unit vector from P to P2
-            std::vector<float> tau_2;
             float mag_2 = sqrt(
                     (P2[0] - P[0]) * (P2[0] - P[0]) +
                     (P2[1] - P[1]) * (P2[1] - P[1]) +
                     (P2[2] - P[2]) * (P2[2] - P[2])
             );
-            tau_2.push_back((P2[0] - P[0]) / mag_2);
-            tau_2.push_back((P2[1] - P[1]) / mag_2);
-            tau_2.push_back((P2[2] - P[2]) / mag_2);
+            tau_2[0] = (P2[0] - P[0]) / mag_2;
+            tau_2[1] = (P2[1] - P[1]) / mag_2;
+            tau_2[2] = (P2[2] - P[2]) / mag_2;
 
             float dot = tau_1[0] * tau_2[0] + tau_1[1] * tau_2[1] + tau_1[2] * tau_2[2];
 
             //angle alpha between the two unit vectors
             float alpha = M_PI - acos(dot);
+            float oneOverSinAlpha = (1 / sin(alpha));
 
             //compute Center C of tangent circle using C = P + turnRadius * csc(alpha) * (tau_2 - tau_1)
-            std::vector<float> C(3, 0);
             for (int j = 0; j < 3; j++) {
-
-
-                C[j] = P[j] + turnRadius * (1 / sin(alpha)) * (tau_2[j] - tau_1[j]);
-                //printf("\ncalculating C %f: %f + %f * %f * (%f - %f)  \n", C[j], P[j], turnRadius, (1 / sin(alpha)),
-                //      tau_2[j], tau_1[j]);
-
-
+                C[j] = P[j] + turnRadius * oneOverSinAlpha * (tau_2[j] - tau_1[j]);
             }
-
 
             //calculate distance between P and C
             float distance_PC = sqrt(
@@ -107,16 +104,12 @@ std::vector <std::vector<float>> smoothPaths(
 
             float cscAlpha = 1 / sin(alpha);
 
+            float oneOverNWaypoints = 1 / (n_waypoints - 1);
             for (int j = 0; j < n_waypoints; j++) {
                 //compute angle omega = j * (pi - alpha) / (n - 1)
-                float omega = j * (M_PI - alpha) / (n_waypoints - 1);
-
-
+                float omega = j * (M_PI - alpha) * oneOverNWaypoints;
                 float cosOmega = cos(omega);
                 float cosAlphaOmega = cos(alpha + omega);
-
-
-                //compute point C_i = C - turnRadius * csc(alpha) * tau_1 * cos(alpha + omega) - turnRadius * csc(alpha) * tau_2 * cos(omega)
 
                 smoothedPath.push_back(C[0] - turnRadius * cscAlpha * tau_1[0] * cosAlphaOmega -
                                        turnRadius * cscAlpha * tau_2[0] * cosOmega);
@@ -126,17 +119,7 @@ std::vector <std::vector<float>> smoothPaths(
                                        turnRadius * cscAlpha * tau_2[2] * cosOmega);
 
             }
-/*
-            smoothedPath.push_back(C[0]);
-            smoothedPath.push_back(C[1]);
-            smoothedPath.push_back(C[2]);
-            smoothedPath.push_back(P[0]);
-            smoothedPath.push_back(P[1]);
-            smoothedPath.push_back(P[2]);
 
-            smoothedPath.push_back(path[3 * i]);
-            smoothedPath.push_back(path[3 * i + 1]);
-            smoothedPath.push_back(path[3 * i + 2]);*/
             prevCPath = c_path;
         }
 

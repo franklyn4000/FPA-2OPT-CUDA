@@ -14,8 +14,6 @@
 #include "utils.cuh"
 #include "pollinator.cuh"
 
-
-
 std::vector <std::vector<float>> computeFPA(
         const std::vector <std::vector<double>> &heightMap,
         int iter_max,
@@ -45,7 +43,7 @@ std::vector <std::vector<float>> computeFPA(
     float yn = (float) y_mid;
     float zn = heightMap[yn][xn] + 10;
 
-    int path_length = 7;
+    int path_length = 10;
 
     float turn_radius = 36.0f;
 
@@ -131,10 +129,10 @@ std::vector <std::vector<float>> computeFPA(
     }
 
 
-    std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 3, &N_wps);
+    std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, &N_wps);
 
 
-    save_to_csv(fittestPath, "../heightMapper/fittest2.csv");
+    save_to_csv(smoothPath, "../heightMapper/fittest2.csv");
 
     //Find the best solution g∗ in the initial population
 
