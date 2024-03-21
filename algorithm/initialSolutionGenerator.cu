@@ -14,6 +14,7 @@ std::vector <std::vector<float>> generateSolutions(
     // Generate a random size for the vector
     std::random_device rd;
 
+    //std::vector <std::vector<float>> solutions(population, std::vector<float>(3 * length, 0));
     std::vector <std::vector<float>> solutions;
 
     for (int i = 0; i < population; i++) {
@@ -33,11 +34,11 @@ std::vector <std::vector<float>> generateSolutions(
         vector[1] = y1;
         vector[2] = z1;
 
-       // printf("\nVECTOR\n");
-        for (int i = 1; i < n - 1; ++i) {
-            vector[3 * i] = distrX(gen);
-            vector[3 * i + 1] = distrY(gen);
-            vector[3 * i + 2] = distrZ(gen);
+        // printf("\nVECTOR\n");
+        for (int j = 1; j < n - 1; ++j) {
+            vector[3 * j] = distrX(gen);
+            vector[3 * j + 1] = distrY(gen);
+            vector[3 * j + 2] = distrZ(gen);
             //printf("test.push_back(%f);\n", vector[3 * i]);
             //printf("test.push_back(%f);\n", vector[3 * i + 1]);
             //printf("test.push_back(%f);\n", vector[3 * i + 2]);
@@ -48,8 +49,8 @@ std::vector <std::vector<float>> generateSolutions(
         vector[3 * n - 2] = yn;
         vector[3 * n - 1] = zn;
 
-
         solutions.push_back(vector);
+        //solutions[i] = vector;
     }
 
     return solutions;

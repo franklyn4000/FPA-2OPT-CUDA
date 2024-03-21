@@ -7,9 +7,9 @@
 
 int main() {
 
-    int iter_max = 250;
+    int iter_max = 100;
 
-    int population = 1500;
+    int population = 10000;
     float p_switch = 0.8;
     float epsilon_init = 0.25;
     float epsilon_final = 0.02;

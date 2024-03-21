@@ -14,7 +14,11 @@ std::vector <std::vector<float>> smoothPaths(
 
     // std::vector<float> N_wps;
     int pathIndex = 0;
-    for (const std::vector<float> &path: paths) {
+
+    for(int path_i = 0; path_i < paths.size(); path_i++) {
+    //for (const std::vector<float> &path: paths) {
+
+        std::vector<float> path = paths[path_i];
         std::vector<float> smoothedPath;
         float unsmoothedVertices = 0;
 
