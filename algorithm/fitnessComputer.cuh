@@ -7,8 +7,11 @@
 
 #include <vector>
 
-std::vector<float> computeFitnesses(
+float computeFitnesses(
         std::vector <std::vector<float>> paths,
+        std::vector<float> *fittestPath,
+        float bestFitness,
+        std::vector <std::vector<float>> unsmoothedPaths,
         const std::vector <std::vector<double>> &heightMap,
         std::vector<float> N_wps, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia);

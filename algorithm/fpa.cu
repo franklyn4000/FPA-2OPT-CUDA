@@ -12,6 +12,7 @@
 #include "pathSmoother.cuh"
 #include "fitnessComputer.cuh"
 #include "utils.cuh"
+#include "pollinator.cuh"
 
 
 
@@ -24,25 +25,31 @@ std::vector <std::vector<float>> computeFPA(
         float epsilon_final,
         int two_opt_freq) {
 
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+
     size_t x_mid = heightMap.size() / 2;
     size_t y_mid = (heightMap.empty()) ? 0 : heightMap[0].size() / 2;
 
     float x_min = 0.0f;
     float x_max = heightMap.size() - 1;
-    float z_min = -100;
+    float z_min = -300;
     float y_min = 0.0f;
     float y_max = heightMap[0].size() - 1;
-    float z_max = 100;
+    float z_max = 300;
     float x1 = 5.0f;
     float y1 = (float) y_mid;
     float z1 = heightMap[y1][x1] + 10;
     float xn = heightMap.size() - 5.0f;
     float yn = (float) y_mid;
-    float zn = heightMap[y1][x1] + 10;
+    float zn = heightMap[yn][xn] + 10;
 
-    int path_length = 8;
+    int path_length = 7;
 
+    float turn_radius = 36.0f;
 
+    float bestFitness = 0;
 
     float a_utopia = 1.0f;
     float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
@@ -72,25 +79,56 @@ std::vector <std::vector<float>> computeFPA(
 
     std::vector <std::vector<float>> smoothedPaths;
     std::vector<float> N_wps;
-    smoothedPaths = smoothPaths(initialSolutions, 8.0f, 82, &N_wps);
+    smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, &N_wps);
 
     double smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
     save_to_csv(N_wps, "../heightMapper/N_wps.csv");
 
     double fitness_start_time = omp_get_wtime();
 
-    std::vector<float> fitnesses;
-    fitnesses = computeFitnesses(smoothedPaths, heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
+    std::vector<float> fittestPath;
+    bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions, heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
 
     double fitness_time_taken = omp_get_wtime() - smoothing_start_time;
 
-    for (float fitness: fitnesses) {
-        printf("\nfitness: %f", fitness);
+    std::vector<float> smoothPath1 = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, &N_wps);
+
+    save_to_csv(smoothPath1, "../heightMapper/fittest.csv");
+
+    for(int i = 0; i < iter_max; i++) {
+
+        printf("ITERATION %i - ", i);
+
+        double pollination_start_time = omp_get_wtime();
+
+        pollinate(initialSolutions, fittestPath, p_switch);
+
+        double pollination_time_taken = omp_get_wtime() - pollination_start_time;
+
+        printf("pollinated - %f - ", pollination_time_taken);
+
+        smoothing_start_time = omp_get_wtime();
+
+        smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, &N_wps);
+
+        smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
+
+        printf("smoothed - %f - ", smoothing_time_taken);
+
+        fitness_start_time = omp_get_wtime();
+
+        bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions,  heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
+
+        fitness_time_taken = omp_get_wtime() - smoothing_start_time;
+
+        printf("fitnessed - %f - best fitness: %f\n", fitness_time_taken, bestFitness);
     }
-    printf("\n");
 
-    save_to_csv(fitnesses, "../heightMapper/fitnesses.csv");
 
+    std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 3, &N_wps);
+
+
+    save_to_csv(fittestPath, "../heightMapper/fittest2.csv");
 
     //Find the best solution g∗ in the initial population
 

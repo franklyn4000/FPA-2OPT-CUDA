@@ -7,29 +7,18 @@
 
 int main() {
 
-    int iter_max = 10;
-    int population = 1000;
+    int iter_max = 150;
+
+    int population = 14000;
     float p_switch = 0.8;
     float epsilon_init = 0.25;
     float epsilon_final = 0.02;
-    int two_opt_freq = 20;
-
-
-
+    int two_opt_freq = 10;
 
     std::string filename = "../heightMapper/height_map.csv";
     auto height_map = load_height_map(filename);
 
     double start_time = omp_get_wtime();
-/*
-    // Print the height map
-    for(const auto &row : height_map) {
-        for(const auto &val : row) {
-            std::cout << std::setprecision(16) << std::fixed << val << " ";
-        }
-        std::cout << '\n';
-    }
-*/
 
     std::vector<std::vector<float>> result = computeFPA(height_map, iter_max, population, p_switch, epsilon_init, epsilon_final, two_opt_freq);
     double time_taken = omp_get_wtime() - start_time;

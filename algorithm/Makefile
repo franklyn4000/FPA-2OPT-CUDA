@@ -273,6 +273,30 @@ pathSmoother.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.s
 .PHONY : pathSmoother.cu.s
 
+pollinator.o: pollinator.cu.o
+.PHONY : pollinator.o
+
+# target to build an object file
+pollinator.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.o
+.PHONY : pollinator.cu.o
+
+pollinator.i: pollinator.cu.i
+.PHONY : pollinator.i
+
+# target to preprocess a source file
+pollinator.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.i
+.PHONY : pollinator.cu.i
+
+pollinator.s: pollinator.cu.s
+.PHONY : pollinator.s
+
+# target to generate assembly for a file
+pollinator.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.s
+.PHONY : pollinator.cu.s
+
 utils.o: utils.cu.o
 .PHONY : utils.o
 
@@ -324,6 +348,9 @@ help:
 	@echo "... pathSmoother.o"
 	@echo "... pathSmoother.i"
 	@echo "... pathSmoother.s"
+	@echo "... pollinator.o"
+	@echo "... pollinator.i"
+	@echo "... pollinator.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"

@@ -14,7 +14,8 @@ add_executable(algorithm main.cu
         initialSolutionGenerator.cu
         pathSmoother.cu
         fitnessComputer.cu
-        utils.cu)
+        utils.cu
+        pollinator.cu)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

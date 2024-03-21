@@ -33,14 +33,14 @@ std::vector <std::vector<float>> generateSolutions(
         vector[1] = y1;
         vector[2] = z1;
 
-        printf("\nVECTOR\n");
+       // printf("\nVECTOR\n");
         for (int i = 1; i < n - 1; ++i) {
             vector[3 * i] = distrX(gen);
             vector[3 * i + 1] = distrY(gen);
             vector[3 * i + 2] = distrZ(gen);
-            printf("test.push_back(%f);\n", vector[3 * i]);
-            printf("test.push_back(%f);\n", vector[3 * i + 1]);
-            printf("test.push_back(%f);\n", vector[3 * i + 2]);
+            //printf("test.push_back(%f);\n", vector[3 * i]);
+            //printf("test.push_back(%f);\n", vector[3 * i + 1]);
+            //printf("test.push_back(%f);\n", vector[3 * i + 2]);
         }
 
         // Set final values
