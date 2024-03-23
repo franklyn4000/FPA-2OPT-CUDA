@@ -3,7 +3,8 @@ project(algorithm CXX CUDA)
 
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
 set(CMAKE_CUDA_STANDARD 17)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ggdb")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+add_compile_options("$<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=${-fopenmp}>")
 
 find_package(OpenMP REQUIRED)
 
@@ -12,10 +13,12 @@ add_executable(algorithm main.cu
         iolib.cu
         fpa.cu
         initialSolutionGenerator.cu
-        pathSmoother.cu
+        pathSmoother_parallel.cpp
         fitnessComputer.cu
         utils.cu
-        pollinator.cu)
+        pollinator.cu
+        pollinator_parallel.cpp
+        twoOpt_parallel.cpp)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

@@ -2,8 +2,10 @@
 // Created by franklyn on 3/20/24.
 //
 
-#include "pathSmoother.cuh"
+#include "pathSmoother_parallel.h"
 #include <iostream>
+#include "omp.h"
+#include <math.h>
 
 std::vector <std::vector<float>> smoothPaths(
         std::vector <std::vector<float>> paths,
@@ -92,7 +94,7 @@ std::vector <std::vector<float>> smoothPaths(
 
             //printf("\n dist1: %f dist2: %f distC: %f cPath: %f\n", mag_1, mag_2, distance_PC, c_path + prevCPath);
 
-            if (distance_PC > min(mag_1, mag_2) ||
+            if (distance_PC > std::min(mag_1, mag_2) ||
                 c_path + prevCPath > mag_1) {
                 //cannot smooth trajectory
                 smoothedPath.push_back(P[0]);
@@ -224,7 +226,7 @@ std::vector<float> smoothPathSingle(
 
         //printf("\n dist1: %f dist2: %f distC: %f cPath: %f\n", mag_1, mag_2, distance_PC, c_path + prevCPath);
 
-        if (distance_PC > min(mag_1, mag_2) ||
+        if (distance_PC > std::min(mag_1, mag_2) ||
             c_path + prevCPath > mag_1) {
             //cannot smooth trajectory
             smoothedPath.push_back(P[0]);

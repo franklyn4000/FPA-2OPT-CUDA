@@ -9,10 +9,12 @@
 #include "omp.h"
 #include "iolib.cuh"
 #include "initialSolutionGenerator.cuh"
-#include "pathSmoother.cuh"
+#include "pathSmoother_parallel.h"
 #include "fitnessComputer.cuh"
 #include "utils.cuh"
 #include "pollinator.cuh"
+#include "twoOpt_parallel.h"
+#include "pollinator_parallel.h"
 
 std::vector <std::vector<float>> computeFPA(
         const std::vector <std::vector<double>> &heightMap,
@@ -99,7 +101,7 @@ std::vector <std::vector<float>> computeFPA(
 
         double pollination_start_time = omp_get_wtime();
 
-        pollinate(initialSolutions, fittestPath, p_switch);
+        pollinate_parallel(initialSolutions, fittestPath, p_switch);
 
         double pollination_time_taken = omp_get_wtime() - pollination_start_time;
 
@@ -123,6 +125,11 @@ std::vector <std::vector<float>> computeFPA(
 
 
         if(i % two_opt_freq == 0) {
+            twoOptParallel(initialSolutions, fittestPath, p_switch);
+
+            smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
+
+            bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions,  heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
 
         }
 

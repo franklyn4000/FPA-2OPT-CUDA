@@ -7,7 +7,8 @@
 #include <math.h>
 #include <cmath>
 #include <iostream>
-
+#include "omp.h"
+/*
 float beta = 1.5;
 float gam = 0.01;
 static double sig = pow(std::tgamma(1.0 + beta) * sin(M_PI * beta / 2.0) /
@@ -51,7 +52,7 @@ void pollinate(
     std::random_device rd;
     std::mt19937 gen(rd());
 
-
+#pragma omp parallel for
     for (int pathIndex = 0; pathIndex < paths.size(); pathIndex++) {
         int n = paths[pathIndex].size() / 3;
 
@@ -69,14 +70,9 @@ void pollinate(
 
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
-
-                    //printf("%f   %f\n", L[i] * paths[pathIndex][3 * i + k],
-                    //       gamma * L[i] * (fittestPath[3 * i + k] - paths[pathIndex][3 * i + k]));
-                    //   printf("%f \n",  L[3*i]);
                     float coord = paths[pathIndex][3 * i + k];
                     paths[pathIndex][3 * i + k] =
-                            coord +
-                            L[3 * i] * (fittestPath[3 * i + k] - coord);
+                            coord + L[3 * i] * (fittestPath[3 * i + k] - coord);
 
                 }
             }
@@ -101,3 +97,4 @@ void pollinate(
     }
 }
 
+*/

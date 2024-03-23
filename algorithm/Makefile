@@ -249,29 +249,29 @@ main.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/main.cu.s
 .PHONY : main.cu.s
 
-pathSmoother.o: pathSmoother.cu.o
-.PHONY : pathSmoother.o
+pathSmoother_parallel.o: pathSmoother_parallel.cpp.o
+.PHONY : pathSmoother_parallel.o
 
 # target to build an object file
-pathSmoother.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.o
-.PHONY : pathSmoother.cu.o
+pathSmoother_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.o
+.PHONY : pathSmoother_parallel.cpp.o
 
-pathSmoother.i: pathSmoother.cu.i
-.PHONY : pathSmoother.i
+pathSmoother_parallel.i: pathSmoother_parallel.cpp.i
+.PHONY : pathSmoother_parallel.i
 
 # target to preprocess a source file
-pathSmoother.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.i
-.PHONY : pathSmoother.cu.i
+pathSmoother_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.i
+.PHONY : pathSmoother_parallel.cpp.i
 
-pathSmoother.s: pathSmoother.cu.s
-.PHONY : pathSmoother.s
+pathSmoother_parallel.s: pathSmoother_parallel.cpp.s
+.PHONY : pathSmoother_parallel.s
 
 # target to generate assembly for a file
-pathSmoother.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother.cu.s
-.PHONY : pathSmoother.cu.s
+pathSmoother_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.s
+.PHONY : pathSmoother_parallel.cpp.s
 
 pollinator.o: pollinator.cu.o
 .PHONY : pollinator.o
@@ -296,6 +296,54 @@ pollinator.s: pollinator.cu.s
 pollinator.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.s
 .PHONY : pollinator.cu.s
+
+pollinator_parallel.o: pollinator_parallel.cpp.o
+.PHONY : pollinator_parallel.o
+
+# target to build an object file
+pollinator_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.o
+.PHONY : pollinator_parallel.cpp.o
+
+pollinator_parallel.i: pollinator_parallel.cpp.i
+.PHONY : pollinator_parallel.i
+
+# target to preprocess a source file
+pollinator_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.i
+.PHONY : pollinator_parallel.cpp.i
+
+pollinator_parallel.s: pollinator_parallel.cpp.s
+.PHONY : pollinator_parallel.s
+
+# target to generate assembly for a file
+pollinator_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.s
+.PHONY : pollinator_parallel.cpp.s
+
+twoOpt_parallel.o: twoOpt_parallel.cpp.o
+.PHONY : twoOpt_parallel.o
+
+# target to build an object file
+twoOpt_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.o
+.PHONY : twoOpt_parallel.cpp.o
+
+twoOpt_parallel.i: twoOpt_parallel.cpp.i
+.PHONY : twoOpt_parallel.i
+
+# target to preprocess a source file
+twoOpt_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.i
+.PHONY : twoOpt_parallel.cpp.i
+
+twoOpt_parallel.s: twoOpt_parallel.cpp.s
+.PHONY : twoOpt_parallel.s
+
+# target to generate assembly for a file
+twoOpt_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.s
+.PHONY : twoOpt_parallel.cpp.s
 
 utils.o: utils.cu.o
 .PHONY : utils.o
@@ -345,12 +393,18 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... pathSmoother.o"
-	@echo "... pathSmoother.i"
-	@echo "... pathSmoother.s"
+	@echo "... pathSmoother_parallel.o"
+	@echo "... pathSmoother_parallel.i"
+	@echo "... pathSmoother_parallel.s"
 	@echo "... pollinator.o"
 	@echo "... pollinator.i"
 	@echo "... pollinator.s"
+	@echo "... pollinator_parallel.o"
+	@echo "... pollinator_parallel.i"
+	@echo "... pollinator_parallel.s"
+	@echo "... twoOpt_parallel.o"
+	@echo "... twoOpt_parallel.i"
+	@echo "... twoOpt_parallel.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"
