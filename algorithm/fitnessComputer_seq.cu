@@ -2,11 +2,11 @@
 // Created by franklyn on 3/20/24.
 //
 
-#include "fitnessComputer.cuh"
+#include "fitnessComputer_seq.cuh"
 #include <iostream>
 #include "omp.h"
 
-float computeFitnesses(
+float computeFitnesses_seq(
         std::vector <std::vector<float>> paths,
         std::vector<float> *fittestPath,
         float bestFitness,

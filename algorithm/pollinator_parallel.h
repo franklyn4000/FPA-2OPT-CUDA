@@ -2,14 +2,15 @@
 // Created by franklyn on 3/21/24.
 //
 
-#ifndef ALGORITHM_TWOOPT_PARALLEL_H
-#define ALGORITHM_TWOOPT_PARALLEL_H
+#ifndef ALGORITHM_POLLINATOR_PARALLEL_H
+#define ALGORITHM_POLLINATOR_PARALLEL_H
 
 #include <vector>
 
-void twoOptParallel(
+void pollinate_parallel(
         std::vector <std::vector<float>> &paths,
         std::vector<float> fittestPath,
         float p_switch);
 
-#endif //ALGORITHM_TWOOPT_PARALLEL_H
+
+#endif //ALGORITHM_POLLINATOR_PARALLEL_H

@@ -10,11 +10,12 @@
 #include "iolib.cuh"
 #include "initialSolutionGenerator.cuh"
 #include "pathSmoother_parallel.h"
-#include "fitnessComputer.cuh"
+#include "fitnessComputer.h"
 #include "utils.cuh"
 #include "pollinator.cuh"
 #include "twoOpt_parallel.h"
 #include "pollinator_parallel.h"
+#include "fitnessComputer_seq.cuh"
 
 std::vector <std::vector<float>> computeFPA(
         const std::vector <std::vector<double>> &heightMap,

@@ -129,29 +129,53 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
-fitnessComputer.o: fitnessComputer.cu.o
+fitnessComputer.o: fitnessComputer.cpp.o
 .PHONY : fitnessComputer.o
 
 # target to build an object file
-fitnessComputer.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.o
-.PHONY : fitnessComputer.cu.o
+fitnessComputer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.o
+.PHONY : fitnessComputer.cpp.o
 
-fitnessComputer.i: fitnessComputer.cu.i
+fitnessComputer.i: fitnessComputer.cpp.i
 .PHONY : fitnessComputer.i
 
 # target to preprocess a source file
-fitnessComputer.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.i
-.PHONY : fitnessComputer.cu.i
+fitnessComputer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.i
+.PHONY : fitnessComputer.cpp.i
 
-fitnessComputer.s: fitnessComputer.cu.s
+fitnessComputer.s: fitnessComputer.cpp.s
 .PHONY : fitnessComputer.s
 
 # target to generate assembly for a file
-fitnessComputer.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cu.s
-.PHONY : fitnessComputer.cu.s
+fitnessComputer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.s
+.PHONY : fitnessComputer.cpp.s
+
+fitnessComputer_seq.o: fitnessComputer_seq.cu.o
+.PHONY : fitnessComputer_seq.o
+
+# target to build an object file
+fitnessComputer_seq.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.o
+.PHONY : fitnessComputer_seq.cu.o
+
+fitnessComputer_seq.i: fitnessComputer_seq.cu.i
+.PHONY : fitnessComputer_seq.i
+
+# target to preprocess a source file
+fitnessComputer_seq.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.i
+.PHONY : fitnessComputer_seq.cu.i
+
+fitnessComputer_seq.s: fitnessComputer_seq.cu.s
+.PHONY : fitnessComputer_seq.s
+
+# target to generate assembly for a file
+fitnessComputer_seq.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.s
+.PHONY : fitnessComputer_seq.cu.s
 
 fpa.o: fpa.cu.o
 .PHONY : fpa.o
@@ -381,6 +405,9 @@ help:
 	@echo "... fitnessComputer.o"
 	@echo "... fitnessComputer.i"
 	@echo "... fitnessComputer.s"
+	@echo "... fitnessComputer_seq.o"
+	@echo "... fitnessComputer_seq.i"
+	@echo "... fitnessComputer_seq.s"
 	@echo "... fpa.o"
 	@echo "... fpa.i"
 	@echo "... fpa.s"

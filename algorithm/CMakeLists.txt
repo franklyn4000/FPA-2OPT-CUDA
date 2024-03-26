@@ -14,11 +14,12 @@ add_executable(algorithm main.cu
         fpa.cu
         initialSolutionGenerator.cu
         pathSmoother_parallel.cpp
-        fitnessComputer.cu
+        fitnessComputer_seq.cu
         utils.cu
         pollinator.cu
         pollinator_parallel.cpp
-        twoOpt_parallel.cpp)
+        twoOpt_parallel.cpp
+        fitnessComputer.cpp)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)
