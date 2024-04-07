@@ -6,14 +6,11 @@
 #define ALGORITHM_FITNESSCOMPUTER_CUH
 
 #include <vector>
+#include "paths.h"
 
-float computeFitnesses(
-        std::vector <std::vector<float>> paths,
-        std::vector<float> *fittestPath,
-        float bestFitness,
-        std::vector <std::vector<float>> unsmoothedPaths,
-        const std::vector <std::vector<double>> &heightMap,
-        float* N_wps, float max_asc_angle,
+void computeFitnesses(
+        Paths &paths,
+        const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia);
 
 #endif //ALGORITHM_FITNESSCOMPUTER_CUH

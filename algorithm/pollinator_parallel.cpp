@@ -45,16 +45,15 @@ double *levy_p(int n) {
 }
 
 void pollinate_parallel(
-        std::vector <std::vector<float>> &paths,
-        std::vector<float> fittestPath,
+        Paths &paths,
         float p_switch) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
 
 #pragma omp parallel for
-    for (int pathIndex = 0; pathIndex < paths.size(); pathIndex++) {
-        int n = paths[pathIndex].size() / 3;
+    for (int pathIndex = 0; pathIndex < paths.rawPaths.size(); pathIndex++) {
+        int n = paths.rawPaths[pathIndex].size() / 3;
 
 
         std::uniform_real_distribution<> dis(0.0, 1.0);
@@ -70,9 +69,9 @@ void pollinate_parallel(
 
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
-                    float coord = paths[pathIndex][3 * i + k];
-                    paths[pathIndex][3 * i + k] =
-                            coord + L[3 * i] * (fittestPath[3 * i + k] - coord);
+                    float coord = paths.rawPaths[pathIndex][3 * i + k];
+                    paths.rawPaths[pathIndex][3 * i + k] =
+                            coord + L[3 * i] * (paths.fittestPath[3 * i + k] - coord);
 
                 }
             }
@@ -81,16 +80,16 @@ void pollinate_parallel(
             std::uniform_real_distribution<> eps(0.0, 1.0);
             float epsilon = eps(gen);
 
-            std::uniform_int_distribution<> rand(0, n);
+            std::uniform_int_distribution<> rand(0, paths.population-1);
             int j = rand(gen);
 
-            std::uniform_int_distribution<> rand2(0, n);
+            std::uniform_int_distribution<> rand2(0, paths.population-1);
             int l = rand2(gen);
 
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
-                    paths[pathIndex][3 * i + k] =
-                            paths[pathIndex][3 * i + k] + epsilon * (paths[j][3 * i + k] - paths[k][3 * i + k]);
+                    paths.rawPaths[pathIndex][3 * i + k] =
+                            paths.rawPaths[pathIndex][3 * i + k] + epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[k][3 * i + k]);
                 }
             }
         }

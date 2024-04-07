@@ -297,6 +297,30 @@ pathSmoother_parallel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.s
 .PHONY : pathSmoother_parallel.cpp.s
 
+paths.o: paths.cpp.o
+.PHONY : paths.o
+
+# target to build an object file
+paths.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.o
+.PHONY : paths.cpp.o
+
+paths.i: paths.cpp.i
+.PHONY : paths.i
+
+# target to preprocess a source file
+paths.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.i
+.PHONY : paths.cpp.i
+
+paths.s: paths.cpp.s
+.PHONY : paths.s
+
+# target to generate assembly for a file
+paths.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.s
+.PHONY : paths.cpp.s
+
 pollinator.o: pollinator.cu.o
 .PHONY : pollinator.o
 
@@ -423,6 +447,9 @@ help:
 	@echo "... pathSmoother_parallel.o"
 	@echo "... pathSmoother_parallel.i"
 	@echo "... pathSmoother_parallel.s"
+	@echo "... paths.o"
+	@echo "... paths.i"
+	@echo "... paths.s"
 	@echo "... pollinator.o"
 	@echo "... pollinator.i"
 	@echo "... pollinator.s"

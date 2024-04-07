@@ -6,10 +6,10 @@
 #define ALGORITHM_POLLINATOR_PARALLEL_H
 
 #include <vector>
+#include "paths.h"
 
 void pollinate_parallel(
-        std::vector <std::vector<float>> &paths,
-        std::vector<float> fittestPath,
+        Paths &paths,
         float p_switch);
 
 

@@ -19,7 +19,8 @@ add_executable(algorithm main.cu
         pollinator.cu
         pollinator_parallel.cpp
         twoOpt_parallel.cpp
-        fitnessComputer.cpp)
+        fitnessComputer.cpp
+        paths.cpp)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

@@ -65,7 +65,7 @@ def generate_terrain(size, min_val=-500, max_val=600):
     return terrain
 
 
-def visualize_height_maps(height_map, fittest_path, fittest_path2):
+def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3, fittest_path4):
     cmap = mcolors.LinearSegmentedColormap.from_list("", ["red", "yellow", "green", "blue", "purple", "white"])
 
     fittest_path_x = [float(point[0]) for point in fittest_path]
@@ -76,19 +76,37 @@ def visualize_height_maps(height_map, fittest_path, fittest_path2):
     fittest_path2_y = [float(point[1]) for point in fittest_path2]
     fittest_path2_z = [float(point[2]) for point in fittest_path2]
 
+    fittest_path3_x = [float(point[0]) for point in fittest_path3]
+    fittest_path3_y = [float(point[1]) for point in fittest_path3]
+    fittest_path3_z = [float(point[2]) for point in fittest_path3]
+
+    fittest_path4_x = [float(point[0]) for point in fittest_path4]
+    fittest_path4_y = [float(point[1]) for point in fittest_path4]
+    fittest_path4_z = [float(point[2]) for point in fittest_path4]
+
+
+
     # Create subplots
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(16, 12))
     ax1, ax2, ax3, ax4 = ax.flatten()
 
     #min_fitness_idx = fitnesses.index(max(fitnesses))  # get the index of path with lowest fitness
 
-    ax1.plot(fittest_path_x, fittest_path_y, color='blue', linewidth=2)
-    ax2.plot(fittest_path_x, fittest_path_z, color='blue', linewidth=2)
-    ax3.plot(fittest_path_y, fittest_path_z, color='blue', linewidth=2)
+    ax1.plot(fittest_path_x, fittest_path_y, color='#ff3300', linewidth=1)
+    ax2.plot(fittest_path_x, fittest_path_z, color='#ff3300', linewidth=1)
+    ax3.plot(fittest_path_y, fittest_path_z, color='#ff3300', linewidth=1)
 
-    ax1.plot(fittest_path2_x, fittest_path2_y, color='cyan', linewidth=2)
-    ax2.plot(fittest_path2_x, fittest_path2_z, color='cyan', linewidth=2)
-    ax3.plot(fittest_path2_y, fittest_path2_z, color='cyan', linewidth=2)
+    ax1.plot(fittest_path2_x, fittest_path2_y, color='#ff8800', linewidth=1)
+    ax2.plot(fittest_path2_x, fittest_path2_z, color='#ff8800', linewidth=1)
+    ax3.plot(fittest_path2_y, fittest_path2_z, color='#ff8800', linewidth=1)
+
+    ax1.plot(fittest_path3_x, fittest_path3_y, color='#ffaa00', linewidth=1)
+    ax2.plot(fittest_path3_x, fittest_path3_z, color='#ffaa00', linewidth=1)
+    ax3.plot(fittest_path3_y, fittest_path3_z, color='#ffaa00', linewidth=1)
+
+    ax1.plot(fittest_path4_x, fittest_path4_y, color='#ffff00', linewidth=1)
+    ax2.plot(fittest_path4_x, fittest_path4_z, color='#ffff00', linewidth=1)
+    ax3.plot(fittest_path4_y, fittest_path4_z, color='#ffff00', linewidth=1)
 
     # 2D Plot from top
     img = ax1.imshow(height_map, cmap=cmap, vmin=-1000, vmax=2000)
@@ -145,6 +163,8 @@ else:
     height_map = load_height_map(filename)
 #paths = read_paths_from_csv(paths_csv_filename)
 #fitnesses = read_fitnesses_from_csv(fitnesses_csv_filename)
-fittest_path_file = read_fittest_from_file("fittest.csv")
+fittest_path_file = read_fittest_from_file("fittest1.csv")
 fittest_path_file2 = read_fittest_from_file("fittest2.csv")
-visualize_height_maps(height_map, fittest_path_file, fittest_path_file2)
+fittest_path_file3 = read_fittest_from_file("fittest3.csv")
+fittest_path_file4 = read_fittest_from_file("fittest4.csv")
+visualize_height_maps(height_map, fittest_path_file, fittest_path_file2, fittest_path_file3, fittest_path_file4)
