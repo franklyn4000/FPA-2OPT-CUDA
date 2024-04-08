@@ -59,6 +59,9 @@ std::vector <std::vector<float>> computeFPA(
     float max_asc_angle = max_asc_angle_deg * M_PI / 180;
     float max_desc_angle = max_desc_angle_deg * M_PI / 180;
 
+    double pollination_start_time = 0;
+    double pollination_time_taken = 0;
+
     double init_start_time = omp_get_wtime();
 
     Paths paths(population);
@@ -98,29 +101,29 @@ std::vector <std::vector<float>> computeFPA(
 
         printf("ITERATION %i - ", i);
 
-        double pollination_start_time = omp_get_wtime();
+        pollination_start_time = omp_get_wtime();
 
         pollinate_parallel(paths, p_switch);
 
-        double pollination_time_taken = omp_get_wtime() - pollination_start_time;
+        pollination_time_taken += omp_get_wtime() - pollination_start_time;
 
-        printf("pollinated - %f - ", pollination_time_taken);
+       // printf("pollinated - %f - ", pollination_time_taken);
 
         smoothing_start_time = omp_get_wtime();
 
         smoothPaths(paths, turn_radius, turn_radius * 2);
 
-        smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
+        smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
 
-        printf("smoothed - %f - ", smoothing_time_taken);
+        //printf("smoothed - %f - ", smoothing_time_taken);
 
         fitness_start_time = omp_get_wtime();
 
         computeFitnesses(paths, heightMap, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
 
-        fitness_time_taken = omp_get_wtime() - fitness_start_time;
+        fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
-        printf("fitnessed - %f - best fitness: %f\n", fitness_time_taken, paths.bestFitness);
+        printf("best fitness: %f\n", paths.bestFitness);
 
 
         int quarter = std::ceil(iter_max / 4.0);
@@ -178,11 +181,11 @@ std::vector <std::vector<float>> computeFPA(
     //  end while
 
 
-    printf("\nSolution Generation time: %f\n", init_time_taken);
+    printf("\nSolution Generation: %f\n", pollination_time_taken);
 
-    printf("Path smoothing time: %f\n", smoothing_time_taken);
+    printf("Path smoothing: %f\n", smoothing_time_taken);
 
-    printf("Fitness computation time: %f\n", fitness_time_taken);
+    printf("Fitness computation: %f\n", fitness_time_taken);
 
     return paths.smoothedPaths;
 }

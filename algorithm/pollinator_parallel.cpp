@@ -51,7 +51,7 @@ void pollinate_parallel(
     std::random_device rd;
     std::mt19937 gen(rd());
 
-#pragma omp parallel for
+//#pragma omp parallel for TODO local pollination race condition
     for (int pathIndex = 0; pathIndex < paths.rawPaths.size(); pathIndex++) {
         int n = paths.rawPaths[pathIndex].size() / 3;
 

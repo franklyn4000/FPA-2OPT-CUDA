@@ -6,10 +6,9 @@
 #define ALGORITHM_TWOOPT_PARALLEL_H
 
 #include <vector>
+#include "paths.h"
 
 void twoOptParallel(
-        std::vector <std::vector<float>> &paths,
-        std::vector<float> fittestPath,
-        float p_switch);
+        Paths &paths);
 
 #endif //ALGORITHM_TWOOPT_PARALLEL_H

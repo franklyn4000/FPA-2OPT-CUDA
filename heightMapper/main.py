@@ -157,7 +157,7 @@ filename = "height_map"
 paths_csv_filename = 'paths.csv'
 fitnesses_csv_filename = 'fitnesses.csv'
 if not os.path.exists(filename + ".npy"):
-    height_map = generate_terrain(600)
+    height_map = generate_terrain(1000)
     save_height_map(height_map, filename)
 else:
     height_map = load_height_map(filename)

@@ -162,7 +162,7 @@ void computeFitnesses(
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia) {
 
-
+#pragma omp parallel for
     for (int index = 0; index < paths.population; index++) {
 
         float F =
@@ -173,17 +173,20 @@ void computeFitnesses(
                                max_desc_angle,
                                a_utopia, f_utopia);
 
-        //printf("fitn %f\n", F);
+        paths.fitnesses[index] = F;
 
-        if (F > paths.bestFitness) {
-            paths.fittestPath = paths.rawPaths[index];
-            paths.bestFitness = F;
-        }
+
 
     }
 
-    //printf("avg fitness: %f %f %i", cumulative_fitness / paths.size(), cumulative_fitness, paths.size());
-    // printf("best fitness: %f\n", bestFitness);
+    for (int index = 0; index < paths.population; index++) {
+
+        if (paths.fitnesses[index] > paths.bestFitness) {
+            paths.fittestPath = paths.rawPaths[index];
+            paths.bestFitness = paths.fitnesses[index];
+        }
+    }
+
 
 }
 
