@@ -6,26 +6,12 @@
 #include <random>
 #include <math.h>
 #include <cmath>
-#include <iostream>
 #include "omp.h"
 
 float beta = 1.5;
 float gam = 0.01;
 static double sig_p = pow(std::tgamma(1.0 + beta) * sin(M_PI * beta / 2.0) /
                         (std::tgamma((1.0 + beta) / 2.0) * beta * pow(2.0, (beta - 1.0) / 2.0)), 1.0 / beta);
-
-double normal_p(float sigma_squared) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::normal_distribution<> disU(0, sigma_squared);
-
-    return disU(gen);
-}
-
-double sigma_p() {
-    return pow(std::tgamma(1.0 + beta) * sin(M_PI * beta / 2.0) /
-               (std::tgamma((1.0 + beta) / 2.0) * beta * pow(2.0, (beta - 1.0) / 2.0)), 1.0 / beta);
-}
 
 double *levy_p(int n) {
     std::random_device rd;

@@ -4,30 +4,33 @@
 #include <iomanip>  // for std::setprecision and std::fixed
 #include "fpa.cuh"
 #include "omp.h"
+#include "config.h"
+#include "drone.h"
+#include "math.h"
 
 int main() {
 
-    int iter_max = 120;
-
-    int population = 35000;
-    float p_switch = 0.8;
-    float epsilon_init = 0.25;
-    float epsilon_final = 0.02;
-    int two_opt_freq = 20;
-
     std::string filename = "../heightMapper/height_map.csv";
-    auto height_map = load_height_map(filename);
 
-    double start_time = omp_get_wtime();
+    Config config;
 
-    std::vector<std::vector<float>> result = computeFPA(height_map, iter_max, population, p_switch, epsilon_init, epsilon_final, two_opt_freq);
-    double time_taken = omp_get_wtime() - start_time;
+    config.iter_max = 120;
+    config.population = 1000;
+    config.two_opt_freq = 30;
+    config.path_length = 7;
+    config.p_switch = 0.8;
+    config.epsilon_init = 0.25;
+    config.epsilon_final = 0.02;
+    config.heightMap = load_height_map(filename);
+
+    Drone drone;
+
+    drone.max_asc_angle = 10.0f * M_PI / 180;
+    drone.max_desc_angle = -40.0f * M_PI / 180;
+    drone.turn_radius = 100.0f;
 
 
-    save_to_csv(result, "../heightMapper/paths.csv");
-
-
-    std::cout << "\nTotal Execution time: " << time_taken << " seconds.\n";
+    computeFPA(config, drone);
 
     return 0;
 }

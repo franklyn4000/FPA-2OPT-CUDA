@@ -3,7 +3,6 @@
 //
 
 #include "paths.h"
-#include <iostream>
 #include <vector>
 
 Paths::Paths(int pop) {

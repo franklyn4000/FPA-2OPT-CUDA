@@ -129,6 +129,54 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
+config.o: config.cpp.o
+.PHONY : config.o
+
+# target to build an object file
+config.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.o
+.PHONY : config.cpp.o
+
+config.i: config.cpp.i
+.PHONY : config.i
+
+# target to preprocess a source file
+config.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.i
+.PHONY : config.cpp.i
+
+config.s: config.cpp.s
+.PHONY : config.s
+
+# target to generate assembly for a file
+config.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.s
+.PHONY : config.cpp.s
+
+drone.o: drone.cpp.o
+.PHONY : drone.o
+
+# target to build an object file
+drone.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.o
+.PHONY : drone.cpp.o
+
+drone.i: drone.cpp.i
+.PHONY : drone.i
+
+# target to preprocess a source file
+drone.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.i
+.PHONY : drone.cpp.i
+
+drone.s: drone.cpp.s
+.PHONY : drone.s
+
+# target to generate assembly for a file
+drone.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.s
+.PHONY : drone.cpp.s
+
 fitnessComputer.o: fitnessComputer.cpp.o
 .PHONY : fitnessComputer.o
 
@@ -426,6 +474,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
+	@echo "... config.o"
+	@echo "... config.i"
+	@echo "... config.s"
+	@echo "... drone.o"
+	@echo "... drone.i"
+	@echo "... drone.s"
 	@echo "... fitnessComputer.o"
 	@echo "... fitnessComputer.i"
 	@echo "... fitnessComputer.s"
