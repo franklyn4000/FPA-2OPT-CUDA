@@ -9,6 +9,9 @@
 #include "paths.h"
 
 void twoOptParallel(
-        Paths &paths);
+        Paths &paths,
+        float turnRadius, int n_pi,
+        const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
+        float max_desc_angle, float a_utopia, float f_utopia);
 
 #endif //ALGORITHM_TWOOPT_PARALLEL_H

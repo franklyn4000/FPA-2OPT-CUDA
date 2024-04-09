@@ -92,21 +92,21 @@ def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3
 
     #min_fitness_idx = fitnesses.index(max(fitnesses))  # get the index of path with lowest fitness
 
-    ax1.plot(fittest_path_x, fittest_path_y, color='#ff3300', linewidth=1)
-    ax2.plot(fittest_path_x, fittest_path_z, color='#ff3300', linewidth=1)
-    ax3.plot(fittest_path_y, fittest_path_z, color='#ff3300', linewidth=1)
+    ax1.plot(fittest_path_x, fittest_path_y, color='#aaddff', linewidth=1)
+    ax2.plot(fittest_path_x, fittest_path_z, color='#aaddff', linewidth=1)
+    ax3.plot(fittest_path_y, fittest_path_z, color='#aaddff', linewidth=1)
 
-    ax1.plot(fittest_path2_x, fittest_path2_y, color='#ff8800', linewidth=1)
-    ax2.plot(fittest_path2_x, fittest_path2_z, color='#ff8800', linewidth=1)
-    ax3.plot(fittest_path2_y, fittest_path2_z, color='#ff8800', linewidth=1)
+    ax1.plot(fittest_path2_x, fittest_path2_y, color='#66aaff', linewidth=1)
+    ax2.plot(fittest_path2_x, fittest_path2_z, color='#66aaff', linewidth=1)
+    ax3.plot(fittest_path2_y, fittest_path2_z, color='#66aaff', linewidth=1)
 
-    ax1.plot(fittest_path3_x, fittest_path3_y, color='#ffaa00', linewidth=1)
-    ax2.plot(fittest_path3_x, fittest_path3_z, color='#ffaa00', linewidth=1)
-    ax3.plot(fittest_path3_y, fittest_path3_z, color='#ffaa00', linewidth=1)
+    ax1.plot(fittest_path3_x, fittest_path3_y, color='#3388ff', linewidth=1)
+    ax2.plot(fittest_path3_x, fittest_path3_z, color='#3388ff', linewidth=1)
+    ax3.plot(fittest_path3_y, fittest_path3_z, color='#3388ff', linewidth=1)
 
-    ax1.plot(fittest_path4_x, fittest_path4_y, color='#ffff00', linewidth=1)
-    ax2.plot(fittest_path4_x, fittest_path4_z, color='#ffff00', linewidth=1)
-    ax3.plot(fittest_path4_y, fittest_path4_z, color='#ffff00', linewidth=1)
+    ax1.plot(fittest_path4_x, fittest_path4_y, color='#0000ff', linewidth=2)
+    ax2.plot(fittest_path4_x, fittest_path4_z, color='#0000ff', linewidth=2)
+    ax3.plot(fittest_path4_y, fittest_path4_z, color='#0000ff', linewidth=2)
 
     # 2D Plot from top
     img = ax1.imshow(height_map, cmap=cmap, vmin=-1000, vmax=2000)
@@ -157,7 +157,7 @@ filename = "height_map"
 paths_csv_filename = 'paths.csv'
 fitnesses_csv_filename = 'fitnesses.csv'
 if not os.path.exists(filename + ".npy"):
-    height_map = generate_terrain(1000)
+    height_map = generate_terrain(1500)
     save_height_map(height_map, filename)
 else:
     height_map = load_height_map(filename)

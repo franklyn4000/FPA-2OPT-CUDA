@@ -13,8 +13,8 @@ float computeFitness(std::vector<float> path,
                      float max_desc_angle, float a_utopia, float f_utopia) {
 
     float interval = 1 / 30.0f;
-    float w1 = 0.4;
-    float w2 = 0.6;
+    float w1 = 0.2;
+    float w2 = 0.8;
 
     float d_ug = 0.0;
     float d_dz = 0.0;
@@ -81,6 +81,7 @@ float computeFitness(std::vector<float> path,
 
             int pointX = static_cast<int>(std::round(P1[0] + interval_x * i));
             int pointY = static_cast<int>(std::round(P1[1] + interval_y * i));
+            int pointZ = static_cast<int>(std::round(P1[2] + interval_z * i));
 
             if (
                     pointY > heightMap.size() - 1 ||
@@ -91,6 +92,7 @@ float computeFitness(std::vector<float> path,
                 underground = true;
             } else {
                 underground = heightMap[pointY][pointX] >= P1[2] + interval_z * i;
+                a_cum +=  pointZ - heightMap[pointY][pointX];
             }
 
             if (underground && undergroundLast) {
@@ -100,6 +102,8 @@ float computeFitness(std::vector<float> path,
             }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
+
+
 
         }
 
@@ -190,4 +194,12 @@ void computeFitnesses(
 
 }
 
+void computeBestFitness(Paths &paths) {
+    for (int index = 0; index < paths.population; index++) {
 
+        if (paths.fitnesses[index] > paths.bestFitness) {
+            paths.fittestPath = paths.rawPaths[index];
+            paths.bestFitness = paths.fitnesses[index];
+        }
+    }
+}

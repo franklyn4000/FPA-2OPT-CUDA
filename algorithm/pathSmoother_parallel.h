@@ -12,6 +12,10 @@ void smoothPaths(
         Paths &paths,
         float turnRadius, int n_pi);
 
+std::vector<float> smoothPath(
+        std::vector<float> &path,
+        float turnRadius, int n_pi, float &N_wp);
+
 std::vector <float> smoothPathSingle(
         std::vector<float> path,
         float turnRadius, int n_pi, float* N_wps);

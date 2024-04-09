@@ -47,11 +47,11 @@ std::vector <std::vector<float>> computeFPA(
     float yn = (float) y_mid;
     float zn = heightMap[yn][xn] + 10;
 
-    int path_length = 8;
+    int path_length = 14;
 
-    float turn_radius = 36.0f;
+    float turn_radius = 30.0f;
 
-    float a_utopia = 1.0f;
+    float a_utopia = 10.0f;
     float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
 
     float max_asc_angle_deg = 10.0f;
@@ -62,7 +62,11 @@ std::vector <std::vector<float>> computeFPA(
     double pollination_start_time = 0;
     double pollination_time_taken = 0;
 
+    double twoopt_start_time = 0;
+    double twoopt_time_taken = 0;
+
     double init_start_time = omp_get_wtime();
+    float nwp = 0;
 
     Paths paths(population);
 
@@ -131,33 +135,47 @@ std::vector <std::vector<float>> computeFPA(
         int eight = std::ceil(iter_max / 8.0);
 
         if (i == eight) {
-            save_to_csv(paths.fittestPath, "../heightMapper/fittest1.csv");
+            std::vector<float> smoothedPath = smoothPath(
+                    paths.fittestPath,
+                    turn_radius, turn_radius * 2, nwp);
+            save_to_csv(smoothedPath, "../heightMapper/fittest1.csv");
         } else if (i == quarter) {
-            save_to_csv(paths.fittestPath, "../heightMapper/fittest2.csv");
+            std::vector<float> smoothedPath = smoothPath(
+                    paths.fittestPath,
+                    turn_radius, turn_radius * 2, nwp);
+            save_to_csv(smoothedPath, "../heightMapper/fittest2.csv");
         } else if (i == half) {
-            save_to_csv(paths.fittestPath, "../heightMapper/fittest3.csv");
+            std::vector<float> smoothedPath = smoothPath(
+                    paths.fittestPath,
+                    turn_radius, turn_radius * 2, nwp);
+            save_to_csv(smoothedPath, "../heightMapper/fittest3.csv");
         }
 
-/*
+
+
         if(i % two_opt_freq == 0) {
-            twoOptParallel(initialSolutions, fittestPath, p_switch);
+            twoopt_start_time = omp_get_wtime();
 
-            smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
+            twoOptParallel(paths, turn_radius, turn_radius * 2, heightMap, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
 
-            bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions,  heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
+            twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
+           // smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
 
+          //  bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions,  heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
+            computeBestFitness(paths);
         }
-        */
+
 
     }
 
-
-   // std::vector<float> smoothPath = smoothPathSingle(fittestPath, turn_radius, turn_radius * 2, N_wps);
+    std::vector<float> smoothedPath = smoothPath(
+            paths.fittestPath,
+            turn_radius, turn_radius * 2, nwp);
 
 
    // save_to_csv(smoothPath, "../heightMapper/fittest2.csv");
 
-   save_to_csv(paths.fittestPath, "../heightMapper/fittest4.csv");
+   save_to_csv(smoothedPath, "../heightMapper/fittest4.csv");
 
 
     //Find the best solution g∗ in the initial population
@@ -186,6 +204,8 @@ std::vector <std::vector<float>> computeFPA(
     printf("Path smoothing: %f\n", smoothing_time_taken);
 
     printf("Fitness computation: %f\n", fitness_time_taken);
+
+    printf("2-opt computation: %f\n", twoopt_time_taken);
 
     return paths.smoothedPaths;
 }

@@ -7,13 +7,13 @@
 
 int main() {
 
-    int iter_max = 50;
+    int iter_max = 120;
 
-    int population = 5000;
+    int population = 35000;
     float p_switch = 0.8;
     float epsilon_init = 0.25;
     float epsilon_final = 0.02;
-    int two_opt_freq = 10;
+    int two_opt_freq = 20;
 
     std::string filename = "../heightMapper/height_map.csv";
     auto height_map = load_height_map(filename);

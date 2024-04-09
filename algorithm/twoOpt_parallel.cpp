@@ -3,43 +3,73 @@
 //
 
 #include "twoOpt_parallel.h"
+#include "fitnessComputer.h"
+#include "pathSmoother_parallel.h"
+#include <iostream>
+#include <omp.h>
 
 void twoOptParallel(
-        Paths &paths) {
-/*
+        Paths &paths,
+        float turnRadius, int n_pi,
+        const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
+        float max_desc_angle, float a_utopia, float f_utopia) {
 
+
+#pragma omp parallel for
     for (int pathIndex = 0; pathIndex < paths.rawPaths.size(); pathIndex++) {
         std::vector<float> path = paths.rawPaths[pathIndex];
         int n = path.size() / 3;
-
-
         float fitness = paths.fitnesses[pathIndex];
+        float N_wp = 0;
+
+        bool improved = true;
+
+        int iter = 0;
+        // printf("current fitness: %f ", fitness);
+        start_again:
+        std::vector<float> newPath(path);
+
+        float newPathFitness = 0;
 
 
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 1; j < n; j++) {
-                std::vector<float> newPath(path);
-                std::swap(newPath[i], newPath[j]);
-                std::swap(newPath[i + 1], newPath[j + 1]);
-                std::swap(newPath[i + 2], newPath[j + 2]);
+        for (int i = 1; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
 
-              //TODO  std::vector<float> smoothedNewPath = smoot
-                N_wp = 0;
+                std::swap(newPath[3 * i], newPath[3 * j]);
+                std::swap(newPath[3 * i + 1], newPath[3 * j + 1]);
+                std::swap(newPath[3 * i + 2], newPath[3 * j + 2]);
 
-                float newPathFitness = computeFitness(newPath,
-                                                      heightMap,
-                                                      N_wp,
-                                                      max_asc_angle,
-                                                      max_desc_angle,
-                                                      a_utopia, f_utopia);
+                std::vector<float> smoothedNewPath =
+                        smoothPath(
+                                newPath,
+                                turnRadius, n_pi,
+                                N_wp);
 
 
+                newPathFitness = computeFitness(smoothedNewPath,
+                                                heightMap,
+                                                N_wp,
+                                                max_asc_angle,
+                                                max_desc_angle,
+                                                a_utopia, f_utopia);
+
+
+                // printf("iter: %i - current fitness: %f new fitness: %f\n", iter, fitness, newPathFitness);
+                if (newPathFitness > fitness) {
+                    path = newPath;
+                    fitness = newPathFitness;
+                    iter++;
+                    goto start_again;
+                }
             }
         }
 
+        //   printf(" new fitness: %f \n", fitness);
+        paths.rawPaths[pathIndex] = path;
+        paths.fitnesses[pathIndex] = fitness;
 
     }
-*/
+
 /*
     for (int pathIndex = 0; pathIndex < paths.size(); pathIndex++)
           std::vector<float> path = paths[pathIndex];

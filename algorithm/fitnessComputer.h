@@ -13,4 +13,11 @@ void computeFitnesses(
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia);
 
+float computeFitness(std::vector<float> path,
+                     const std::vector <std::vector<double>> &heightMap,
+                     float N_wp, float max_asc_angle,
+                     float max_desc_angle, float a_utopia, float f_utopia);
+
+void computeBestFitness(Paths &paths);
+
 #endif //ALGORITHM_FITNESSCOMPUTER_CUH
