@@ -14,10 +14,11 @@ int main() {
 
     Config config;
 
-    config.iter_max = 120;
-    config.population = 1000;
-    config.two_opt_freq = 30;
+    config.iter_max = 160;
+    config.population = 45000;
+    config.two_opt_freq = 20;
     config.path_length = 7;
+    config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;
     config.epsilon_final = 0.02;
@@ -25,9 +26,9 @@ int main() {
 
     Drone drone;
 
-    drone.max_asc_angle = 10.0f * M_PI / 180;
-    drone.max_desc_angle = -40.0f * M_PI / 180;
-    drone.turn_radius = 100.0f;
+    drone.max_asc_angle = 15.0f * M_PI / 180;
+    drone.max_desc_angle = -30.0f * M_PI / 180;
+    drone.turn_radius = 120.0f;
 
 
     computeFPA(config, drone);

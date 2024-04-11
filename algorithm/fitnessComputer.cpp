@@ -10,11 +10,11 @@
 float computeFitness(std::vector<float> path,
                      const std::vector <std::vector<double>> &heightMap,
                      float N_wp, float max_asc_angle,
-                     float max_desc_angle, float a_utopia, float f_utopia) {
+                     float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
-    float interval = 1 / 30.0f;
-    float w1 = 0.2;
-    float w2 = 0.8;
+
+    float w1 = 0.15;
+    float w2 = 0.85;
 
     float d_ug = 0.0;
     float d_dz = 0.0;
@@ -58,7 +58,7 @@ float computeFitness(std::vector<float> path,
                 diff_z * diff_z
         );
 
-        steps_P1P2 = std::floor(distance_P1P2 * interval);
+        steps_P1P2 = std::floor(distance_P1P2 * resolution);
 
         inv_steps = 1 / steps_P1P2;
 
@@ -91,7 +91,7 @@ float computeFitness(std::vector<float> path,
                     ) {
                 underground = true;
             } else {
-                underground = heightMap[pointY][pointX] >= P1[2] + interval_z * i;
+                underground = heightMap[pointY][pointX] + a_utopia >= P1[2] + interval_z * i;
                 a_cum +=  pointZ - heightMap[pointY][pointX];
             }
 
@@ -125,7 +125,7 @@ float computeFitness(std::vector<float> path,
         }
 
 
-        underground = height2 < 0;
+        underground = height2 < a_utopia;
         if (underground && undergroundLast) {
             d_ug += step_length_P1P2;
         } else if (underground != undergroundLast) {
@@ -164,7 +164,7 @@ float computeFitness(std::vector<float> path,
 void computeFitnesses(
         Paths &paths,
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
-        float max_desc_angle, float a_utopia, float f_utopia) {
+        float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 #pragma omp parallel for
     for (int index = 0; index < paths.population; index++) {
@@ -175,7 +175,7 @@ void computeFitnesses(
                                paths.N_wps[index],
                                max_asc_angle,
                                max_desc_angle,
-                               a_utopia, f_utopia);
+                               a_utopia, f_utopia, resolution);
 
         paths.fitnesses[index] = F;
 
@@ -183,13 +183,7 @@ void computeFitnesses(
 
     }
 
-    for (int index = 0; index < paths.population; index++) {
-
-        if (paths.fitnesses[index] > paths.bestFitness) {
-            paths.fittestPath = paths.rawPaths[index];
-            paths.bestFitness = paths.fitnesses[index];
-        }
-    }
+    computeBestFitness(paths);
 
 
 }

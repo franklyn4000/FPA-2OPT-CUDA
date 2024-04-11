@@ -37,12 +37,12 @@ void computeFPA(
     float z_max = 300;
     float x1 = 5.0f;
     float y1 = (float) y_mid;
-    float z1 = config.heightMap[y1][x1] + 10;
+    float z1 = config.heightMap[y1][x1] + 60;
     float xn = config.heightMap.size() - 5.0f;
     float yn = (float) y_mid;
-    float zn = config.heightMap[yn][xn] + 10;
+    float zn = config.heightMap[yn][xn] + 60;
 
-    float a_utopia = 10.0f;
+    float a_utopia = 20.0f;
     float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
 
 
@@ -73,7 +73,7 @@ void computeFPA(
 
     double fitness_start_time = omp_get_wtime();
 
-    computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia);
+    computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
 
@@ -93,7 +93,7 @@ void computeFPA(
 
         fitness_start_time = omp_get_wtime();
 
-        computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia);
+        computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
@@ -121,10 +121,11 @@ void computeFPA(
 
 
         if (i % config.two_opt_freq == 0) {
+            printf("Iteration: %i\n", i);
             twoopt_start_time = omp_get_wtime();
 
             twoOptParallel(paths, drone.turn_radius, drone.turn_radius * 2, config.heightMap, drone.max_asc_angle,
-                           drone.max_desc_angle, a_utopia, f_utopia);
+                           drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
             // smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
@@ -156,5 +157,60 @@ void computeFPA(
 
     printf("Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
 
+
+/*
+    std::vector<float> testPath;
+
+    testPath.push_back(0);
+    testPath.push_back(0);
+    testPath.push_back(550);
+
+    testPath.push_back(0);
+    testPath.push_back(120);
+    testPath.push_back(552);
+
+    testPath.push_back(0);
+    testPath.push_back(300);
+    testPath.push_back(400);
+
+    testPath.push_back(400);
+    testPath.push_back(300);
+    testPath.push_back(800);
+
+    testPath.push_back(0);
+    testPath.push_back(50);
+    testPath.push_back(500);
+
+    testPath.push_back(600);
+    testPath.push_back(600);
+    testPath.push_back(200);
+
+    double test_start_time;
+    double test_time_taken = 0;
+
+    std::vector<float> testSmoothed = smoothPath(
+            testPath,
+            100, 400, nwp);
+
+    for (int i = 0; i < 25000; i++) {
+        test_start_time = omp_get_wtime();
+
+        float F =
+                computeFitness(testSmoothed,
+                               config.heightMap,
+                               nwp,
+                               drone.max_asc_angle,
+                               drone.max_desc_angle,
+                               a_utopia, f_utopia, config.resolution);
+
+        test_time_taken += omp_get_wtime() - test_start_time;
+    }
+
+
+
+
+
+    printf("Test Path Smoothing: %f\n", test_time_taken);
+*/
 }
 

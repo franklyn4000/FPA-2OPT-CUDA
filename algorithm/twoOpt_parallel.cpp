@@ -12,7 +12,7 @@ void twoOptParallel(
         Paths &paths,
         float turnRadius, int n_pi,
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
-        float max_desc_angle, float a_utopia, float f_utopia) {
+        float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
 #pragma omp parallel for
@@ -39,11 +39,17 @@ void twoOptParallel(
                 std::swap(newPath[3 * i + 1], newPath[3 * j + 1]);
                 std::swap(newPath[3 * i + 2], newPath[3 * j + 2]);
 
+                float oldNwp = N_wp;
+
                 std::vector<float> smoothedNewPath =
                         smoothPath(
                                 newPath,
                                 turnRadius, n_pi,
                                 N_wp);
+
+                if(N_wp > oldNwp) {
+                    continue;
+                }
 
 
                 newPathFitness = computeFitness(smoothedNewPath,
@@ -51,7 +57,7 @@ void twoOptParallel(
                                                 N_wp,
                                                 max_asc_angle,
                                                 max_desc_angle,
-                                                a_utopia, f_utopia);
+                                                a_utopia, f_utopia, resolution);
 
 
                 // printf("iter: %i - current fitness: %f new fitness: %f\n", iter, fitness, newPathFitness);
