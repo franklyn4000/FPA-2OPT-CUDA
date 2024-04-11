@@ -6,7 +6,7 @@
 #define ALGORITHM_FITNESSCOMPUTER_CUH
 
 #include <vector>
-#include "paths.h"
+#include "../objects/paths.h"
 
 void computeFitnesses(
         Paths &paths,

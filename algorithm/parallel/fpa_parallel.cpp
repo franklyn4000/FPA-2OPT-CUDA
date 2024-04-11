@@ -2,21 +2,21 @@
 // Created by franklyn on 3/17/24.
 //
 
-#include "fpa.cuh"
+#include "fpa_parallel.h"
 #include <iostream>
 #include <random>
 #include <math.h>
 #include "omp.h"
-#include "iolib.cuh"
-#include "initialSolutionGenerator.cuh"
+#include "../iolib.cuh"
+#include "../initialSolutionGenerator.cuh"
 #include "pathSmoother_parallel.h"
-#include "fitnessComputer.h"
-#include "utils.cuh"
-#include "pollinator.cuh"
+#include "fitnessComputer_parallel.h"
+#include "../utils.cuh"
+#include "../pollinator.cuh"
 #include "twoOpt_parallel.h"
 #include "pollinator_parallel.h"
-#include "fitnessComputer_seq.cuh"
-#include "paths.h"
+#include "../fitnessComputer_seq.cuh"
+#include "../objects/paths.h"
 
 
 void computeFPA(
@@ -42,7 +42,7 @@ void computeFPA(
     float yn = (float) y_mid;
     float zn = config.heightMap[yn][xn] + 60;
 
-    float a_utopia = 20.0f;
+    float a_utopia = drone.min_altitude;
     float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
 
 
@@ -128,9 +128,7 @@ void computeFPA(
                            drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
-            // smoothedPaths = smoothPaths(initialSolutions, turn_radius, turn_radius * 2, N_wps);
 
-            //  bestFitness = computeFitnesses(smoothedPaths, &fittestPath, bestFitness, initialSolutions,  heightMap, N_wps, max_asc_angle, max_desc_angle, a_utopia, f_utopia);
             computeBestFitness(paths);
         }
 

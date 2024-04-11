@@ -6,7 +6,7 @@
 #define ALGORITHM_POLLINATOR_PARALLEL_H
 
 #include <vector>
-#include "paths.h"
+#include "../objects/paths.h"
 
 void pollinate_parallel(
         Paths &paths,

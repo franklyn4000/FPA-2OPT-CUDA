@@ -8,6 +8,7 @@ public:
     float max_asc_angle;
     float max_desc_angle;
     float turn_radius;
+    float min_altitude;
 };
 
 #endif //DRONE_H

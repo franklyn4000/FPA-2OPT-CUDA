@@ -3,7 +3,7 @@
 //
 
 #include "twoOpt_parallel.h"
-#include "fitnessComputer.h"
+#include "fitnessComputer_parallel.h"
 #include "pathSmoother_parallel.h"
 #include <iostream>
 #include <omp.h>

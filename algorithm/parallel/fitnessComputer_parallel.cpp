@@ -2,7 +2,7 @@
 // Created by franklyn on 3/20/24.
 //
 
-#include "fitnessComputer.h"
+#include "fitnessComputer_parallel.h"
 #include <iostream>
 #include "omp.h"
 #include <math.h>

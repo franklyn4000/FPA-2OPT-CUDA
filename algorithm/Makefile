@@ -129,78 +129,6 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
-config.o: config.cpp.o
-.PHONY : config.o
-
-# target to build an object file
-config.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.o
-.PHONY : config.cpp.o
-
-config.i: config.cpp.i
-.PHONY : config.i
-
-# target to preprocess a source file
-config.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.i
-.PHONY : config.cpp.i
-
-config.s: config.cpp.s
-.PHONY : config.s
-
-# target to generate assembly for a file
-config.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/config.cpp.s
-.PHONY : config.cpp.s
-
-drone.o: drone.cpp.o
-.PHONY : drone.o
-
-# target to build an object file
-drone.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.o
-.PHONY : drone.cpp.o
-
-drone.i: drone.cpp.i
-.PHONY : drone.i
-
-# target to preprocess a source file
-drone.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.i
-.PHONY : drone.cpp.i
-
-drone.s: drone.cpp.s
-.PHONY : drone.s
-
-# target to generate assembly for a file
-drone.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/drone.cpp.s
-.PHONY : drone.cpp.s
-
-fitnessComputer.o: fitnessComputer.cpp.o
-.PHONY : fitnessComputer.o
-
-# target to build an object file
-fitnessComputer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.o
-.PHONY : fitnessComputer.cpp.o
-
-fitnessComputer.i: fitnessComputer.cpp.i
-.PHONY : fitnessComputer.i
-
-# target to preprocess a source file
-fitnessComputer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.i
-.PHONY : fitnessComputer.cpp.i
-
-fitnessComputer.s: fitnessComputer.cpp.s
-.PHONY : fitnessComputer.s
-
-# target to generate assembly for a file
-fitnessComputer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer.cpp.s
-.PHONY : fitnessComputer.cpp.s
-
 fitnessComputer_seq.o: fitnessComputer_seq.cu.o
 .PHONY : fitnessComputer_seq.o
 
@@ -224,30 +152,6 @@ fitnessComputer_seq.s: fitnessComputer_seq.cu.s
 fitnessComputer_seq.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.s
 .PHONY : fitnessComputer_seq.cu.s
-
-fpa.o: fpa.cu.o
-.PHONY : fpa.o
-
-# target to build an object file
-fpa.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.o
-.PHONY : fpa.cu.o
-
-fpa.i: fpa.cu.i
-.PHONY : fpa.i
-
-# target to preprocess a source file
-fpa.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.i
-.PHONY : fpa.cu.i
-
-fpa.s: fpa.cu.s
-.PHONY : fpa.s
-
-# target to generate assembly for a file
-fpa.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fpa.cu.s
-.PHONY : fpa.cu.s
 
 initialSolutionGenerator.o: initialSolutionGenerator.cu.o
 .PHONY : initialSolutionGenerator.o
@@ -321,53 +225,197 @@ main.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/main.cu.s
 .PHONY : main.cu.s
 
-pathSmoother_parallel.o: pathSmoother_parallel.cpp.o
-.PHONY : pathSmoother_parallel.o
+objects/config.o: objects/config.cpp.o
+.PHONY : objects/config.o
 
 # target to build an object file
-pathSmoother_parallel.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.o
-.PHONY : pathSmoother_parallel.cpp.o
+objects/config.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/config.cpp.o
+.PHONY : objects/config.cpp.o
 
-pathSmoother_parallel.i: pathSmoother_parallel.cpp.i
-.PHONY : pathSmoother_parallel.i
+objects/config.i: objects/config.cpp.i
+.PHONY : objects/config.i
 
 # target to preprocess a source file
-pathSmoother_parallel.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.i
-.PHONY : pathSmoother_parallel.cpp.i
+objects/config.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/config.cpp.i
+.PHONY : objects/config.cpp.i
 
-pathSmoother_parallel.s: pathSmoother_parallel.cpp.s
-.PHONY : pathSmoother_parallel.s
+objects/config.s: objects/config.cpp.s
+.PHONY : objects/config.s
 
 # target to generate assembly for a file
-pathSmoother_parallel.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pathSmoother_parallel.cpp.s
-.PHONY : pathSmoother_parallel.cpp.s
+objects/config.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/config.cpp.s
+.PHONY : objects/config.cpp.s
 
-paths.o: paths.cpp.o
-.PHONY : paths.o
+objects/drone.o: objects/drone.cpp.o
+.PHONY : objects/drone.o
 
 # target to build an object file
-paths.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.o
-.PHONY : paths.cpp.o
+objects/drone.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/drone.cpp.o
+.PHONY : objects/drone.cpp.o
 
-paths.i: paths.cpp.i
-.PHONY : paths.i
+objects/drone.i: objects/drone.cpp.i
+.PHONY : objects/drone.i
 
 # target to preprocess a source file
-paths.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.i
-.PHONY : paths.cpp.i
+objects/drone.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/drone.cpp.i
+.PHONY : objects/drone.cpp.i
 
-paths.s: paths.cpp.s
-.PHONY : paths.s
+objects/drone.s: objects/drone.cpp.s
+.PHONY : objects/drone.s
 
 # target to generate assembly for a file
-paths.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/paths.cpp.s
-.PHONY : paths.cpp.s
+objects/drone.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/drone.cpp.s
+.PHONY : objects/drone.cpp.s
+
+objects/paths.o: objects/paths.cpp.o
+.PHONY : objects/paths.o
+
+# target to build an object file
+objects/paths.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/paths.cpp.o
+.PHONY : objects/paths.cpp.o
+
+objects/paths.i: objects/paths.cpp.i
+.PHONY : objects/paths.i
+
+# target to preprocess a source file
+objects/paths.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/paths.cpp.i
+.PHONY : objects/paths.cpp.i
+
+objects/paths.s: objects/paths.cpp.s
+.PHONY : objects/paths.s
+
+# target to generate assembly for a file
+objects/paths.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/paths.cpp.s
+.PHONY : objects/paths.cpp.s
+
+parallel/fitnessComputer_parallel.o: parallel/fitnessComputer_parallel.cpp.o
+.PHONY : parallel/fitnessComputer_parallel.o
+
+# target to build an object file
+parallel/fitnessComputer_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fitnessComputer_parallel.cpp.o
+.PHONY : parallel/fitnessComputer_parallel.cpp.o
+
+parallel/fitnessComputer_parallel.i: parallel/fitnessComputer_parallel.cpp.i
+.PHONY : parallel/fitnessComputer_parallel.i
+
+# target to preprocess a source file
+parallel/fitnessComputer_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fitnessComputer_parallel.cpp.i
+.PHONY : parallel/fitnessComputer_parallel.cpp.i
+
+parallel/fitnessComputer_parallel.s: parallel/fitnessComputer_parallel.cpp.s
+.PHONY : parallel/fitnessComputer_parallel.s
+
+# target to generate assembly for a file
+parallel/fitnessComputer_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fitnessComputer_parallel.cpp.s
+.PHONY : parallel/fitnessComputer_parallel.cpp.s
+
+parallel/fpa_parallel.o: parallel/fpa_parallel.cpp.o
+.PHONY : parallel/fpa_parallel.o
+
+# target to build an object file
+parallel/fpa_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fpa_parallel.cpp.o
+.PHONY : parallel/fpa_parallel.cpp.o
+
+parallel/fpa_parallel.i: parallel/fpa_parallel.cpp.i
+.PHONY : parallel/fpa_parallel.i
+
+# target to preprocess a source file
+parallel/fpa_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fpa_parallel.cpp.i
+.PHONY : parallel/fpa_parallel.cpp.i
+
+parallel/fpa_parallel.s: parallel/fpa_parallel.cpp.s
+.PHONY : parallel/fpa_parallel.s
+
+# target to generate assembly for a file
+parallel/fpa_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/fpa_parallel.cpp.s
+.PHONY : parallel/fpa_parallel.cpp.s
+
+parallel/pathSmoother_parallel.o: parallel/pathSmoother_parallel.cpp.o
+.PHONY : parallel/pathSmoother_parallel.o
+
+# target to build an object file
+parallel/pathSmoother_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pathSmoother_parallel.cpp.o
+.PHONY : parallel/pathSmoother_parallel.cpp.o
+
+parallel/pathSmoother_parallel.i: parallel/pathSmoother_parallel.cpp.i
+.PHONY : parallel/pathSmoother_parallel.i
+
+# target to preprocess a source file
+parallel/pathSmoother_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pathSmoother_parallel.cpp.i
+.PHONY : parallel/pathSmoother_parallel.cpp.i
+
+parallel/pathSmoother_parallel.s: parallel/pathSmoother_parallel.cpp.s
+.PHONY : parallel/pathSmoother_parallel.s
+
+# target to generate assembly for a file
+parallel/pathSmoother_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pathSmoother_parallel.cpp.s
+.PHONY : parallel/pathSmoother_parallel.cpp.s
+
+parallel/pollinator_parallel.o: parallel/pollinator_parallel.cpp.o
+.PHONY : parallel/pollinator_parallel.o
+
+# target to build an object file
+parallel/pollinator_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pollinator_parallel.cpp.o
+.PHONY : parallel/pollinator_parallel.cpp.o
+
+parallel/pollinator_parallel.i: parallel/pollinator_parallel.cpp.i
+.PHONY : parallel/pollinator_parallel.i
+
+# target to preprocess a source file
+parallel/pollinator_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pollinator_parallel.cpp.i
+.PHONY : parallel/pollinator_parallel.cpp.i
+
+parallel/pollinator_parallel.s: parallel/pollinator_parallel.cpp.s
+.PHONY : parallel/pollinator_parallel.s
+
+# target to generate assembly for a file
+parallel/pollinator_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/pollinator_parallel.cpp.s
+.PHONY : parallel/pollinator_parallel.cpp.s
+
+parallel/twoOpt_parallel.o: parallel/twoOpt_parallel.cpp.o
+.PHONY : parallel/twoOpt_parallel.o
+
+# target to build an object file
+parallel/twoOpt_parallel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/twoOpt_parallel.cpp.o
+.PHONY : parallel/twoOpt_parallel.cpp.o
+
+parallel/twoOpt_parallel.i: parallel/twoOpt_parallel.cpp.i
+.PHONY : parallel/twoOpt_parallel.i
+
+# target to preprocess a source file
+parallel/twoOpt_parallel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/twoOpt_parallel.cpp.i
+.PHONY : parallel/twoOpt_parallel.cpp.i
+
+parallel/twoOpt_parallel.s: parallel/twoOpt_parallel.cpp.s
+.PHONY : parallel/twoOpt_parallel.s
+
+# target to generate assembly for a file
+parallel/twoOpt_parallel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/twoOpt_parallel.cpp.s
+.PHONY : parallel/twoOpt_parallel.cpp.s
 
 pollinator.o: pollinator.cu.o
 .PHONY : pollinator.o
@@ -392,54 +440,6 @@ pollinator.s: pollinator.cu.s
 pollinator.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.s
 .PHONY : pollinator.cu.s
-
-pollinator_parallel.o: pollinator_parallel.cpp.o
-.PHONY : pollinator_parallel.o
-
-# target to build an object file
-pollinator_parallel.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.o
-.PHONY : pollinator_parallel.cpp.o
-
-pollinator_parallel.i: pollinator_parallel.cpp.i
-.PHONY : pollinator_parallel.i
-
-# target to preprocess a source file
-pollinator_parallel.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.i
-.PHONY : pollinator_parallel.cpp.i
-
-pollinator_parallel.s: pollinator_parallel.cpp.s
-.PHONY : pollinator_parallel.s
-
-# target to generate assembly for a file
-pollinator_parallel.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator_parallel.cpp.s
-.PHONY : pollinator_parallel.cpp.s
-
-twoOpt_parallel.o: twoOpt_parallel.cpp.o
-.PHONY : twoOpt_parallel.o
-
-# target to build an object file
-twoOpt_parallel.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.o
-.PHONY : twoOpt_parallel.cpp.o
-
-twoOpt_parallel.i: twoOpt_parallel.cpp.i
-.PHONY : twoOpt_parallel.i
-
-# target to preprocess a source file
-twoOpt_parallel.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.i
-.PHONY : twoOpt_parallel.cpp.i
-
-twoOpt_parallel.s: twoOpt_parallel.cpp.s
-.PHONY : twoOpt_parallel.s
-
-# target to generate assembly for a file
-twoOpt_parallel.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/twoOpt_parallel.cpp.s
-.PHONY : twoOpt_parallel.cpp.s
 
 utils.o: utils.cu.o
 .PHONY : utils.o
@@ -474,21 +474,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
-	@echo "... config.o"
-	@echo "... config.i"
-	@echo "... config.s"
-	@echo "... drone.o"
-	@echo "... drone.i"
-	@echo "... drone.s"
-	@echo "... fitnessComputer.o"
-	@echo "... fitnessComputer.i"
-	@echo "... fitnessComputer.s"
 	@echo "... fitnessComputer_seq.o"
 	@echo "... fitnessComputer_seq.i"
 	@echo "... fitnessComputer_seq.s"
-	@echo "... fpa.o"
-	@echo "... fpa.i"
-	@echo "... fpa.s"
 	@echo "... initialSolutionGenerator.o"
 	@echo "... initialSolutionGenerator.i"
 	@echo "... initialSolutionGenerator.s"
@@ -498,21 +486,33 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... pathSmoother_parallel.o"
-	@echo "... pathSmoother_parallel.i"
-	@echo "... pathSmoother_parallel.s"
-	@echo "... paths.o"
-	@echo "... paths.i"
-	@echo "... paths.s"
+	@echo "... objects/config.o"
+	@echo "... objects/config.i"
+	@echo "... objects/config.s"
+	@echo "... objects/drone.o"
+	@echo "... objects/drone.i"
+	@echo "... objects/drone.s"
+	@echo "... objects/paths.o"
+	@echo "... objects/paths.i"
+	@echo "... objects/paths.s"
+	@echo "... parallel/fitnessComputer_parallel.o"
+	@echo "... parallel/fitnessComputer_parallel.i"
+	@echo "... parallel/fitnessComputer_parallel.s"
+	@echo "... parallel/fpa_parallel.o"
+	@echo "... parallel/fpa_parallel.i"
+	@echo "... parallel/fpa_parallel.s"
+	@echo "... parallel/pathSmoother_parallel.o"
+	@echo "... parallel/pathSmoother_parallel.i"
+	@echo "... parallel/pathSmoother_parallel.s"
+	@echo "... parallel/pollinator_parallel.o"
+	@echo "... parallel/pollinator_parallel.i"
+	@echo "... parallel/pollinator_parallel.s"
+	@echo "... parallel/twoOpt_parallel.o"
+	@echo "... parallel/twoOpt_parallel.i"
+	@echo "... parallel/twoOpt_parallel.s"
 	@echo "... pollinator.o"
 	@echo "... pollinator.i"
 	@echo "... pollinator.s"
-	@echo "... pollinator_parallel.o"
-	@echo "... pollinator_parallel.i"
-	@echo "... pollinator_parallel.s"
-	@echo "... twoOpt_parallel.o"
-	@echo "... twoOpt_parallel.i"
-	@echo "... twoOpt_parallel.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"

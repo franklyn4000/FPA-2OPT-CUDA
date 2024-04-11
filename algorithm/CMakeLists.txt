@@ -11,18 +11,18 @@ find_package(OpenMP REQUIRED)
 
 add_executable(algorithm main.cu
         iolib.cu
-        fpa.cu
+        parallel/fpa_parallel.cpp
         initialSolutionGenerator.cu
-        pathSmoother_parallel.cpp
+        parallel/pathSmoother_parallel.cpp
         fitnessComputer_seq.cu
         utils.cu
         pollinator.cu
-        pollinator_parallel.cpp
-        twoOpt_parallel.cpp
-        fitnessComputer.cpp
-        paths.cpp
-        drone.cpp
-        config.cpp)
+        parallel/pollinator_parallel.cpp
+        parallel/twoOpt_parallel.cpp
+        parallel/fitnessComputer_parallel.cpp
+        objects/paths.cpp
+        objects/drone.cpp
+        objects/config.cpp)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

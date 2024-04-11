@@ -6,7 +6,7 @@
 #define ALGORITHM_TWOOPT_PARALLEL_H
 
 #include <vector>
-#include "paths.h"
+#include "../objects/paths.h"
 
 void twoOptParallel(
         Paths &paths,

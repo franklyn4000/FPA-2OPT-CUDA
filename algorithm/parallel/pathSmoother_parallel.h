@@ -6,7 +6,7 @@
 #define ALGORITHM_PATHSMOOTHER_CUH
 
 #include <vector>
-#include "paths.h"
+#include "../objects/paths.h"
 
 void smoothPaths(
         Paths &paths,
