@@ -6,6 +6,7 @@
 class Paths {
 public:
     std::vector<std::vector<float>> rawPaths;
+    std::vector<std::vector<float>> pollinatedPaths;
     std::vector<std::vector<float>> smoothedPaths;
     std::vector<float> N_wps;
     std::vector<float> fitnesses;

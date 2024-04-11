@@ -129,30 +129,6 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
-fitnessComputer_seq.o: fitnessComputer_seq.cu.o
-.PHONY : fitnessComputer_seq.o
-
-# target to build an object file
-fitnessComputer_seq.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.o
-.PHONY : fitnessComputer_seq.cu.o
-
-fitnessComputer_seq.i: fitnessComputer_seq.cu.i
-.PHONY : fitnessComputer_seq.i
-
-# target to preprocess a source file
-fitnessComputer_seq.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.i
-.PHONY : fitnessComputer_seq.cu.i
-
-fitnessComputer_seq.s: fitnessComputer_seq.cu.s
-.PHONY : fitnessComputer_seq.s
-
-# target to generate assembly for a file
-fitnessComputer_seq.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/fitnessComputer_seq.cu.s
-.PHONY : fitnessComputer_seq.cu.s
-
 initialSolutionGenerator.o: initialSolutionGenerator.cu.o
 .PHONY : initialSolutionGenerator.o
 
@@ -417,30 +393,6 @@ parallel/twoOpt_parallel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/parallel/twoOpt_parallel.cpp.s
 .PHONY : parallel/twoOpt_parallel.cpp.s
 
-pollinator.o: pollinator.cu.o
-.PHONY : pollinator.o
-
-# target to build an object file
-pollinator.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.o
-.PHONY : pollinator.cu.o
-
-pollinator.i: pollinator.cu.i
-.PHONY : pollinator.i
-
-# target to preprocess a source file
-pollinator.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.i
-.PHONY : pollinator.cu.i
-
-pollinator.s: pollinator.cu.s
-.PHONY : pollinator.s
-
-# target to generate assembly for a file
-pollinator.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/pollinator.cu.s
-.PHONY : pollinator.cu.s
-
 utils.o: utils.cu.o
 .PHONY : utils.o
 
@@ -474,9 +426,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
-	@echo "... fitnessComputer_seq.o"
-	@echo "... fitnessComputer_seq.i"
-	@echo "... fitnessComputer_seq.s"
 	@echo "... initialSolutionGenerator.o"
 	@echo "... initialSolutionGenerator.i"
 	@echo "... initialSolutionGenerator.s"
@@ -510,9 +459,6 @@ help:
 	@echo "... parallel/twoOpt_parallel.o"
 	@echo "... parallel/twoOpt_parallel.i"
 	@echo "... parallel/twoOpt_parallel.s"
-	@echo "... pollinator.o"
-	@echo "... pollinator.i"
-	@echo "... pollinator.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"

@@ -39,7 +39,10 @@ void computeFPA_parallel(
 
     //Initialize a population of n flowers/pollen gametes with random solutions
     paths.rawPaths = generateSolutions(init,
-            config.path_length, config.population);
+                                       config.path_length, config.population);
+
+    paths.pollinatedPaths = generateSolutions(init,
+                                              config.path_length, config.population);
 
 
     double smoothing_start_time = omp_get_wtime();
@@ -50,7 +53,8 @@ void computeFPA_parallel(
 
     double fitness_start_time = omp_get_wtime();
 
-    computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
+    computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+                     config.resolution);
 
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
 
@@ -70,7 +74,8 @@ void computeFPA_parallel(
 
         fitness_start_time = omp_get_wtime();
 
-        computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
+        computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+                         config.resolution);
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 

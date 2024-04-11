@@ -37,7 +37,7 @@ void pollinate_parallel(
     std::random_device rd;
     std::mt19937 gen(rd());
 
-#pragma omp parallel for // TODO local pollination race condition
+#pragma omp parallel for
     for (int pathIndex = 0; pathIndex < paths.rawPaths.size(); pathIndex++) {
         int n = paths.rawPaths[pathIndex].size() / 3;
 
@@ -48,7 +48,7 @@ void pollinate_parallel(
         if (dis(gen) < p_switch) {
             //global pollinate
 
-            // TODO Levy flight
+            // TODO precompute large array of levy numbers?
             double *L = levy_p(n * 3);
             //  float gamma = 0.1;
 
@@ -56,7 +56,7 @@ void pollinate_parallel(
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
                     float coord = paths.rawPaths[pathIndex][3 * i + k];
-                    paths.rawPaths[pathIndex][3 * i + k] =
+                    paths.pollinatedPaths[pathIndex][3 * i + k] =
                             coord + L[3 * i] * (paths.fittestPath[3 * i + k] - coord);
 
                 }
@@ -74,11 +74,13 @@ void pollinate_parallel(
 
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
-                    paths.rawPaths[pathIndex][3 * i + k] =
+                    paths.pollinatedPaths[pathIndex][3 * i + k] =
                             paths.rawPaths[pathIndex][3 * i + k] + epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[k][3 * i + k]);
                 }
             }
         }
     }
+
+    paths.rawPaths = paths.pollinatedPaths;
 }
 
