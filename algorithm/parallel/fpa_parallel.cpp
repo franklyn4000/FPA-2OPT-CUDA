@@ -12,39 +12,20 @@
 #include "pathSmoother_parallel.h"
 #include "fitnessComputer_parallel.h"
 #include "../utils.cuh"
-#include "../pollinator.cuh"
 #include "twoOpt_parallel.h"
 #include "pollinator_parallel.h"
-#include "../fitnessComputer_seq.cuh"
 #include "../objects/paths.h"
 
 
-void computeFPA(
-        Config &config, Drone &drone) {
+void computeFPA_parallel(
+        Config &config, Drone &drone, InitialConditions &init) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
 
-    size_t x_mid = config.heightMap.size() / 2;
-    size_t y_mid = (config.heightMap.empty()) ? 0 : config.heightMap[0].size() / 2;
-
-    float x_min = 0.0f;
-    float x_max = config.heightMap.size() - 1;
-    float z_min = -300;
-    float y_min = 0.0f;
-    float y_max = config.heightMap[0].size() - 1;
-    float z_max = 300;
-    float x1 = 5.0f;
-    float y1 = (float) y_mid;
-    float z1 = config.heightMap[y1][x1] + 60;
-    float xn = config.heightMap.size() - 5.0f;
-    float yn = (float) y_mid;
-    float zn = config.heightMap[yn][xn] + 60;
-
     float a_utopia = drone.min_altitude;
-    float f_utopia = calculateFUtopia(x1, y1, z1, xn, yn, zn);
-
+    float f_utopia = calculateFUtopia(init);
 
     double pollination_start_time = 0;
     double pollination_time_taken = 0;
@@ -57,11 +38,7 @@ void computeFPA(
     Paths paths(config.population);
 
     //Initialize a population of n flowers/pollen gametes with random solutions
-    paths.rawPaths = generateSolutions(
-            x1, y1, z1,
-            xn, yn, zn,
-            x_min, x_max, y_min,
-            y_max, z_min, z_max,
+    paths.rawPaths = generateSolutions(init,
             config.path_length, config.population);
 
 

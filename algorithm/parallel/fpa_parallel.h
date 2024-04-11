@@ -8,9 +8,10 @@
 #include <vector>
 #include "../objects/config.h"
 #include "../objects/drone.h"
+#include "../objects/initialConditions.h"
 
-void computeFPA(
-        Config &config, Drone &drone);
+void computeFPA_parallel(
+        Config &config, Drone &drone, InitialConditions &init);
 
 
 

@@ -14,9 +14,7 @@ add_executable(algorithm main.cu
         parallel/fpa_parallel.cpp
         initialSolutionGenerator.cu
         parallel/pathSmoother_parallel.cpp
-        fitnessComputer_seq.cu
         utils.cu
-        pollinator.cu
         parallel/pollinator_parallel.cpp
         parallel/twoOpt_parallel.cpp
         parallel/fitnessComputer_parallel.cpp

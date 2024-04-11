@@ -6,7 +6,8 @@
 #define ALGORITHM_UTILS_CUH
 
 #include <vector>
+#include "objects/initialConditions.h"
 
-float calculateFUtopia(float x1, float y1, float z1, float xn, float yn, float zn);
+float calculateFUtopia(InitialConditions &init);
 
 #endif //ALGORITHM_UTILS_CUH

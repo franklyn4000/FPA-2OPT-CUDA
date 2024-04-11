@@ -4,16 +4,16 @@
 
 #include "utils.cuh"
 
-float calculateFUtopia(float x1, float y1, float z1, float xn, float yn, float zn) {
+float calculateFUtopia(InitialConditions &init) {
     std::vector<float> start;
     std::vector<float> end;
-    start.push_back(x1);
-    start.push_back(y1);
-    start.push_back(z1);
+    start.push_back(init.x1);
+    start.push_back(init.y1);
+    start.push_back(init.z1);
 
-    end.push_back(xn);
-    end.push_back(yn);
-    end.push_back(zn);
+    end.push_back(init.xn);
+    end.push_back(init.yn);
+    end.push_back(init.zn);
 
     float distance_P1P2 = sqrt(
             (end[0] - start[0]) * (end[0] - start[0]) +

@@ -6,6 +6,7 @@
 #include "omp.h"
 #include "objects/config.h"
 #include "objects/drone.h"
+#include "objects/initialConditions.h"
 #include "math.h"
 
 int main() {
@@ -31,8 +32,27 @@ int main() {
     drone.turn_radius = 120.0f;
     drone.min_altitude = 20.0f;
 
+    InitialConditions init;
 
-    computeFPA(config, drone);
+
+    size_t x_mid = config.heightMap.size() / 2;
+    size_t y_mid = (config.heightMap.empty()) ? 0 : config.heightMap[0].size() / 2;
+
+    init.x_min = 0.0f;
+    init.x_max = config.heightMap.size() - 1;
+    init.z_min = -300;
+    init.y_min = 0.0f;
+    init.y_max = config.heightMap[0].size() - 1;
+    init.z_max = 300;
+    init.x1 = 5.0f;
+    init.y1 = (float) y_mid;
+    init.z1 = config.heightMap[init.y1][init.x1] + 60;
+    init.xn = config.heightMap.size() - 5.0f;
+    init.yn = (float) y_mid;
+    init.zn = config.heightMap[init.yn][init.xn] + 60;
+
+
+    computeFPA_parallel(config, drone, init);
 
     return 0;
 }
