@@ -20,7 +20,9 @@ add_executable(algorithm main.cu
         parallel/fitnessComputer_parallel.cpp
         objects/paths.cpp
         objects/drone.cpp
-        objects/config.cpp)
+        objects/config.cpp
+        objects/initialConditions.cpp
+        cuda/fpa_cuda.cu)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)

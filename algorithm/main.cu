@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>  // for std::setprecision and std::fixed
 #include "parallel/fpa_parallel.h"
+#include "cuda/fpa_cuda.cuh"
 #include "omp.h"
 #include "objects/config.h"
 #include "objects/drone.h"
@@ -15,9 +16,9 @@ int main() {
 
     Config config;
 
-    config.iter_max = 160;
-    config.population = 1000;
-    config.two_opt_freq = 20;
+    config.iter_max = 100;
+    config.population = 5000;
+    config.two_opt_freq = 25;
     config.path_length = 7;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
@@ -29,21 +30,20 @@ int main() {
 
     drone.max_asc_angle = 15.0f * M_PI / 180;
     drone.max_desc_angle = -30.0f * M_PI / 180;
-    drone.turn_radius = 120.0f;
+    drone.turn_radius = 100.0f;
     drone.min_altitude = 20.0f;
 
     InitialConditions init;
-
 
     size_t x_mid = config.heightMap.size() / 2;
     size_t y_mid = (config.heightMap.empty()) ? 0 : config.heightMap[0].size() / 2;
 
     init.x_min = 0.0f;
     init.x_max = config.heightMap.size() - 1;
-    init.z_min = -300;
+    init.z_min = -500;
     init.y_min = 0.0f;
     init.y_max = config.heightMap[0].size() - 1;
-    init.z_max = 300;
+    init.z_max = 500;
     init.x1 = 5.0f;
     init.y1 = (float) y_mid;
     init.z1 = config.heightMap[init.y1][init.x1] + 60;
@@ -51,8 +51,11 @@ int main() {
     init.yn = (float) y_mid;
     init.zn = config.heightMap[init.yn][init.xn] + 60;
 
-
+    printf("OMP\n");
     computeFPA_parallel(config, drone, init);
+    printf("--------------------------------------------\n");
+    printf("CUDA\n");
+    computeFPA_cuda(config, drone, init);
 
     return 0;
 }

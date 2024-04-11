@@ -129,6 +129,30 @@ algorithm/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
 .PHONY : algorithm/fast
 
+cuda/fpa_cuda.o: cuda/fpa_cuda.cu.o
+.PHONY : cuda/fpa_cuda.o
+
+# target to build an object file
+cuda/fpa_cuda.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/fpa_cuda.cu.o
+.PHONY : cuda/fpa_cuda.cu.o
+
+cuda/fpa_cuda.i: cuda/fpa_cuda.cu.i
+.PHONY : cuda/fpa_cuda.i
+
+# target to preprocess a source file
+cuda/fpa_cuda.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/fpa_cuda.cu.i
+.PHONY : cuda/fpa_cuda.cu.i
+
+cuda/fpa_cuda.s: cuda/fpa_cuda.cu.s
+.PHONY : cuda/fpa_cuda.s
+
+# target to generate assembly for a file
+cuda/fpa_cuda.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/fpa_cuda.cu.s
+.PHONY : cuda/fpa_cuda.cu.s
+
 initialSolutionGenerator.o: initialSolutionGenerator.cu.o
 .PHONY : initialSolutionGenerator.o
 
@@ -248,6 +272,30 @@ objects/drone.s: objects/drone.cpp.s
 objects/drone.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/drone.cpp.s
 .PHONY : objects/drone.cpp.s
+
+objects/initialConditions.o: objects/initialConditions.cpp.o
+.PHONY : objects/initialConditions.o
+
+# target to build an object file
+objects/initialConditions.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/initialConditions.cpp.o
+.PHONY : objects/initialConditions.cpp.o
+
+objects/initialConditions.i: objects/initialConditions.cpp.i
+.PHONY : objects/initialConditions.i
+
+# target to preprocess a source file
+objects/initialConditions.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/initialConditions.cpp.i
+.PHONY : objects/initialConditions.cpp.i
+
+objects/initialConditions.s: objects/initialConditions.cpp.s
+.PHONY : objects/initialConditions.s
+
+# target to generate assembly for a file
+objects/initialConditions.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/objects/initialConditions.cpp.s
+.PHONY : objects/initialConditions.cpp.s
 
 objects/paths.o: objects/paths.cpp.o
 .PHONY : objects/paths.o
@@ -426,6 +474,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... algorithm"
+	@echo "... cuda/fpa_cuda.o"
+	@echo "... cuda/fpa_cuda.i"
+	@echo "... cuda/fpa_cuda.s"
 	@echo "... initialSolutionGenerator.o"
 	@echo "... initialSolutionGenerator.i"
 	@echo "... initialSolutionGenerator.s"
@@ -441,6 +492,9 @@ help:
 	@echo "... objects/drone.o"
 	@echo "... objects/drone.i"
 	@echo "... objects/drone.s"
+	@echo "... objects/initialConditions.o"
+	@echo "... objects/initialConditions.i"
+	@echo "... objects/initialConditions.s"
 	@echo "... objects/paths.o"
 	@echo "... objects/paths.i"
 	@echo "... objects/paths.s"
