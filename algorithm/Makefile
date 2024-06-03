@@ -153,6 +153,30 @@ cuda/fpa_cuda.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/fpa_cuda.cu.s
 .PHONY : cuda/fpa_cuda.cu.s
 
+cuda/pathSmoother_cuda.o: cuda/pathSmoother_cuda.cu.o
+.PHONY : cuda/pathSmoother_cuda.o
+
+# target to build an object file
+cuda/pathSmoother_cuda.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/pathSmoother_cuda.cu.o
+.PHONY : cuda/pathSmoother_cuda.cu.o
+
+cuda/pathSmoother_cuda.i: cuda/pathSmoother_cuda.cu.i
+.PHONY : cuda/pathSmoother_cuda.i
+
+# target to preprocess a source file
+cuda/pathSmoother_cuda.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/pathSmoother_cuda.cu.i
+.PHONY : cuda/pathSmoother_cuda.cu.i
+
+cuda/pathSmoother_cuda.s: cuda/pathSmoother_cuda.cu.s
+.PHONY : cuda/pathSmoother_cuda.s
+
+# target to generate assembly for a file
+cuda/pathSmoother_cuda.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/cuda/pathSmoother_cuda.cu.s
+.PHONY : cuda/pathSmoother_cuda.cu.s
+
 initialSolutionGenerator.o: initialSolutionGenerator.cu.o
 .PHONY : initialSolutionGenerator.o
 
@@ -477,6 +501,9 @@ help:
 	@echo "... cuda/fpa_cuda.o"
 	@echo "... cuda/fpa_cuda.i"
 	@echo "... cuda/fpa_cuda.s"
+	@echo "... cuda/pathSmoother_cuda.o"
+	@echo "... cuda/pathSmoother_cuda.i"
+	@echo "... cuda/pathSmoother_cuda.s"
 	@echo "... initialSolutionGenerator.o"
 	@echo "... initialSolutionGenerator.i"
 	@echo "... initialSolutionGenerator.s"

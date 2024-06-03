@@ -112,10 +112,9 @@ void computeFPA_parallel(
                            drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
-
-            computeBestFitness(paths);
         }
 
+        computeBestFitness(paths);
 
     }
     printf("\n");
@@ -130,7 +129,7 @@ void computeFPA_parallel(
 
     printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.2f, %.2f, %.2f, %.2f\n", pollination_time_taken / totalTime, smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
 
-    printf("Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
+    printf("PARA Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
 
 
 /*

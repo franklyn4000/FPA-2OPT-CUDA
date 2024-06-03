@@ -13,6 +13,10 @@ std::vector <std::vector<float>> generateSolutions(
         InitialConditions &init,
         int length, int population);
 
+float** generateSolutions_cuda(
+        InitialConditions &init,
+        const int length, int population);
+
 std::vector <std::vector<float>> generateTestSolutions();
 
 #endif //ALGORITHM_INITIALSOLUTIONGENERATOR_CUH

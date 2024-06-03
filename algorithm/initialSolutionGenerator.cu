@@ -52,6 +52,48 @@ std::vector <std::vector<float>> generateSolutions(
     return solutions;
 }
 
+float** generateSolutions_cuda(
+        InitialConditions &init,
+        const int length, int population) {
+    // Generate a random size for the vector
+    std::random_device rd;
+
+    float** solutions = new float*[population];
+
+    for (int i = 0; i < population; i++) {
+        std::mt19937 gen(rd());
+
+        std::uniform_real_distribution<> distrX(init.x_min, init.x_max);
+        std::uniform_real_distribution<> distrY(init.y_min, init.y_max);
+        std::uniform_real_distribution<> distrZ(init.z_min, init.z_max);
+
+        const int n = length;
+
+        float* vector = new float[3 * n];
+
+        // Set initial values
+        vector[0] = init.x1;
+        vector[1] = init.y1;
+        vector[2] = init.z1;
+
+        for (int j = 1; j < n - 1; ++j) {
+            vector[3 * j] = distrX(gen);
+            vector[3 * j + 1] = distrY(gen);
+            vector[3 * j + 2] = distrZ(gen);
+        }
+
+        // Set final values
+        vector[3 * n - 3] = init.xn;
+        vector[3 * n - 2] = init.yn;
+        vector[3 * n - 1] = init.zn;
+
+        solutions[i] = vector;
+        //solutions[i] = vector;
+    }
+
+    return solutions;
+}
+
 std::vector <std::vector<float>> generateTestSolutions() {
     std::vector <std::vector<float>> testSolutions;
     std::vector<float> test;

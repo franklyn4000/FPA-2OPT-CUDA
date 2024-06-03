@@ -19,4 +19,23 @@ public:
     Paths(int pop);
 };
 
+typedef struct {
+    int width;
+    int height;
+    float* elements;
+} Matrix;
+
+struct Paths_cuda {
+    Matrix rawPaths;
+    float** pollinatedPaths;
+
+    float* N_wps;
+    float* fitnesses;
+
+    int fittestPathIndex;
+    float bestFitness;
+};
+
+
+
 #endif //PATHS_H

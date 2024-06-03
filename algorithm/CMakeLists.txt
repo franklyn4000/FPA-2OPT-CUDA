@@ -22,7 +22,8 @@ add_executable(algorithm main.cu
         objects/drone.cpp
         objects/config.cpp
         objects/initialConditions.cpp
-        cuda/fpa_cuda.cu)
+        cuda/fpa_cuda.cu
+        cuda/pathSmoother_cuda.cu)
 
 
 target_link_libraries(algorithm PRIVATE OpenMP::OpenMP_CXX)
