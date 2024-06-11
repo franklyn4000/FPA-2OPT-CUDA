@@ -160,7 +160,16 @@ __global__ void smoothPaths_cuda(
 
 
 
-    paths.N_wps[idx] = paths.rawPaths.elements[idx * paths.rawPaths.width];
+    paths.N_wps[idx] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints];
+
+
+    for(int i = 0; i < paths.rawPaths.n_waypoints; i++) {
+      paths.smoothedPaths.elements[idx * paths.smoothedPaths.n_waypoints] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints];
+
+    }
+
+
+
 
     /*
 

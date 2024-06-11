@@ -52,7 +52,7 @@ std::vector <std::vector<float>> generateSolutions(
     return solutions;
 }
 
-float** generateSolutions_cuda(
+float** generateSolutions_cuda_old(
         InitialConditions &init,
         const int length, int population) {
     // Generate a random size for the vector

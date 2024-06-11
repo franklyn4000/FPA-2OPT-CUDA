@@ -20,14 +20,15 @@ public:
 };
 
 typedef struct {
-    int width;
-    int height;
+    int n_waypoints;
+    int n_paths;
     float* elements;
-} Matrix;
+} PathMatrix;
 
 struct Paths_cuda {
-    Matrix rawPaths;
-    float** pollinatedPaths;
+    PathMatrix rawPaths;
+    PathMatrix pollinatedPaths;
+    PathMatrix smoothedPaths;
 
     float* N_wps;
     float* fitnesses;

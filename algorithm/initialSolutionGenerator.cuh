@@ -13,7 +13,7 @@ std::vector <std::vector<float>> generateSolutions(
         InitialConditions &init,
         int length, int population);
 
-float** generateSolutions_cuda(
+float** generateSolutions_cuda_old(
         InitialConditions &init,
         const int length, int population);
 
