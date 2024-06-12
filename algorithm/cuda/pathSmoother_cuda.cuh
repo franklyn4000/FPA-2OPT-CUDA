@@ -9,11 +9,12 @@
 #include "../objects/paths.h"
 
 __global__ void smoothPaths_cuda(
-        Paths_cuda paths,
-        float turnRadius, int n_pi, size_t pitch);
+    Paths_cuda paths,
+    float turnRadius, int n_pi, size_t pitch);
 
-std::vector<float> smoothPath_cuda(
-        std::vector<float> &path,
-        float turnRadius, int n_pi, float &N_wp);
+__device__ void smoothPath_cuda(
+    Paths_cuda paths,
+    int startIndex,
+    float turnRadius, int n_pi);
 
 #endif //ALGORITHM_PATHSMOOTHER_CUDA_CUH

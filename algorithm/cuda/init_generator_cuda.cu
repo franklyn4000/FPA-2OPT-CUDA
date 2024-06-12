@@ -19,15 +19,16 @@ float* generateSolutions_cuda(
         hostPaths[i * n_waypoints * 3 + 1] = init.y1;
         hostPaths[i * n_waypoints * 3 + 2] = init.z1;
 
+
         for (int j = 1; j < n_waypoints - 1; ++j) {
             hostPaths[i * n_waypoints * 3 + (3 * j)] = distrX(gen);
             hostPaths[i * n_waypoints * 3 + (3 * j + 1)] = distrY(gen);
             hostPaths[i * n_waypoints * 3 + (3 * j + 2)] = distrZ(gen);
         }
 
-        hostPaths[(i + 1) * n_waypoints - 3] = init.xn;
-        hostPaths[(i + 1) * n_waypoints - 2] = init.yn;
-        hostPaths[(i + 1) * n_waypoints - 1] = init.zn;
+        hostPaths[i * n_waypoints * 3 +  n_waypoints * 3 - 3] = init.xn;
+        hostPaths[i * n_waypoints * 3 +  n_waypoints * 3 - 2] = init.yn;
+        hostPaths[i * n_waypoints * 3 +  n_waypoints * 3 - 1] = init.zn;
     }
 
     return hostPaths;

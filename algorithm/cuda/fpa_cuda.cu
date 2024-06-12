@@ -46,7 +46,7 @@ void computeFPA_cuda(
 
     float nwp = 0;
 
-    int max_waypoints = config.path_length * 3;
+    int max_waypoints_smoothed = config.path_length * drone.turn_radius * 2 * 2; // upper bound
 
     Paths_cuda paths;
     paths.bestFitness = -1.0f;
@@ -64,18 +64,22 @@ void computeFPA_cuda(
 
     // float* hostPtr = new float[config.population * max_waypoints];
 
-    float* hostPtr = generateSolutions_cuda(init, max_waypoints, config.population);
+    float* hostPtr = generateSolutions_cuda(init, config.path_length, config.population);
 
-    float* hostPtr2 = new float[config.population * max_waypoints];
+    printf("%i \n", config.population * config.path_length * 3* sizeof(float));
+
+    float* hostPtr2 = new float[config.population * max_waypoints_smoothed * 3];
 
 
-    paths.smoothedPaths.n_waypoints = max_waypoints;
+    paths.smoothedPaths.n_waypoints = config.path_length;
     paths.smoothedPaths.n_paths = config.population;
 
-    paths.rawPaths.n_waypoints = max_waypoints;
+    paths.rawPaths.n_waypoints = config.path_length;
     paths.rawPaths.n_paths = config.population;
-    size_t paths_size = paths.rawPaths.n_waypoints * paths.rawPaths.n_paths * sizeof(float);
-    printf("size %i \n", paths_size);
+    size_t raw_paths_size = paths.rawPaths.n_waypoints * 3 * paths.rawPaths.n_paths * sizeof(float);
+    size_t smoothed_paths_size = config.population * max_waypoints_smoothed * 3 * sizeof(float);
+
+    printf("size %i \n", raw_paths_size);
 /*
     for (int i = 0; i < paths.rawPaths.n_paths; i++)
         for (int j = 0; j < paths.rawPaths.n_waypoints; j++) {
@@ -89,13 +93,13 @@ void computeFPA_cuda(
 
     size_t pitch = 0;
 
-    CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.elements, paths_size));
-    cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, paths_size,
+    CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.elements, smoothed_paths_size));
+    cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, smoothed_paths_size,
                cudaMemcpyHostToDevice);
 
 
-    CHECK_CUDA(cudaMalloc(&paths.rawPaths.elements, paths_size));
-    cudaMemcpy(paths.rawPaths.elements, hostPtr, paths_size,
+    CHECK_CUDA(cudaMalloc(&paths.rawPaths.elements, raw_paths_size));
+    cudaMemcpy(paths.rawPaths.elements, hostPtr, raw_paths_size,
                cudaMemcpyHostToDevice);
 
 
@@ -154,7 +158,8 @@ void computeFPA_cuda(
 
         smoothing_start_time = omp_get_wtime();
 
-        //  smoothPaths_cuda(paths, drone.turn_radius, drone.turn_radius * 2);
+        smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, drone.turn_radius, drone.turn_radius * 2, pitch);
+        cudaDeviceSynchronize();
 
         smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
 
@@ -188,8 +193,9 @@ void computeFPA_cuda(
                 }
         */
 
-        /*if (i % config.two_opt_freq == 0) {
+        if (i % config.two_opt_freq == 0) {
             printf("%i ", i);
+            /*
             twoopt_start_time = omp_get_wtime();
 
             twoOptParallel(paths, drone.turn_radius, drone.turn_radius * 2, config.heightMap, drone.max_asc_angle,
@@ -198,7 +204,8 @@ void computeFPA_cuda(
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
 
             computeBestFitness(paths);
-        }*/
+            */
+        }
         //   computeBestFitness(paths);
     }
     printf("\n");
@@ -217,10 +224,10 @@ void computeFPA_cuda(
     printf("CUDA Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
 
 
-    float* hostSmoothedPaths = new float[config.population * max_waypoints];
+    float* hostSmoothedPaths = new float[config.population * config.path_length * 3];
 
-    CHECK_CUDA(cudaMallocHost(&hostSmoothedPaths, paths_size));
-    cudaMemcpy(hostSmoothedPaths, paths.smoothedPaths.elements, paths_size,
+    CHECK_CUDA(cudaMallocHost(&hostSmoothedPaths, smoothed_paths_size));
+    cudaMemcpy(hostSmoothedPaths, paths.smoothedPaths.elements, smoothed_paths_size,
                cudaMemcpyDeviceToHost);
 
     float* res;
@@ -236,9 +243,19 @@ void computeFPA_cuda(
 
     for (int i = 0; i < config.population; i++) {
         //printf("%f  ", rawPaths[i][5]);
-        if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints] > 0.0) {
-            printf("%f\n", hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints]);
+       // printf("path: ");
+
+        for(int j = 0; j < max_waypoints_smoothed * 3; j++) {
+            if( hostSmoothedPaths[i * config.population + j] > 0) {
+                //printf("%.2f ", hostSmoothedPaths[i * config.population + j]);
+            }
+
         }
+
+        //if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints * 3] > -1.0) {
+
+       // }
+       // printf("\n");
     }
 
     /*

@@ -7,22 +7,25 @@
 #include <math.h>
 #include <cmath>
 
-std::vector<float> smoothPath_cuda(
-        std::vector<float> &path,
-        float turnRadius, int n_pi, float &N_wp) {
-
-    std::vector<float> smoothedPath;
+__device__ void smoothPath_cuda(
+    Paths_cuda paths,
+    int startIndex,
+    float turnRadius, int n_pi) {
+   // std::vector<float> smoothedPath;
 
     // std::vector<float> N_wps;
     float prevCPath = 0.0f;
 
     float unsmoothedVertices = 0;
 
-    smoothedPath.push_back(path[0]);
-    smoothedPath.push_back(path[1]);
-    smoothedPath.push_back(path[2]);
 
-    int n = path.size() / 3;
+    paths.smoothedPaths.elements[startIndex] = paths.rawPaths.elements[startIndex];
+    paths.smoothedPaths.elements[startIndex + 1] = paths.rawPaths.elements[startIndex + 1];
+    paths.smoothedPaths.elements[startIndex + 2] = paths.rawPaths.elements[startIndex + 2];
+
+    int smoothedPathLength = 1;
+
+    int n = paths.rawPaths.n_waypoints;
 
     float P[3];
     float P1[3];
@@ -40,23 +43,23 @@ std::vector<float> smoothPath_cuda(
     float mag_2_inv;
 
     for (int i = 1; i < n - 1; i++) {
-        P1[0] = path[3 * (i - 1)];
-        P1[1] = path[3 * (i - 1) + 1];
-        P1[2] = path[3 * (i - 1) + 2];
+        P1[0] =  paths.rawPaths.elements[startIndex + 3 * (i - 1)];
+        P1[1] =  paths.rawPaths.elements[startIndex + 3 * (i - 1) + 1];
+        P1[2] =  paths.rawPaths.elements[startIndex + 3 * (i - 1) + 2];
 
-        P[0] = path[3 * i];
-        P[1] = path[3 * i + 1];
-        P[2] = path[3 * i + 2];
+        P[0] = paths.rawPaths.elements[startIndex + 3 * i];
+        P[1] = paths.rawPaths.elements[startIndex + 3 * i + 1];
+        P[2] = paths.rawPaths.elements[startIndex + 3 * i + 2];
 
-        P2[0] = path[3 * (i + 1)];
-        P2[1] = path[3 * (i + 1) + 1];
-        P2[2] = path[3 * (i + 1) + 2];
+        P2[0] = paths.rawPaths.elements[startIndex + 3 * (i + 1)];
+        P2[1] = paths.rawPaths.elements[startIndex + 3 * (i + 1) + 1];
+        P2[2] = paths.rawPaths.elements[startIndex + 3 * (i + 1) + 2];
 
         //unit vector from P1 to P
         mag_1 = sqrt(
-                (P[0] - P1[0]) * (P[0] - P1[0]) +
-                (P[1] - P1[1]) * (P[1] - P1[1]) +
-                (P[2] - P1[2]) * (P[2] - P1[2])
+            (P[0] - P1[0]) * (P[0] - P1[0]) +
+            (P[1] - P1[1]) * (P[1] - P1[1]) +
+            (P[2] - P1[2]) * (P[2] - P1[2])
         );
 
         mag_1_inv = 1 / mag_1;
@@ -67,9 +70,9 @@ std::vector<float> smoothPath_cuda(
 
         //unit vector from P to P2
         mag_2 = sqrt(
-                (P2[0] - P[0]) * (P2[0] - P[0]) +
-                (P2[1] - P[1]) * (P2[1] - P[1]) +
-                (P2[2] - P[2]) * (P2[2] - P[2])
+            (P2[0] - P[0]) * (P2[0] - P[0]) +
+            (P2[1] - P[1]) * (P2[1] - P[1]) +
+            (P2[2] - P[2]) * (P2[2] - P[2])
         );
 
         mag_2_inv = 1 / mag_2;
@@ -92,26 +95,29 @@ std::vector<float> smoothPath_cuda(
 
         //calculate distance between P and C
         float distance_PC = sqrt(
-                (P[0] - C[0]) * (P[0] - C[0]) +
-                (P[1] - C[1]) * (P[1] - C[1]) +
-                (P[2] - C[2]) * (P[2] - C[2])
+            (P[0] - C[0]) * (P[0] - C[0]) +
+            (P[1] - C[1]) * (P[1] - C[1]) +
+            (P[2] - C[2]) * (P[2] - C[2])
         );
 
         float c_path = distance_PC * cos(alpha / 2);
 
-        if (distance_PC > std::min(mag_1, mag_2) ||
+        if (distance_PC > min(mag_1, mag_2) ||
             c_path + prevCPath > mag_1) {
             //cannot smooth trajectory
-            smoothedPath.push_back(P[0]);
-            smoothedPath.push_back(P[1]);
-            smoothedPath.push_back(P[2]);
+
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = P[0];
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 1] = P[1];
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 2] = P[2];
+            smoothedPathLength++;
+
             unsmoothedVertices++;
             prevCPath = c_path;
             continue;
         }
 
         //compute the number n of waypoints required to draw a circular arc using n = max(3, ceil(n_pi * (pi - alpha)/pi))
-        int n_waypoints = std::max(3, static_cast<int>(ceil(n_pi * (M_PI - alpha) / M_PI)));
+        int n_waypoints = max(3, static_cast<int>(ceil(n_pi * (M_PI - alpha) / M_PI)));
 
 
         float oneOverNWaypoints = (M_PI - alpha) / (n_waypoints - 1);
@@ -121,55 +127,60 @@ std::vector<float> smoothPath_cuda(
             float cosOmega = cos(omega);
             float cosAlphaOmega = cos(alpha + omega);
 
-            smoothedPath.push_back(C[0] - cscAlphaTurnradius * tau_1[0] * cosAlphaOmega -
-                                   cscAlphaTurnradius * tau_2[0] * cosOmega);
-            smoothedPath.push_back(C[1] - cscAlphaTurnradius * tau_1[1] * cosAlphaOmega -
-                                   cscAlphaTurnradius * tau_2[1] * cosOmega);
-            smoothedPath.push_back(C[2] - cscAlphaTurnradius * tau_1[2] * cosAlphaOmega -
-                                   cscAlphaTurnradius * tau_2[2] * cosOmega);
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = C[0] - cscAlphaTurnradius * tau_1[0] * cosAlphaOmega -
+                cscAlphaTurnradius * tau_2[0] * cosOmega;
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 1] = C[1] - cscAlphaTurnradius * tau_1[1] * cosAlphaOmega -
+                cscAlphaTurnradius * tau_2[1] * cosOmega;
+            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 2] = C[2] - cscAlphaTurnradius * tau_1[2] * cosAlphaOmega -
+                cscAlphaTurnradius * tau_2[2] * cosOmega;
+            smoothedPathLength++;
 
         }
 
         prevCPath = c_path;
     }
 
-    smoothedPath.push_back(path[3 * n - 3]);
-    smoothedPath.push_back(path[3 * n - 2]);
-    smoothedPath.push_back(path[3 * n - 1]);
-
-    N_wp = unsmoothedVertices / n;
+    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 3];
+    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 2];
+    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 1];
 
 
-    return smoothedPath;
+    //TODO N_wp = unsmoothedVertices / n;
+
+
+    //return smoothedPath;
 }
 
 __global__ void smoothPaths_cuda(
-        Paths_cuda paths,
-        float turnRadius, int n_pi, size_t pitch) {
-
-
-
+    Paths_cuda paths,
+    float turnRadius, int n_pi, size_t pitch) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
 
+    if (idx < paths.rawPaths.n_paths) {
 
-    /*int row = idx;
-    int column = 0;
+        smoothPath_cuda(paths, idx * paths.smoothedPaths.n_waypoints * 3, turnRadius, n_pi);
 
-    float* row_a = (float*)((char*)paths.rawPaths + row * pitch) + column;
-*/
-
-
-
-    paths.N_wps[idx] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints];
+        /*
+                for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
+                    paths.smoothedPaths.elements[idx * paths.smoothedPaths.n_waypoints * 3 + i] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints * 3 + i];
+                    //   paths.smoothedPaths.elements[idx * paths.smoothedPaths.n_waypoints * 3 + i] = idx * paths.rawPaths.n_waypoints * 3 + i;
 
 
-    for(int i = 0; i < paths.rawPaths.n_waypoints; i++) {
-      paths.smoothedPaths.elements[idx * paths.smoothedPaths.n_waypoints] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints];
-
+                    paths.smoothedPaths[index] =
+                       smoothPath_cuda(
+                               paths.rawPaths[index],
+                               turnRadius, n_pi,
+                               paths.N_wps[index]);
+                }*/
     }
 
+    //
 
 
+    //  paths.smoothedPaths.elements[idx * paths.smoothedPaths.n_waypoints * 3 + 20] = paths.rawPaths.elements[9];
+
+
+    // paths.smoothedPaths.elements[0] = paths.rawPaths.elements[paths.smoothedPaths.n_waypoints * 3 -9];
 
     /*
 
