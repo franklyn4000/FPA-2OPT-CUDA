@@ -10,11 +10,13 @@
 
 __global__ void smoothPaths_cuda(
     Paths_cuda paths,
+    int max_elements,
     float turnRadius, int n_pi, size_t pitch);
 
 __device__ void smoothPath_cuda(
     Paths_cuda paths,
-    int startIndex,
+    int smooth_startIndex,
+    int raw_startIndex,
     float turnRadius, int n_pi);
 
 #endif //ALGORITHM_PATHSMOOTHER_CUDA_CUH

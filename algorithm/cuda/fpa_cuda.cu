@@ -10,8 +10,6 @@
 #include "init_generator_cuda.cuh"
 #include "omp.h"
 #include "../iolib.cuh"
-#include "../initialSolutionGenerator.cuh"
-
 
 #include "../utils.cuh"
 
@@ -34,7 +32,7 @@ exit(EXIT_FAILURE);                                                 \
 }
 
 void computeFPA_cuda(
-    Config& config, Drone& drone, InitialConditions& init) {
+        Config &config, Drone &drone, InitialConditions &init) {
     float a_utopia = drone.min_altitude;
     float f_utopia = calculateFUtopia(init);
 
@@ -64,11 +62,11 @@ void computeFPA_cuda(
 
     // float* hostPtr = new float[config.population * max_waypoints];
 
-    float* hostPtr = generateSolutions_cuda(init, config.path_length, config.population);
+    float *hostPtr = generateSolutions_cuda(init, config.path_length, config.population);
 
-    printf("%i \n", config.population * config.path_length * 3* sizeof(float));
+    printf("%i \n", config.population * config.path_length * 3 * sizeof(float));
 
-    float* hostPtr2 = new float[config.population * max_waypoints_smoothed * 3];
+    float *hostPtr2 = new float[config.population * max_waypoints_smoothed * 3];
 
 
     paths.smoothedPaths.n_waypoints = config.path_length;
@@ -76,10 +74,11 @@ void computeFPA_cuda(
 
     paths.rawPaths.n_waypoints = config.path_length;
     paths.rawPaths.n_paths = config.population;
+
     size_t raw_paths_size = paths.rawPaths.n_waypoints * 3 * paths.rawPaths.n_paths * sizeof(float);
     size_t smoothed_paths_size = config.population * max_waypoints_smoothed * 3 * sizeof(float);
 
-    printf("size %i \n", raw_paths_size);
+    printf("size %lu \n", (unsigned long) smoothed_paths_size);
 /*
     for (int i = 0; i < paths.rawPaths.n_paths; i++)
         for (int j = 0; j < paths.rawPaths.n_waypoints; j++) {
@@ -124,18 +123,19 @@ void computeFPA_cuda(
         cudaMemcpy(paths.rawPaths, rawPaths, config.path_length * 3 * config.population * sizeof(float), cudaMemcpyHostToDevice);
 
     */
-    float* test_Nwps;
-    cudaMallocHost(&test_Nwps, config.population * sizeof(float));
+    float *test_Nwps;
+    CHECK_CUDA(cudaMallocHost(&test_Nwps, config.population * sizeof(float)));
 
     for (int i = 0; i < config.population; i++) {
         test_Nwps[i] = i + 0.0;
     }
-    cudaMemcpy(paths.fitnesses, test_Nwps, config.population * sizeof(float), cudaMemcpyHostToDevice);
+    CHECK_CUDA(cudaMemcpy(paths.fitnesses, test_Nwps, config.population * sizeof(float), cudaMemcpyHostToDevice));
 
 
     double smoothing_start_time = omp_get_wtime();
 
-    smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, drone.turn_radius, drone.turn_radius * 2, pitch);
+    smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, drone.turn_radius, drone.turn_radius * 2,
+                                            pitch);
     cudaDeviceSynchronize();
 
     double smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
@@ -158,7 +158,8 @@ void computeFPA_cuda(
 
         smoothing_start_time = omp_get_wtime();
 
-        smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, drone.turn_radius, drone.turn_radius * 2, pitch);
+        smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, drone.turn_radius,
+                                                drone.turn_radius * 2, pitch);
         cudaDeviceSynchronize();
 
         smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
@@ -224,13 +225,13 @@ void computeFPA_cuda(
     printf("CUDA Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
 
 
-    float* hostSmoothedPaths = new float[config.population * config.path_length * 3];
+    float *hostSmoothedPaths = new float[smoothed_paths_size];
 
     CHECK_CUDA(cudaMallocHost(&hostSmoothedPaths, smoothed_paths_size));
-    cudaMemcpy(hostSmoothedPaths, paths.smoothedPaths.elements, smoothed_paths_size,
-               cudaMemcpyDeviceToHost);
+    CHECK_CUDA(cudaMemcpy(hostSmoothedPaths, paths.smoothedPaths.elements, smoothed_paths_size,
+                          cudaMemcpyDeviceToHost));
 
-    float* res;
+    float *res;
 
     cudaMallocHost(&res, config.population * sizeof(float));
     if (res == NULL) {
@@ -240,13 +241,14 @@ void computeFPA_cuda(
 
     cudaMemcpy(res, paths.N_wps, config.population * sizeof(float), cudaMemcpyDeviceToHost);
 
+    save_to_csv_cuda(hostSmoothedPaths, max_waypoints_smoothed * 3, "../heightMapper/fittest5.csv");
 
     for (int i = 0; i < config.population; i++) {
         //printf("%f  ", rawPaths[i][5]);
-       // printf("path: ");
+        // printf("path: ");
 
-        for(int j = 0; j < max_waypoints_smoothed * 3; j++) {
-            if( hostSmoothedPaths[i * config.population + j] > 0) {
+        for (int j = 0; j < max_waypoints_smoothed * 3; j++) {
+            if (hostSmoothedPaths[i * config.population + j] > 0) {
                 //printf("%.2f ", hostSmoothedPaths[i * config.population + j]);
             }
 
@@ -254,8 +256,8 @@ void computeFPA_cuda(
 
         //if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints * 3] > -1.0) {
 
-       // }
-       // printf("\n");
+        // }
+        // printf("\n");
     }
 
     /*
@@ -314,5 +316,10 @@ void computeFPA_cuda(
     */
 
 
-    delete[] hostPtr;
+    //delete[] hostPtr;
+    //delete[] hostPtr2;
+   // delete[] hostSmoothedPaths;
+    cudaFree(hostSmoothedPaths);
+    cudaFree(hostPtr);
+    cudaFree(hostPtr2);
 }

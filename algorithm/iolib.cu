@@ -71,3 +71,28 @@ void save_to_csv(const std::vector<float> &data, const std::string &file_name) {
     // Close the file
     out_file.close();
 }
+
+void save_to_csv_cuda(const float* data, int length, const std::string &file_name) {
+    // Create an output filestream object
+    std::ofstream out_file(file_name);
+
+    // Check if the file was opened successfully
+    if (!out_file.is_open()) {
+        std::cerr << "Error opening file" << std::endl;
+        return;
+    }
+
+    // Iterate through each vector in data
+    for (int i = 0; i < length; i++) {
+
+        // Write each number to the file followed by a comma
+        //for (const auto num : row) {
+            out_file << data[i];
+      //  }
+        // Write a newline character at the end of each row
+        out_file << '\n';
+    }
+
+    // Close the file
+    out_file.close();
+}

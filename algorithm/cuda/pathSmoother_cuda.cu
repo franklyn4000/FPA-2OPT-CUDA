@@ -4,12 +4,11 @@
 
 #include "pathSmoother_cuda.cuh"
 #include <iostream>
-#include <math.h>
-#include <cmath>
 
 __device__ void smoothPath_cuda(
     Paths_cuda paths,
-    int startIndex,
+    int smooth_startIndex,
+    int raw_startIndex,
     float turnRadius, int n_pi) {
    // std::vector<float> smoothedPath;
 
@@ -19,9 +18,9 @@ __device__ void smoothPath_cuda(
     float unsmoothedVertices = 0;
 
 
-    paths.smoothedPaths.elements[startIndex] = paths.rawPaths.elements[startIndex];
-    paths.smoothedPaths.elements[startIndex + 1] = paths.rawPaths.elements[startIndex + 1];
-    paths.smoothedPaths.elements[startIndex + 2] = paths.rawPaths.elements[startIndex + 2];
+    paths.smoothedPaths.elements[smooth_startIndex] = paths.rawPaths.elements[raw_startIndex];
+    paths.smoothedPaths.elements[smooth_startIndex + 1] = paths.rawPaths.elements[raw_startIndex + 1];
+    paths.smoothedPaths.elements[smooth_startIndex + 2] = paths.rawPaths.elements[raw_startIndex + 2];
 
     int smoothedPathLength = 1;
 
@@ -43,17 +42,17 @@ __device__ void smoothPath_cuda(
     float mag_2_inv;
 
     for (int i = 1; i < n - 1; i++) {
-        P1[0] =  paths.rawPaths.elements[startIndex + 3 * (i - 1)];
-        P1[1] =  paths.rawPaths.elements[startIndex + 3 * (i - 1) + 1];
-        P1[2] =  paths.rawPaths.elements[startIndex + 3 * (i - 1) + 2];
+        P1[0] =  paths.rawPaths.elements[raw_startIndex + 3 * (i - 1)];
+        P1[1] =  paths.rawPaths.elements[raw_startIndex + 3 * (i - 1) + 1];
+        P1[2] =  paths.rawPaths.elements[raw_startIndex + 3 * (i - 1) + 2];
 
-        P[0] = paths.rawPaths.elements[startIndex + 3 * i];
-        P[1] = paths.rawPaths.elements[startIndex + 3 * i + 1];
-        P[2] = paths.rawPaths.elements[startIndex + 3 * i + 2];
+        P[0] = paths.rawPaths.elements[raw_startIndex + 3 * i];
+        P[1] = paths.rawPaths.elements[raw_startIndex + 3 * i + 1];
+        P[2] = paths.rawPaths.elements[raw_startIndex + 3 * i + 2];
 
-        P2[0] = paths.rawPaths.elements[startIndex + 3 * (i + 1)];
-        P2[1] = paths.rawPaths.elements[startIndex + 3 * (i + 1) + 1];
-        P2[2] = paths.rawPaths.elements[startIndex + 3 * (i + 1) + 2];
+        P2[0] = paths.rawPaths.elements[raw_startIndex + 3 * (i + 1)];
+        P2[1] = paths.rawPaths.elements[raw_startIndex + 3 * (i + 1) + 1];
+        P2[2] = paths.rawPaths.elements[raw_startIndex + 3 * (i + 1) + 2];
 
         //unit vector from P1 to P
         mag_1 = sqrt(
@@ -106,9 +105,9 @@ __device__ void smoothPath_cuda(
             c_path + prevCPath > mag_1) {
             //cannot smooth trajectory
 
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = P[0];
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 1] = P[1];
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 2] = P[2];
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = P[0];
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 1] = P[1];
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 2] = P[2];
             smoothedPathLength++;
 
             unsmoothedVertices++;
@@ -127,11 +126,11 @@ __device__ void smoothPath_cuda(
             float cosOmega = cos(omega);
             float cosAlphaOmega = cos(alpha + omega);
 
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = C[0] - cscAlphaTurnradius * tau_1[0] * cosAlphaOmega -
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = C[0] - cscAlphaTurnradius * tau_1[0] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[0] * cosOmega;
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 1] = C[1] - cscAlphaTurnradius * tau_1[1] * cosAlphaOmega -
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 1] = C[1] - cscAlphaTurnradius * tau_1[1] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[1] * cosOmega;
-            paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 2] = C[2] - cscAlphaTurnradius * tau_1[2] * cosAlphaOmega -
+            paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 2] = C[2] - cscAlphaTurnradius * tau_1[2] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[2] * cosOmega;
             smoothedPathLength++;
 
@@ -140,9 +139,9 @@ __device__ void smoothPath_cuda(
         prevCPath = c_path;
     }
 
-    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 3];
-    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 2];
-    paths.smoothedPaths.elements[startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[startIndex + paths.rawPaths.n_waypoints * 3 - 1];
+   paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = paths.rawPaths.elements[raw_startIndex + paths.rawPaths.n_waypoints * 3 - 3];
+   paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 1] = paths.rawPaths.elements[raw_startIndex + paths.rawPaths.n_waypoints * 3 - 2];
+   paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 2] = paths.rawPaths.elements[raw_startIndex + paths.rawPaths.n_waypoints * 3 - 1];
 
 
     //TODO N_wp = unsmoothedVertices / n;
@@ -153,12 +152,13 @@ __device__ void smoothPath_cuda(
 
 __global__ void smoothPaths_cuda(
     Paths_cuda paths,
+    int max_elements,
     float turnRadius, int n_pi, size_t pitch) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
 
     if (idx < paths.rawPaths.n_paths) {
 
-        smoothPath_cuda(paths, idx * paths.smoothedPaths.n_waypoints * 3, turnRadius, n_pi);
+        smoothPath_cuda(paths, idx * max_elements, idx * paths.rawPaths.n_waypoints, turnRadius, n_pi);
 
         /*
                 for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {

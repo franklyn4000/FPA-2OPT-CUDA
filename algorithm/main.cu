@@ -16,10 +16,10 @@ int main() {
 
     Config config;
 
-    config.iter_max = 100;
-    config.population = 15000;
+    config.iter_max = 50;
+    config.population = 800;
     config.two_opt_freq = 25;
-    config.path_length = 5;
+    config.path_length = 11;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;
