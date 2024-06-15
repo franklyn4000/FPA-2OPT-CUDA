@@ -64,7 +64,7 @@ def generate_terrain(size, min_val=-500, max_val=600):
     return terrain
 
 
-def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3, fittest_path4):
+def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3, fittest_path4, fittest_path5):
     cmap = mcolors.LinearSegmentedColormap.from_list("", ["red", "yellow", "green", "blue", "purple", "white"])
 
     fittest_path_x = [float(point[0]) for point in fittest_path]
@@ -82,6 +82,10 @@ def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3
     fittest_path4_x = [float(point[0]) for point in fittest_path4]
     fittest_path4_y = [float(point[1]) for point in fittest_path4]
     fittest_path4_z = [float(point[2]) for point in fittest_path4]
+
+    fittest_path5_x = [float(point[0]) for point in fittest_path5]
+    fittest_path5_y = [float(point[1]) for point in fittest_path5]
+    fittest_path5_z = [float(point[2]) for point in fittest_path5]
 
 
 
@@ -106,6 +110,10 @@ def visualize_height_maps(height_map, fittest_path, fittest_path2, fittest_path3
     ax1.plot(fittest_path4_x, fittest_path4_y, color='#0000ff', linewidth=2)
     ax2.plot(fittest_path4_x, fittest_path4_z, color='#0000ff', linewidth=2)
     ax3.plot(fittest_path4_y, fittest_path4_z, color='#0000ff', linewidth=2)
+
+    ax1.plot(fittest_path5_x, fittest_path5_y, color='#BBAA00', linewidth=2)
+    ax2.plot(fittest_path5_x, fittest_path5_z, color='#BBAA00', linewidth=2)
+    ax3.plot(fittest_path5_y, fittest_path5_z, color='#BBAA00', linewidth=2)
 
     # 2D Plot from top
     img = ax1.imshow(height_map, cmap=cmap, vmin=-1000, vmax=2000)
@@ -165,4 +173,6 @@ fittest_path_file = read_fittest_from_file("fittest1.csv")
 fittest_path_file2 = read_fittest_from_file("fittest2.csv")
 fittest_path_file3 = read_fittest_from_file("fittest3.csv")
 fittest_path_file4 = read_fittest_from_file("fittest4.csv")
-visualize_height_maps(height_map, fittest_path_file, fittest_path_file2, fittest_path_file3, fittest_path_file4)
+fittest_path_file5 = read_fittest_from_file("fittest5.csv")
+
+visualize_height_maps(height_map, fittest_path_file, fittest_path_file2, fittest_path_file3, fittest_path_file4, fittest_path_file5)
