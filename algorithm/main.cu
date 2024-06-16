@@ -16,15 +16,18 @@ int main() {
 
     Config config;
 
-    config.iter_max = 50;
-    config.population = 800;
+    config.iter_max = 25;
+    config.population = 2000;
     config.two_opt_freq = 25;
-    config.path_length = 11;
+    config.path_length = 7;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;
     config.epsilon_final = 0.02;
+    config.heightMap_cols = 1500;
+    config.heightMap_rows = 1500;
     config.heightMap = load_height_map(filename);
+	float* heightMap_h = load_height_map_cuda(filename, config.heightMap_cols, config.heightMap_rows);
 
     Drone drone;
 
@@ -55,7 +58,7 @@ int main() {
     computeFPA_parallel(config, drone, init);
     printf("--------------------------------------------\n");
     printf("CUDA\n");
-    computeFPA_cuda(config, drone, init);
+    computeFPA_cuda(config, heightMap_h, drone, init);
 
     return 0;
 }

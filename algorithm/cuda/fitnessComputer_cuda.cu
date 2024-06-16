@@ -1,14 +1,14 @@
 //
-// Created by franklyn on 3/20/24.
+// Created by franklyn on 6/15/24.
 //
 
-#include "fitnessComputer_parallel.h"
+#include "fitnessComputer_cuda.cuh"
 #include <iostream>
-#include "omp.h"
-#include <math.h>
 
-float computeFitness(std::vector<float> path,
-                     const std::vector <std::vector<double>> &heightMap,
+__device__ float computeFitness_cuda(Paths_cuda paths,
+                     const float* heightMap,
+                     int path_index,
+                     int startIndex,
                      float N_wp, float max_asc_angle,
                      float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
@@ -25,7 +25,7 @@ float computeFitness(std::vector<float> path,
     float a_avg = 0;
     float f_avg = 0;
 
-    int n = path.size() / 3;
+    int n = paths.smoothedPaths.used_waypoints[path_index];
     bool underground = false;
     bool undergroundLast = false;
 
@@ -41,28 +41,28 @@ float computeFitness(std::vector<float> path,
     float step_length_P1P2;
 
     for (int i = 0; i < n - 1; i++) {
-        P1[0] = path[3 * i];
-        P1[1] = path[3 * i + 1];
-        P1[2] = path[3 * i + 2];
-        P2[0] = path[3 * (i + 1)];
-        P2[1] = path[3 * (i + 1) + 1];
-        P2[2] = path[3 * (i + 1) + 2];
+        P1[0] = paths.smoothedPaths.elements[startIndex + i * 3 + 0];
+        P1[1] = paths.smoothedPaths.elements[startIndex + i * 3 + 1];
+        P1[2] = paths.smoothedPaths.elements[startIndex + i * 3 + 2];
+        P2[0] = paths.smoothedPaths.elements[startIndex + (i + 1) * 3 + 0];
+        P2[1] = paths.smoothedPaths.elements[startIndex + (i + 1) * 3 + 1];
+        P2[2] = paths.smoothedPaths.elements[startIndex + (i + 1) * 3 + 2];
 
         float diff_x = P2[0] - P1[0];
         float diff_y = P2[1] - P1[1];
         float diff_z = P2[2] - P1[2];
 
-        float distance_P1P2 = std::sqrt(
+        float distance_P1P2 = sqrt(
                 diff_x * diff_x +
                 diff_y * diff_y +
                 diff_z * diff_z
         );
 
-        steps_P1P2 = std::floor(distance_P1P2 * resolution);
+        steps_P1P2 = floor(distance_P1P2 * resolution);
 
-        inv_steps = 1 / steps_P1P2;
 
         if (steps_P1P2 > 0) {
+            inv_steps = 1 / steps_P1P2;
             step_length_P1P2 = distance_P1P2 * inv_steps;
             interval_x = diff_x * inv_steps;
             interval_y = diff_y * inv_steps;
@@ -74,63 +74,65 @@ float computeFitness(std::vector<float> path,
             interval_z = 0;
         }
 
-        float horizontal_length = std::sqrt(diff_x * diff_x + diff_y * diff_y);
-        float angle_radians = std::atan2(diff_z, horizontal_length);
+        float horizontal_length = sqrt(diff_x * diff_x + diff_y * diff_y);
+        float angle_radians = atan2(diff_z, horizontal_length);
+
 
         for (int j = 1; j < steps_P1P2; j++) {
 
-            int pointX = static_cast<int>(std::round(P1[0] + interval_x * j));
-            int pointY = static_cast<int>(std::round(P1[1] + interval_y * j));
-            int pointZ = static_cast<int>(std::round(P1[2] + interval_z * j));
+            int pointX = __float2int_rd(P1[0] + interval_x * j);
+            int pointY = __float2int_rd(P1[1] + interval_y * j);
+            int pointZ = __float2int_rd(P1[2] + interval_z * j);
 
             if (
-                    pointY > heightMap.size() - 1 ||
+                    pointY > 1500 - 1 || //TODO heightmap size
                     pointY < 0 ||
-                    pointX > heightMap[0].size() - 1 ||
+                    pointX > 1500 - 1 || //TODO heightmap size
                     pointX < 0
                     ) {
                 underground = true;
-            } else {
-                underground = heightMap[pointY][pointX] + a_utopia >= P1[2] + interval_z * j;
-                a_cum +=  pointZ - heightMap[pointY][pointX];
-            }
+                    } else {
+                        underground = heightMap[pointY * 1500 + pointX] + a_utopia >= P1[2] + interval_z * j;
+                        a_cum +=  pointZ - heightMap[pointY * 1500 + pointX];
+                    }
 
             if (underground && undergroundLast) {
                 d_ug += step_length_P1P2;
             } else if (underground != undergroundLast) {
                 d_ug += step_length_P1P2 / 2;
-            }
+           }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
 
-
-
         }
 
-        int p2X = static_cast<int>(std::round(P2[0]));
-        int p2Y = static_cast<int>(std::round(P2[1]));
-        int p2Z = static_cast<int>(std::round(P2[2]));
+
+
+        int p2X = __float2int_rd(P2[0]);
+        int p2Y = __float2int_rd(P2[1]);
+        int p2Z = __float2int_rd(P2[2]);
 
         float height2;
         if (
-                p2Y > heightMap.size() - 1 ||
+                p2Y > 1500 - 1 ||//TODO heightmap size
                 p2Y < 0 ||
-                p2X > heightMap[0].size() - 1 ||
+                p2X > 1500 - 1 ||//TODO heightmap size
                 p2X < 0
                 ) {
             height2 = 99999;
             underground = true;
         } else {
-            height2 = p2Z - heightMap[p2Y][p2X];
+            height2 = p2Z - heightMap[p2Y * 1500 + p2X];
         }
 
-
         underground = height2 < a_utopia;
+
         if (underground && undergroundLast) {
             d_ug += step_length_P1P2;
         } else if (underground != undergroundLast) {
             d_ug += step_length_P1P2 / 2;
         }
+
         undergroundLast = underground;
         l_traj += step_length_P1P2;
 
@@ -139,6 +141,7 @@ float computeFitness(std::vector<float> path,
         if (angle_radians > max_asc_angle || angle_radians < max_desc_angle) {
             d_ea += distance_P1P2;
         }
+
 
     }
 
@@ -155,40 +158,44 @@ float computeFitness(std::vector<float> path,
         //Cost term C
         float C = w1 * (a_avg / a_utopia) + w2 * (l_traj / f_utopia);
 
-        return 1 + 1 / (1 + C);
+
+        paths.fitnesses[path_index] = 1 + 1 / (1 + C);
+    } else {
+        paths.fitnesses[path_index] = 0 + 1 / (1 + P);
     }
-    return 0 + 1 / (1 + P);
+
+    paths.fitnesses[path_index] = 0 + 1 / (1 + P);
 
 }
 
-void computeFitnesses(
-        Paths &paths,
-        const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
+__global__ void computeFitnesses_cuda(
+        Paths_cuda paths,
+        int max_elements,
+        const float* heightMap, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
-#pragma omp parallel for
-    for (int index = 0; index < paths.population; index++) {
 
-        float F =
-                computeFitness(paths.smoothedPaths[index],
-                               heightMap,
-                               paths.N_wps[index],
-                               max_asc_angle,
-                               max_desc_angle,
-                               a_utopia, f_utopia, resolution);
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
 
-        paths.fitnesses[index] = F;
+    if (idx < paths.rawPaths.n_paths) {
 
+
+        computeFitness_cuda(paths, heightMap, idx, idx * max_elements, paths.N_wps[idx],
+                                       max_asc_angle,
+                                       max_desc_angle,
+                                       a_utopia, f_utopia, resolution);
 
 
     }
 
-    computeBestFitness(paths);
+    computeBestFitness_cuda(paths);
 
 
 }
 
-void computeBestFitness(Paths &paths) {
+
+__device__ void computeBestFitness_cuda(Paths_cuda paths) {
+ /*
     for (int index = 0; index < paths.population; index++) {
 
         if (paths.fitnesses[index] > paths.bestFitness) {
@@ -196,4 +203,6 @@ void computeBestFitness(Paths &paths) {
             paths.bestFitness = paths.fitnesses[index];
         }
     }
+    */
+
 }

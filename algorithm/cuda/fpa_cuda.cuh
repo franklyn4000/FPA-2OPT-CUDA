@@ -11,6 +11,6 @@
 #include "../objects/initialConditions.h"
 
 void computeFPA_cuda(
-        Config &config, Drone &drone, InitialConditions &init);
+        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init);
 
 #endif //ALGORITHM_FPA_CUDA_CUH

@@ -22,6 +22,7 @@ public:
 typedef struct {
     int n_waypoints;
     int n_paths;
+    int* used_waypoints;
     float* elements;
 } PathMatrix;
 

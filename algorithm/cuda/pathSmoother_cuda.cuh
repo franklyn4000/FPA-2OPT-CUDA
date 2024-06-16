@@ -15,6 +15,7 @@ __global__ void smoothPaths_cuda(
 
 __device__ void smoothPath_cuda(
     Paths_cuda paths,
+    int path_index,
     int smooth_startIndex,
     int raw_startIndex,
     float turnRadius, int n_pi);

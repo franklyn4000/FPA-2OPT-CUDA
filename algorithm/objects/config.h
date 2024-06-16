@@ -14,6 +14,9 @@ public:
     float epsilon_init;
     float epsilon_final;
     std::vector<std::vector<double>> heightMap;
+    float* heightMap_cuda;
+    int heightMap_cols;
+    int heightMap_rows;
 };
 
 #endif //CONFIG_H

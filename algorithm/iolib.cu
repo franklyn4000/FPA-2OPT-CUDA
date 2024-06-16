@@ -29,6 +29,33 @@ std::vector<std::vector<double>> load_height_map(const std::string &filename) {
     return height_map;
 }
 
+float* load_height_map_cuda(const std::string &filename, int cols, int rows) {
+    float* height_map = new float[cols * rows];;
+
+    std::ifstream file(filename);
+    std::string line;
+    int rowIndex = 0;
+    int colIndex = 0;
+
+    while (std::getline(file, line)) {
+        //float* row;
+        std::stringstream ss(line);
+        std::string val;
+
+        while (std::getline(ss, val, ',')) {
+            height_map[rowIndex * rows + colIndex] = std::stof(val);
+            colIndex++;
+            //row.push_back(std::stof(val));
+        }
+        colIndex = 0;
+        //height_map.push_back(row);
+        rowIndex++;
+    }
+
+    return height_map;
+}
+
+
 void save_to_csv(const std::vector<std::vector<float>> &data, const std::string &file_name) {
     // Create an output filestream object
     std::ofstream out_file(file_name);

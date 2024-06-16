@@ -7,6 +7,7 @@
 #include <random>
 #include <math.h>
 
+#include "fitnessComputer_cuda.cuh"
 #include "init_generator_cuda.cuh"
 #include "omp.h"
 #include "../iolib.cuh"
@@ -32,7 +33,7 @@ exit(EXIT_FAILURE);                                                 \
 }
 
 void computeFPA_cuda(
-        Config &config, Drone &drone, InitialConditions &init) {
+        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init) {
     float a_utopia = drone.min_altitude;
     float f_utopia = calculateFUtopia(init);
 
@@ -92,14 +93,22 @@ void computeFPA_cuda(
 
     size_t pitch = 0;
 
+    CHECK_CUDA(cudaMalloc(&config.heightMap_cuda, config.heightMap_rows * config.heightMap_cols * sizeof(float)));
+    cudaMemcpy(config.heightMap_cuda, heightMap_h, config.heightMap_rows * config.heightMap_cols * sizeof(float),
+               cudaMemcpyHostToDevice);
+
     CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.elements, smoothed_paths_size));
     cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, smoothed_paths_size,
                cudaMemcpyHostToDevice);
+
+    CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.used_waypoints, config.population * sizeof(int)));
 
 
     CHECK_CUDA(cudaMalloc(&paths.rawPaths.elements, raw_paths_size));
     cudaMemcpy(paths.rawPaths.elements, hostPtr, raw_paths_size,
                cudaMemcpyHostToDevice);
+
+
 
 
     //  CHECK_CUDA(cudaMalloc((void **) &paths.rawPaths, config.path_length * 3 * config.population * sizeof(float)));
@@ -142,8 +151,11 @@ void computeFPA_cuda(
 
     double fitness_start_time = omp_get_wtime();
 
-    //computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
-    //                 config.resolution);
+
+        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed, config.heightMap_cuda, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+                     config.resolution
+                     );
+    cudaDeviceSynchronize();
 
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
 
@@ -168,6 +180,11 @@ void computeFPA_cuda(
 
         //computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
         //               config.resolution);
+
+        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed, config.heightMap_cuda, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+                             config.resolution
+                             );
+        cudaDeviceSynchronize();
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
