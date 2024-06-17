@@ -17,9 +17,9 @@ int main() {
     Config config;
 
     config.iter_max = 25;
-    config.population = 2000;
+    config.population = 15000;
     config.two_opt_freq = 25;
-    config.path_length = 7;
+    config.path_length = 5;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;

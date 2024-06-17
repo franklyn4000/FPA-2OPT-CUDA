@@ -26,6 +26,9 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
     float f_avg = 0;
 
     int n = paths.smoothedPaths.used_waypoints[path_index];
+
+    int totalSteps = 1;
+
     bool underground = false;
     bool undergroundLast = false;
 
@@ -94,6 +97,7 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
                     } else {
                         underground = heightMap[pointY * 1500 + pointX] + a_utopia >= P1[2] + interval_z * j;
                         a_cum +=  pointZ - heightMap[pointY * 1500 + pointX];
+
                     }
 
             if (underground && undergroundLast) {
@@ -103,7 +107,7 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
            }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
-
+            totalSteps++;
         }
 
 
@@ -142,20 +146,24 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
             d_ea += distance_P1P2;
         }
 
-
+        totalSteps++;
     }
 
 
     //Penaly term P
     float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
-    a_avg = a_cum / n;
+
     // printf("a_avg: %f, a_utopia: %f, l_traj: %f, f_utopia: %f \n", a_avg, a_utopia, l_traj, f_utopia);
 
 
+   // printf("%i -- %.2f \n", path_index, d_ea);
+
     //Fitness function F
-    if (P == 0) {
+    if (P == 0.0) {
         //Cost term C
+
+        a_avg = a_cum / totalSteps;
         float C = w1 * (a_avg / a_utopia) + w2 * (l_traj / f_utopia);
 
 
@@ -164,7 +172,6 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
         paths.fitnesses[path_index] = 0 + 1 / (1 + P);
     }
 
-    paths.fitnesses[path_index] = 0 + 1 / (1 + P);
 
 }
 
@@ -176,8 +183,8 @@ __global__ void computeFitnesses_cuda(
 
 
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
-
     if (idx < paths.rawPaths.n_paths) {
+
 
 
         computeFitness_cuda(paths, heightMap, idx, idx * max_elements, paths.N_wps[idx],
@@ -188,6 +195,7 @@ __global__ void computeFitnesses_cuda(
 
     }
 
+
     computeBestFitness_cuda(paths);
 
 
@@ -195,6 +203,18 @@ __global__ void computeFitnesses_cuda(
 
 
 __device__ void computeBestFitness_cuda(Paths_cuda paths) {
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+    float fitness = idx < paths.rawPaths.n_paths ? paths.fitnesses[idx] : 0.0;
+
+    for(int i = 1; i < 32; i *=2) {
+        fitness = max(fitness, __shfl_xor_sync(-1, fitness, i));
+    }
+
+    if(threadIdx.x % 32 == 0) {
+        paths.bestFitness[0] = max(paths.bestFitness[0], fitness);
+    }
+
  /*
     for (int index = 0; index < paths.population; index++) {
 

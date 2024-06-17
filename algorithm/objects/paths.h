@@ -35,7 +35,7 @@ struct Paths_cuda {
     float* fitnesses;
 
     int fittestPathIndex;
-    float bestFitness;
+    float* bestFitness;
 };
 
 

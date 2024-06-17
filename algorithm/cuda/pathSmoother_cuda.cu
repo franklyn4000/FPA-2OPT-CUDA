@@ -163,7 +163,7 @@ __global__ void smoothPaths_cuda(
 
     if (idx < paths.rawPaths.n_paths) {
 
-        smoothPath_cuda(paths, idx, idx * max_elements, idx * paths.rawPaths.n_waypoints, turnRadius, n_pi);
+        smoothPath_cuda(paths, idx, idx * max_elements, idx * paths.rawPaths.n_waypoints * 3, turnRadius, n_pi);
 
         /*
                 for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
