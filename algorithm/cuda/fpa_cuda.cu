@@ -20,6 +20,7 @@
 #include "../parallel/pollinator_parallel.h"
 #include "../objects/paths.h"
 #include "pathSmoother_cuda.cuh"
+#include "pollinator_cuda.cuh"
 
 #define CHECK_CUDA(call)                                            \
 {                                                                   \
@@ -44,6 +45,8 @@ void computeFPA_cuda(
     double twoopt_time_taken = 0;
 
     float nwp = 0;
+
+    curandStatePhilox4_32_10_t *devPHILOXStates;
 
     int max_waypoints_smoothed = config.path_length * drone.turn_radius * 2 * 2; // upper bound
 
@@ -109,6 +112,7 @@ void computeFPA_cuda(
                cudaMemcpyHostToDevice);
 
 
+    CHECK_CUDA(cudaMalloc(&paths.pollinatedPaths.elements, raw_paths_size));
 
 
     //  CHECK_CUDA(cudaMalloc((void **) &paths.rawPaths, config.path_length * 3 * config.population * sizeof(float)));
@@ -138,10 +142,18 @@ void computeFPA_cuda(
     float *test_Nwps;
     CHECK_CUDA(cudaMallocHost(&test_Nwps, config.population * sizeof(float)));
 
+
     for (int i = 0; i < config.population; i++) {
         test_Nwps[i] = i + 0.0;
     }
     CHECK_CUDA(cudaMemcpy(paths.fitnesses, test_Nwps, config.population * sizeof(float), cudaMemcpyHostToDevice));
+
+
+    // allocate one curandState per thread on device
+    CHECK_CUDA(cudaMalloc((void **)&devPHILOXStates, dimBlock.x * dimGrid.x * sizeof(curandStatePhilox4_32_10_t)));
+
+    // setup curand state
+    setup_curand_kernel<<<64, 64>>>(devPHILOXStates);
 
 
     double smoothing_start_time = omp_get_wtime();
@@ -168,6 +180,10 @@ void computeFPA_cuda(
         pollination_start_time = omp_get_wtime();
 
         //pollinate_parallel(paths, config.p_switch);
+        pollinate_cuda<<<dimGrid, dimBlock>>>(paths, config.p_switch, devPHILOXStates);
+        cudaDeviceSynchronize();
+
+        CHECK_CUDA(cudaMemcpy(paths.rawPaths.elements, paths.pollinatedPaths.elements, raw_paths_size, cudaMemcpyDeviceToDevice));
 
         pollination_time_taken += omp_get_wtime() - pollination_start_time;
 
@@ -262,6 +278,12 @@ void computeFPA_cuda(
         //printf("%f \n", fitnesses_h[i]);
     }
 
+    float *hostPollinatedPaths = new float[raw_paths_size];
+
+    CHECK_CUDA(cudaMallocHost(&hostPollinatedPaths, raw_paths_size));
+    CHECK_CUDA(cudaMemcpy(hostPollinatedPaths, paths.pollinatedPaths.elements, raw_paths_size,
+                          cudaMemcpyDeviceToHost));
+
     float *hostSmoothedPaths = new float[smoothed_paths_size];
 
     CHECK_CUDA(cudaMallocHost(&hostSmoothedPaths, smoothed_paths_size));
@@ -281,6 +303,17 @@ void computeFPA_cuda(
     save_to_csv_cuda(hostSmoothedPaths, max_waypoints_smoothed * 3, "../heightMapper/fittest5.csv");
 
     for (int i = 0; i < config.population; i++) {
+        printf("POLLINATED path: ");
+
+
+        for (int j = 0; j < paths.rawPaths.n_waypoints * 3; j++) {
+            if (hostPtr[i *  paths.rawPaths.n_waypoints * 3 + j] != 0.0) {
+                printf("%.2f ", hostPollinatedPaths[i * paths.rawPaths.n_waypoints * 3 + j]);
+            } else {
+                printf(".");
+            }
+
+        }
         /*
         printf("RAW path: ");
 
@@ -292,8 +325,8 @@ void computeFPA_cuda(
                 printf(".");
             }
 
-        }
-
+        }*/
+        /*
         //printf("%f  ", rawPaths[i][5]);
          printf("\npath: ");
 
@@ -309,7 +342,7 @@ void computeFPA_cuda(
         //if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints * 3] > -1.0) {
 
         // }
-         //printf("\n");
+         printf("\n");
     }
 
     /*
@@ -374,4 +407,5 @@ void computeFPA_cuda(
     cudaFree(hostSmoothedPaths);
     cudaFree(hostPtr);
     cudaFree(hostPtr2);
+    CHECK_CUDA(cudaFree(devPHILOXStates));
 }

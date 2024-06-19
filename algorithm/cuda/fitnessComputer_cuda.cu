@@ -213,7 +213,10 @@ __device__ void computeBestFitness_cuda(Paths_cuda paths) {
 
     if(threadIdx.x % 32 == 0) {
         paths.bestFitness[0] = max(paths.bestFitness[0], fitness);
+       // paths.bestFitnessStartIndex[0] = max(paths.bestFitness[0], fitness);
     }
+
+
 
  /*
     for (int index = 0; index < paths.population; index++) {

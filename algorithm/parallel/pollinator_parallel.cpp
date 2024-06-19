@@ -75,7 +75,7 @@ void pollinate_parallel(
             for (int i = 0; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
                     paths.pollinatedPaths[pathIndex][3 * i + k] =
-                            paths.rawPaths[pathIndex][3 * i + k] + epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[k][3 * i + k]);
+                            paths.rawPaths[pathIndex][3 * i + k] + epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[l][3 * i + k]);
                 }
             }
         }
