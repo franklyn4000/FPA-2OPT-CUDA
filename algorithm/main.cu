@@ -16,10 +16,10 @@ int main() {
 
     Config config;
 
-    config.iter_max = 30;
-    config.population = 20;
-    config.two_opt_freq = 40;
-    config.path_length = 6;
+    config.iter_max = 300;
+    config.population = 100000;
+    config.two_opt_freq = 25;
+    config.path_length = 8;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;
@@ -55,7 +55,7 @@ int main() {
     init.zn = config.heightMap[init.yn][init.xn] + 60;
 
     printf("OMP\n");
-    computeFPA_parallel(config, drone, init);
+    //computeFPA_parallel(config, drone, init);
     printf("--------------------------------------------\n");
     printf("CUDA\n");
     computeFPA_cuda(config, heightMap_h, drone, init);

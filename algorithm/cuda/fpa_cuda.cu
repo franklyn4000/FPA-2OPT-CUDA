@@ -114,6 +114,8 @@ void computeFPA_cuda(
 
     CHECK_CUDA(cudaMalloc(&paths.pollinatedPaths.elements, raw_paths_size));
 
+    CHECK_CUDA(cudaMalloc(&paths.fittestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float)));
+
 
     //  CHECK_CUDA(cudaMalloc((void **) &paths.rawPaths, config.path_length * 3 * config.population * sizeof(float)));
     //  CHECK_CUDA(cudaMalloc((void **) &paths.pollinatedPaths, config.path_length * 3 * config.population * sizeof(float)));
@@ -182,6 +184,8 @@ void computeFPA_cuda(
         //pollinate_parallel(paths, config.p_switch);
         pollinate_cuda<<<dimGrid, dimBlock>>>(paths, config.p_switch, devPHILOXStates);
         cudaDeviceSynchronize();
+
+       // paths.fittestPathIndex = 0;
 
         CHECK_CUDA(cudaMemcpy(paths.rawPaths.elements, paths.pollinatedPaths.elements, raw_paths_size, cudaMemcpyDeviceToDevice));
 
@@ -290,6 +294,12 @@ void computeFPA_cuda(
     CHECK_CUDA(cudaMemcpy(hostSmoothedPaths, paths.smoothedPaths.elements, smoothed_paths_size,
                           cudaMemcpyDeviceToHost));
 
+    float *hostBestPath = new float[paths.rawPaths.n_waypoints * 3 * sizeof(float)];
+
+    CHECK_CUDA(cudaMallocHost(&hostBestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float)));
+    CHECK_CUDA(cudaMemcpy(hostBestPath, paths.fittestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float),
+                          cudaMemcpyDeviceToHost));
+
     float *res;
 
     cudaMallocHost(&res, config.population * sizeof(float));
@@ -300,10 +310,10 @@ void computeFPA_cuda(
 
     cudaMemcpy(res, paths.N_wps, config.population * sizeof(float), cudaMemcpyDeviceToHost);
 
-    save_to_csv_cuda(hostSmoothedPaths, max_waypoints_smoothed * 3, "../heightMapper/fittest5.csv");
+    save_to_csv_cuda(hostBestPath, paths.rawPaths.n_waypoints * 3, "../heightMapper/fittest5.csv");
 
     for (int i = 0; i < config.population; i++) {
-        printf("POLLINATED path: ");
+      /*  printf("POLLINATED path: ");
 
 
         for (int j = 0; j < paths.rawPaths.n_waypoints * 3; j++) {
@@ -313,7 +323,7 @@ void computeFPA_cuda(
                 printf(".");
             }
 
-        }
+        }*/
         /*
         printf("RAW path: ");
 
@@ -342,7 +352,7 @@ void computeFPA_cuda(
         //if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints * 3] > -1.0) {
 
         // }
-         printf("\n");
+      //   printf("\n");
     }
 
     /*

@@ -63,7 +63,7 @@ __global__ void pollinate_cuda(
                         //global pollinate
 
                         // TODO precompute large array of levy numbers?
-                        float *L = levy_p(paths.rawPaths.n_waypoints * 3, dis.x);
+                        //float *L = levy_p(paths.rawPaths.n_waypoints * 3, dis.x);
                         //  float gamma = 0.1;
 
                         paths.pollinatedPaths.elements[pathIndex + 3 * 0] = paths.rawPaths.elements[pathIndex + 3 * 0];
@@ -79,11 +79,18 @@ __global__ void pollinate_cuda(
                                 float coord = paths.rawPaths.elements[pathIndex + 3 * i + 0];
                                 float coord1 = paths.rawPaths.elements[pathIndex + 3 * i + 1];
                                 float coord2 = paths.rawPaths.elements[pathIndex + 3 * i + 2];
+                         //   paths.pollinatedPaths.elements[pathIndex + 3 * i] = paths.rawPaths.elements[pathIndex + 3 * i];
+                         //   paths.pollinatedPaths.elements[pathIndex + 3 * i + 1] = paths.rawPaths.elements[pathIndex + 3 * i + 1];
+                       //     paths.pollinatedPaths.elements[pathIndex + 3 * i + 2] = paths.rawPaths.elements[pathIndex + 3 * i + 2];
 
 
 
-                                paths.pollinatedPaths[pathIndex][3 * i + 0] =
-                                        coord + L[3 * i] * (paths.fittestPath[3 * i + k] - coord);
+                            paths.pollinatedPaths.elements[pathIndex + 3 * i + 0] = coord + dis.z * (paths.fittestPath[3 * i + 0] - coord);
+                            paths.pollinatedPaths.elements[pathIndex + 3 * i + 1] = coord1 + dis.z * (paths.fittestPath[3 * i + 1] - coord1);
+                            paths.pollinatedPaths.elements[pathIndex + 3 * i + 2] = coord2 + dis.z * (paths.fittestPath[3 * i + 2] - coord2);
+
+                               // paths.pollinatedPaths[pathIndex][3 * i + 0] =
+                               //         coord + L[3 * i] * (paths.fittestPath[3 * i + k] - coord);
 
 
                         }
