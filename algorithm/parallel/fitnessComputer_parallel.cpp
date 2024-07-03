@@ -13,8 +13,8 @@ float computeFitness(std::vector<float> path,
                      float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
-    float w1 = 0.35;
-    float w2 = 0.65;
+    float w1 = 0.25;
+    float w2 = 0.75;
 
     float d_ug = 0.0;
     float d_dz = 0.0;
@@ -39,6 +39,9 @@ float computeFitness(std::vector<float> path,
     float steps_P1P2;
     float inv_steps;
     float step_length_P1P2;
+
+    int heightMapWidth = heightMap.size();
+    int heightMapHeight = heightMap[0].size();
 
     for (int i = 0; i < n - 1; i++) {
         P1[0] = path[3 * i];
@@ -76,6 +79,7 @@ float computeFitness(std::vector<float> path,
 
         float horizontal_length = std::sqrt(diff_x * diff_x + diff_y * diff_y);
         float angle_radians = std::atan2(diff_z, horizontal_length);
+        float currentAltitude = 0.0f;
 
         for (int j = 1; j < steps_P1P2; j++) {
 
@@ -84,21 +88,24 @@ float computeFitness(std::vector<float> path,
             int pointZ = static_cast<int>(std::round(P1[2] + interval_z * j));
 
             if (
-                    pointY > heightMap.size() - 1 ||
+                    pointY > heightMapWidth - 1 ||
                     pointY < 0 ||
-                    pointX > heightMap[0].size() - 1 ||
+                    pointX > heightMapHeight - 1 ||
                     pointX < 0
                     ) {
                 underground = true;
             } else {
-                underground = heightMap[pointY][pointX] + a_utopia >= P1[2] + interval_z * j;
-                a_cum +=  pointZ - heightMap[pointY][pointX];
+                //underground = heightMap[pointY][pointX] + a_utopia >= P1[2] + interval_z * j;
+                currentAltitude = pointZ - heightMap[pointY][pointX];
+                underground = currentAltitude < a_utopia;
+                a_cum += currentAltitude;
             }
+
 
             if (underground && undergroundLast) {
                 d_ug += step_length_P1P2;
             } else if (underground != undergroundLast) {
-                d_ug += step_length_P1P2 / 2;
+                d_ug += step_length_P1P2 * 0.5f;
             }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
@@ -111,30 +118,27 @@ float computeFitness(std::vector<float> path,
         int p2Y = static_cast<int>(std::round(P2[1]));
         int p2Z = static_cast<int>(std::round(P2[2]));
 
-        float height2;
+
         if (
-                p2Y > heightMap.size() - 1 ||
+                p2Y > heightMapWidth - 1 ||
                 p2Y < 0 ||
-                p2X > heightMap[0].size() - 1 ||
+                p2X > heightMapHeight - 1 ||
                 p2X < 0
                 ) {
-            height2 = 99999;
             underground = true;
         } else {
-            height2 = p2Z - heightMap[p2Y][p2X];
+            currentAltitude = p2Z - heightMap[p2Y][p2X];
+            underground = currentAltitude < a_utopia;
+            a_cum += currentAltitude;
         }
 
-
-        underground = height2 < a_utopia;
         if (underground && undergroundLast) {
             d_ug += step_length_P1P2;
         } else if (underground != undergroundLast) {
-            d_ug += step_length_P1P2 / 2;
+            d_ug += step_length_P1P2 * 0.5f;
         }
         undergroundLast = underground;
         l_traj += step_length_P1P2;
-
-        a_cum += height2;
 
         if (angle_radians > max_asc_angle || angle_radians < max_desc_angle) {
             d_ea += distance_P1P2;

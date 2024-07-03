@@ -53,7 +53,7 @@ void pollinate_parallel(
             //  float gamma = 0.1;
 
 
-            for (int i = 0; i < n - 1; i++) {
+            for (int i = 1; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
                     float coord = paths.rawPaths[pathIndex][3 * i + k];
                     paths.pollinatedPaths[pathIndex][3 * i + k] =
@@ -72,10 +72,12 @@ void pollinate_parallel(
             std::uniform_int_distribution<> rand2(0, paths.population-1);
             int l = rand2(gen);
 
-            for (int i = 0; i < n - 1; i++) {
+            for (int i = 1; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
+                    float inc = epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[l][3 * i + k]);
+                    float boundedInc = std::max(std::min(inc, 500.0f), -500.0f);
                     paths.pollinatedPaths[pathIndex][3 * i + k] =
-                            paths.rawPaths[pathIndex][3 * i + k] + epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[l][3 * i + k]);
+                            paths.rawPaths[pathIndex][3 * i + k] + boundedInc;
                 }
             }
         }

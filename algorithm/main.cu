@@ -12,28 +12,28 @@
 
 int main() {
 
-    std::string filename = "../heightMapper/height_map.csv";
+    std::string filename = "../heightMapper/switzerland.csv";
 
     Config config;
 
-    config.iter_max = 300;
-    config.population = 100000;
+    config.iter_max = 200;
+    config.population = 30000;
     config.two_opt_freq = 25;
-    config.path_length = 8;
+    config.path_length = 5;
     config.resolution = 1 / 2.0f;
     config.p_switch = 0.8;
     config.epsilon_init = 0.25;
     config.epsilon_final = 0.02;
-    config.heightMap_cols = 1500;
-    config.heightMap_rows = 1500;
+    config.heightMap_cols = 1000;
+    config.heightMap_rows = 1000;
     config.heightMap = load_height_map(filename);
 	float* heightMap_h = load_height_map_cuda(filename, config.heightMap_cols, config.heightMap_rows);
 
     Drone drone;
 
-    drone.max_asc_angle = 15.0f * M_PI / 180;
+    drone.max_asc_angle = 25.0f * M_PI / 180;
     drone.max_desc_angle = -30.0f * M_PI / 180;
-    drone.turn_radius = 100.0f;
+    drone.turn_radius = 40.0f;
     drone.min_altitude = 20.0f;
 
     InitialConditions init;
@@ -43,22 +43,22 @@ int main() {
 
     init.x_min = 0.0f;
     init.x_max = config.heightMap.size() - 1;
-    init.z_min = -500;
+    init.z_min = 2000;
     init.y_min = 0.0f;
     init.y_max = config.heightMap[0].size() - 1;
-    init.z_max = 500;
-    init.x1 = 5.0f;
-    init.y1 = (float) y_mid;
+    init.z_max = 3000;
+    init.x1 = config.heightMap.size() - 5.0f;
+    init.y1 = 800.0;
     init.z1 = config.heightMap[init.y1][init.x1] + 60;
     init.xn = config.heightMap.size() - 5.0f;
-    init.yn = (float) y_mid;
+    init.yn = 50.0;
     init.zn = config.heightMap[init.yn][init.xn] + 60;
 
     printf("OMP\n");
-    //computeFPA_parallel(config, drone, init);
+    computeFPA_parallel(config, drone, init);
     printf("--------------------------------------------\n");
     printf("CUDA\n");
-    computeFPA_cuda(config, heightMap_h, drone, init);
+    //computeFPA_cuda(config, heightMap_h, drone, init);
 
     return 0;
 }
