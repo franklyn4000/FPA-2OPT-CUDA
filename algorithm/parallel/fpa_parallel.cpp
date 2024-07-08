@@ -47,7 +47,7 @@ void computeFPA_parallel(
 
     double smoothing_start_time = omp_get_wtime();
 
-    smoothPaths(paths, drone.turn_radius, drone.turn_radius * 2);
+    smoothPaths(paths, drone.turn_radius, 10);
 
     double smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
 
@@ -70,7 +70,7 @@ void computeFPA_parallel(
 
         smoothing_start_time = omp_get_wtime();
 
-        smoothPaths(paths, drone.turn_radius, drone.turn_radius * 2);
+        smoothPaths(paths, drone.turn_radius, 10);
 
         smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
 
@@ -89,17 +89,17 @@ void computeFPA_parallel(
         if (i == eight) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, drone.turn_radius * 2, nwp);
+                    drone.turn_radius, 10, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest1.csv");
         } else if (i == quarter) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, drone.turn_radius * 2, nwp);
+                    drone.turn_radius, 10, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest2.csv");
         } else if (i == half) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, drone.turn_radius * 2, nwp);
+                    drone.turn_radius, 10, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest3.csv");
         }
 
@@ -108,7 +108,7 @@ void computeFPA_parallel(
             printf("%i \n", i);
             twoopt_start_time = omp_get_wtime();
 
-            twoOptParallel(paths, drone.turn_radius, drone.turn_radius * 2, config.heightMap, drone.max_asc_angle,
+            twoOptParallel(paths, drone.turn_radius, 10, config.heightMap, drone.max_asc_angle,
                            drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
@@ -121,7 +121,7 @@ void computeFPA_parallel(
 
     std::vector<float> smoothedPath = smoothPath(
             paths.fittestPath,
-            drone.turn_radius, drone.turn_radius * 2, nwp);
+            drone.turn_radius, 10, nwp);
 
     save_to_csv(smoothedPath, "../heightMapper/fittest4.csv");
 

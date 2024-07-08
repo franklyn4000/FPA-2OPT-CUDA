@@ -40,18 +40,11 @@ void pollinate_parallel(
 #pragma omp parallel for
     for (int pathIndex = 0; pathIndex < paths.rawPaths.size(); pathIndex++) {
         int n = paths.rawPaths[pathIndex].size() / 3;
-
-
         std::uniform_real_distribution<> dis(0.0, 1.0);
-        // printf("%f\n", dis(gen));
 
         if (dis(gen) < p_switch) {
             //global pollinate
-
-            // TODO precompute large array of levy numbers?
             double *L = levy_p(n * 3);
-            //  float gamma = 0.1;
-
 
             for (int i = 1; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
@@ -75,7 +68,7 @@ void pollinate_parallel(
             for (int i = 1; i < n - 1; i++) {
                 for (int k = 0; k < 3; k++) {
                     float inc = epsilon * (paths.rawPaths[j][3 * i + k] - paths.rawPaths[l][3 * i + k]);
-                    float boundedInc = std::max(std::min(inc, 500.0f), -500.0f);
+                    float boundedInc = std::max(std::min(inc, 800.0f), -800.0f);
                     paths.pollinatedPaths[pathIndex][3 * i + k] =
                             paths.rawPaths[pathIndex][3 * i + k] + boundedInc;
                 }

@@ -10,15 +10,17 @@
 __global__ void computeFitnesses_cuda(
         Paths_cuda paths,
         int max_elements,
-        const float* heightMap, float max_asc_angle,
+        const float *heightMap,
+        int heightMapWidth, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia, float resolution);
 
 __device__ float computeFitness_cuda(Paths_cuda paths,
-         const float* heightMap,
-         int path_index,
-         int startIndex,
-         float N_wp, float max_asc_angle,
-         float max_desc_angle, float a_utopia, float f_utopia, float resolution);
+     const float *heightMap,
+     int heightMapWidth,
+     int path_index,
+     int startIndex,
+     float N_wp, float max_asc_angle,
+     float max_desc_angle, float a_utopia, float f_utopia, float resolution);
 
 __device__ void computeBestFitness_cuda(Paths_cuda paths);
 

@@ -7,6 +7,7 @@
 
 __device__ float computeFitness_cuda(Paths_cuda paths,
                      const float* heightMap,
+                                     int heightMapWidth,
                      int path_index,
                      int startIndex,
                      float N_wp, float max_asc_angle,
@@ -79,7 +80,7 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
 
         float horizontal_length = sqrt(diff_x * diff_x + diff_y * diff_y);
         float angle_radians = atan2(diff_z, horizontal_length);
-
+        float currentAltitude = 0.0f;
 
         for (int j = 1; j < steps_P1P2; j++) {
 
@@ -87,23 +88,16 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
             int pointY = __float2int_rd(P1[1] + interval_y * j);
             int pointZ = __float2int_rd(P1[2] + interval_z * j);
 
-            if (
-                    pointY > 1500 - 1 || //TODO heightmap size
-                    pointY < 0 ||
-                    pointX > 1500 - 1 || //TODO heightmap size
-                    pointX < 0
-                    ) {
-                underground = true;
-                    } else {
-                        underground = heightMap[pointY * 1500 + pointX] + a_utopia >= P1[2] + interval_z * j;
-                        a_cum +=  pointZ - heightMap[pointY * 1500 + pointX];
 
-                    }
+            currentAltitude = pointZ - heightMap[pointY * heightMapWidth + pointX];
+            underground = currentAltitude < a_utopia;
+            a_cum += currentAltitude;
+
 
             if (underground && undergroundLast) {
                 d_ug += step_length_P1P2;
             } else if (underground != undergroundLast) {
-                d_ug += step_length_P1P2 / 2;
+                d_ug += step_length_P1P2 * 0.5f;
            }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
@@ -116,31 +110,22 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
         int p2Y = __float2int_rd(P2[1]);
         int p2Z = __float2int_rd(P2[2]);
 
-        float height2;
-        if (
-                p2Y > 1500 - 1 ||//TODO heightmap size
-                p2Y < 0 ||
-                p2X > 1500 - 1 ||//TODO heightmap size
-                p2X < 0
-                ) {
-            height2 = 99999;
-            underground = true;
-        } else {
-            height2 = p2Z - heightMap[p2Y * 1500 + p2X];
-        }
 
-        underground = height2 < a_utopia;
+        currentAltitude = p2Z - heightMap[p2Y * heightMapWidth + p2X];
+        underground = currentAltitude < a_utopia;
+        a_cum += currentAltitude;
+
 
         if (underground && undergroundLast) {
             d_ug += step_length_P1P2;
         } else if (underground != undergroundLast) {
-            d_ug += step_length_P1P2 / 2;
+            d_ug += step_length_P1P2 * 0.5;
         }
 
         undergroundLast = underground;
         l_traj += step_length_P1P2;
 
-        a_cum += height2;
+
 
         if (angle_radians > max_asc_angle || angle_radians < max_desc_angle) {
             d_ea += distance_P1P2;
@@ -179,7 +164,8 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
 __global__ void computeFitnesses_cuda(
         Paths_cuda paths,
         int max_elements,
-        const float* heightMap, float max_asc_angle,
+        const float* heightMap,
+        int heightMapWidth, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
@@ -188,7 +174,7 @@ __global__ void computeFitnesses_cuda(
 
 
 
-        computeFitness_cuda(paths, heightMap, idx, idx * max_elements, paths.N_wps[idx],
+        computeFitness_cuda(paths, heightMap, heightMapWidth,idx, idx * max_elements, paths.N_wps[idx],
                                        max_asc_angle,
                                        max_desc_angle,
                                        a_utopia, f_utopia, resolution);

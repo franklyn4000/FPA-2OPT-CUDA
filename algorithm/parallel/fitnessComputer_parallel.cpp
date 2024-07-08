@@ -13,8 +13,8 @@ float computeFitness(std::vector<float> path,
                      float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
-    float w1 = 0.25;
-    float w2 = 0.75;
+    float w1 = 0.40;
+    float w2 = 0.60;
 
     float d_ug = 0.0;
     float d_dz = 0.0;
@@ -26,6 +26,8 @@ float computeFitness(std::vector<float> path,
     float f_avg = 0;
 
     int n = path.size() / 3;
+    int totalSteps = 1;
+
     bool underground = false;
     bool undergroundLast = false;
 
@@ -109,7 +111,7 @@ float computeFitness(std::vector<float> path,
             }
             undergroundLast = underground;
             l_traj += step_length_P1P2;
-
+            totalSteps++;
 
 
         }
@@ -144,19 +146,16 @@ float computeFitness(std::vector<float> path,
             d_ea += distance_P1P2;
         }
 
+        totalSteps++;
     }
-
 
     //Penaly term P
     float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
-    a_avg = a_cum / n;
-    // printf("a_avg: %f, a_utopia: %f, l_traj: %f, f_utopia: %f \n", a_avg, a_utopia, l_traj, f_utopia);
-
-
     //Fitness function F
-    if (P == 0) {
+    if (P == 0.0f) {
         //Cost term C
+        a_avg = a_cum / totalSteps;
         float C = w1 * (a_avg / a_utopia) + w2 * (l_traj / f_utopia);
 
         return 1 + 1 / (1 + C);

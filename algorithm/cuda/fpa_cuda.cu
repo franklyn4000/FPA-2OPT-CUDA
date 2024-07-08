@@ -160,7 +160,7 @@ void computeFPA_cuda(
 
     double smoothing_start_time = omp_get_wtime();
 
-    smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, drone.turn_radius, drone.turn_radius * 2,
+    smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, drone.turn_radius, 10,
                                             pitch);
     cudaDeviceSynchronize();
 
@@ -169,7 +169,7 @@ void computeFPA_cuda(
     double fitness_start_time = omp_get_wtime();
 
 
-        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, config.heightMap_cuda, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, config.heightMap_cuda, config.heightMap_rows, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
                      config.resolution
                      );
     cudaDeviceSynchronize();
@@ -182,7 +182,7 @@ void computeFPA_cuda(
         pollination_start_time = omp_get_wtime();
 
         //pollinate_parallel(paths, config.p_switch);
-        pollinate_cuda<<<dimGrid, dimBlock>>>(paths, config.p_switch, devPHILOXStates);
+        pollinate_cuda<<<dimGrid, dimBlock>>>(paths, config.p_switch, config.heightMap_cols, config.heightMap_rows, devPHILOXStates);
         cudaDeviceSynchronize();
 
        // paths.fittestPathIndex = 0;
@@ -194,7 +194,7 @@ void computeFPA_cuda(
         smoothing_start_time = omp_get_wtime();
 
         smoothPaths_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, drone.turn_radius,
-                                                drone.turn_radius * 2, pitch);
+                                                10, pitch);
         cudaDeviceSynchronize();
 
         smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
@@ -204,7 +204,7 @@ void computeFPA_cuda(
         //computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
         //               config.resolution);
 
-        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, config.heightMap_cuda, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+        computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, config.heightMap_cuda, config.heightMap_rows, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
                              config.resolution
                              );
         cudaDeviceSynchronize();

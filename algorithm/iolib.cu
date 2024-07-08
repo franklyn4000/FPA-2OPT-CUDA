@@ -123,3 +123,15 @@ void save_to_csv_cuda(float* data, int length, const std::string &file_name) {
     // Close the file
     out_file.close();
 }
+
+
+
+// for convenience
+using json = nlohmann::json;
+
+json readJsonFile(const std::string& filePath) {
+    std::ifstream i(filePath);
+    json j;
+    i >> j;
+    return j;
+}
