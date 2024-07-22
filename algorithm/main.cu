@@ -58,7 +58,7 @@ int main() {
     printf("%i\n",config.iter_max);
 
     printf("OMP\n");
-    computeFPA_parallel(config, drone, init);
+  // computeFPA_parallel(config, drone, init);
     printf("--------------------------------------------\n");
     printf("CUDA\n");
     computeFPA_cuda(config, heightMap_h, drone, init);

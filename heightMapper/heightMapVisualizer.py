@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import math
-import pandas as pd
+import json
+
 
 def read_fittest_from_file(file_path):
 
@@ -76,7 +77,10 @@ def visualize_3D(loaded, fittest_paths):
     fig.show()
 
 
-loaded = load_array_from_csv('switzerland.csv')
+with open('init.json', 'r') as config:
+    data = json.load(config)
+
+loaded = load_array_from_csv(data['heightmap_file'])
 fittest_path_cpu = read_fittest_from_file('fittest4.csv')
 fittest_path_gpu = read_fittest_from_file('fittest5.csv')
 visualize_3D(loaded, [fittest_path_cpu, fittest_path_gpu])

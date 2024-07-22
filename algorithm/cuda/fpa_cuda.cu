@@ -48,13 +48,14 @@ void computeFPA_cuda(
 
     curandStatePhilox4_32_10_t *devPHILOXStates;
 
-    int max_waypoints_smoothed = config.path_length * drone.turn_radius * 2 * 2; // upper bound
+    int max_waypoints_smoothed = config.path_length * 10 * 2; // upper bound
 
     Paths_cuda paths;
    // paths.bestFitness = -1.0f;
 
     dim3 dimBlock(256);
     dim3 dimGrid((config.population + dimBlock.x - 1) / dimBlock.x);
+    printf("grid: %i\n", dimGrid.x * dimBlock.x);
 
     //Initialize a population of n flowers/pollen gametes with random solutions
     // paths.rawPaths = generateSolutions(init,
@@ -273,7 +274,7 @@ void computeFPA_cuda(
 
     double totalTime = pollination_time_taken + smoothing_time_taken + fitness_time_taken + twoopt_time_taken;
 
-    printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.2f, %.2f, %.2f, %.2f\n", pollination_time_taken / totalTime,
+    printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.3f, %.3f, %.3f, %.3f\n", pollination_time_taken / totalTime,
            smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
 
     printf("CUDA Algorithm time: %f Reached Fitness: %f\n", totalTime, bestFitness_h[0]);
@@ -417,5 +418,10 @@ void computeFPA_cuda(
     cudaFree(hostSmoothedPaths);
     cudaFree(hostPtr);
     cudaFree(hostPtr2);
+    cudaFree(hostBestPath);
     CHECK_CUDA(cudaFree(devPHILOXStates));
+    CHECK_CUDA(cudaFree(paths.fittestPath));
+    CHECK_CUDA(cudaFree(paths.rawPaths.elements));
+    CHECK_CUDA(cudaFree(paths.pollinatedPaths.elements));
+    CHECK_CUDA(cudaFree(paths.smoothedPaths.elements));
 }

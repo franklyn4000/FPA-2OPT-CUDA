@@ -14,8 +14,8 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
                      float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
-    float w1 = 0.35;
-    float w2 = 0.65;
+    float w1 = 0.40;
+    float w2 = 0.60;
 
     float d_ug = 0.0;
     float d_dz = 0.0;
@@ -105,13 +105,11 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
         }
 
 
-
         int p2X = __float2int_rd(P2[0]);
         int p2Y = __float2int_rd(P2[1]);
         int p2Z = __float2int_rd(P2[2]);
 
-
-        currentAltitude = p2Z - heightMap[p2Y * heightMapWidth + p2X];
+       currentAltitude = p2Z - heightMap[p2Y * heightMapWidth + p2X];
         underground = currentAltitude < a_utopia;
         a_cum += currentAltitude;
 
@@ -157,8 +155,6 @@ __device__ float computeFitness_cuda(Paths_cuda paths,
         paths.fitnesses[path_index] = 0 + 1 / (1 + P);
     }
 
-  //  printf("fit: %f \n",  paths.fitnesses[path_index]);
-
 }
 
 __global__ void computeFitnesses_cuda(
@@ -198,7 +194,7 @@ __device__ void computeBestFitness_cuda(Paths_cuda paths) {
     float fitness = idx < paths.rawPaths.n_paths ? paths.fitnesses[idx] : 0.0;
 
     for(int i = 1; i < 32; i *=2) {
-        fitness = max(fitness, __shfl_xor_sync(-1, fitness, i));
+        fitness = max(fitness, __shfl_xor_sync(0xffffffff, fitness, i));
     }
 
     if(threadIdx.x % 32 == 0) {
@@ -209,14 +205,31 @@ __device__ void computeBestFitness_cuda(Paths_cuda paths) {
 
   //  printf("max: %f\n", __int_as_float(((int *)paths.bestFitness)[0]));
 
-    if(__int_as_float(((int *)paths.bestFitness)[0]) == paths.fitnesses[idx]) {
-        //paths.fittestPathIndex = idx;
+    paths.fittestPathThread = 0;
+
+    __syncthreads();
+
+    if(idx < paths.rawPaths.n_paths && __int_as_float(((int *)paths.bestFitness)[0]) == paths.fitnesses[idx]) {
+        paths.fittestPathThread = idx;
 
         //TODO race condition?
         for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
             paths.fittestPath[i] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints * 3 + i];
         }
 
+
+    //    printf("\n fit: %.5f %.5f %i\n", __int_as_float(((int *)paths.bestFitness)[0]), paths.fitnesses[idx], idx);
+
+    }
+__syncthreads();
+
+
+
+
+    if (paths.fittestPathThread == idx) {
+       // for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
+      //      paths.fittestPath[i] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints * 3 + i];
+       // }
     }
 
 

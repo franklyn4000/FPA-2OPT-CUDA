@@ -91,6 +91,7 @@ __device__ void smoothPath_cuda(
         //compute Center C of tangent circle using C = P + turnRadius * csc(alpha) * (tau_2 - tau_1)
         for (int j = 0; j < 3; j++) {
             C[j] = P[j] + cscAlphaTurnradius * (tau_2[j] - tau_1[j]);
+
         }
 
         //calculate distance between P and C
@@ -103,7 +104,9 @@ __device__ void smoothPath_cuda(
         float c_path = distance_PC * cos(alpha / 2);
 
         if (distance_PC > min(mag_1, mag_2) ||
-            c_path + prevCPath > mag_1) {
+            c_path + prevCPath > mag_1 ||
+            mag_1 == 0.0 ||
+            mag_2 == 0.0) {
             //cannot smooth trajectory
 
             paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = P[0];
@@ -127,12 +130,15 @@ __device__ void smoothPath_cuda(
             float cosOmega = cos(omega);
             float cosAlphaOmega = cos(alpha + omega);
 
+
+
             paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = C[0] - cscAlphaTurnradius * tau_1[0] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[0] * cosOmega;
             paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 1] = C[1] - cscAlphaTurnradius * tau_1[1] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[1] * cosOmega;
             paths.smoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 2] = C[2] - cscAlphaTurnradius * tau_1[2] * cosAlphaOmega -
                 cscAlphaTurnradius * tau_2[2] * cosOmega;
+
             smoothedPathLength++;
 
         }
@@ -148,9 +154,7 @@ __device__ void smoothPath_cuda(
 
     paths.smoothedPaths.used_waypoints[path_index] = smoothedPathLength;
 
-
-    //TODO N_wp = unsmoothedVertices / n;
-
+    paths.N_wps[path_index] = unsmoothedVertices / n;
 
     //return smoothedPath;
 }

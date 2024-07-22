@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 def load_and_make_array(filename):
     data1 = np.loadtxt(filename, skiprows=1)
@@ -44,3 +45,8 @@ final_data = np.concatenate((bottom_row, top_row), axis=0)
 np.savetxt("switzerland.csv", final_data, delimiter=",")
 
 
+with open('switzerland.json', 'r') as source_file:
+    data = json.load(source_file)
+
+with open('init.json', 'w') as destination_file:
+    json.dump(data, destination_file)
