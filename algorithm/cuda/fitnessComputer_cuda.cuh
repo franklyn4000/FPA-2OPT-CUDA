@@ -14,7 +14,7 @@ __global__ void computeFitnesses_cuda(
         int heightMapWidth, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia, float resolution);
 
-__device__ float computeFitness_cuda(Paths_cuda paths,
+__device__ void computeFitness_cuda(Paths_cuda paths,
      const float *heightMap,
      int heightMapWidth,
      int path_index,

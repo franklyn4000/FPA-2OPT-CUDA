@@ -87,7 +87,7 @@ float computeFitness(std::vector<float> path,
 
             int pointX = static_cast<int>(std::round(P1[0] + interval_x * j));
             int pointY = static_cast<int>(std::round(P1[1] + interval_y * j));
-            int pointZ = static_cast<int>(std::round(P1[2] + interval_z * j));
+            int pointZ = P1[2] + interval_z * j;
 
             if (
                     pointY > heightMapWidth - 1 ||
@@ -118,7 +118,7 @@ float computeFitness(std::vector<float> path,
 
         int p2X = static_cast<int>(std::round(P2[0]));
         int p2Y = static_cast<int>(std::round(P2[1]));
-        int p2Z = static_cast<int>(std::round(P2[2]));
+        int p2Z = P2[2];
 
 
         if (

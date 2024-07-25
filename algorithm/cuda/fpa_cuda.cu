@@ -237,16 +237,20 @@ void computeFPA_cuda(
 
         if (i % config.two_opt_freq == 0) {
             printf("%i ", i);
-            /*
+
             twoopt_start_time = omp_get_wtime();
 
-            twoOptParallel(paths, drone.turn_radius, drone.turn_radius * 2, config.heightMap, drone.max_asc_angle,
-                           drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
+            //create copy of smoothedpaths and fitnesses
+
+
+            //start 32 threads with unique i, j values per path
+            //evaluate them, if one is better than best fitness, set i,j to initial values and restart with new path
+
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
 
-            computeBestFitness(paths);
-            */
+            //computeBestFitness(paths);
+
         }
         //   computeBestFitness(paths);
     }
