@@ -1,0 +1,10 @@
+{
+    "iter_max": 2,
+    "population": 1,
+    "two_opt_freq": 25,
+    "path_length": 12,
+    "resolution": 1,
+    "p_switch": 0.83,
+    "epsilon_init": 0.25,
+    "epsilon_final": 0.02
+}
