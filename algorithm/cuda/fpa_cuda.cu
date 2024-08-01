@@ -21,6 +21,7 @@
 #include "../objects/paths.h"
 #include "pathSmoother_cuda.cuh"
 #include "pollinator_cuda.cuh"
+#include "twoOpt_cuda.cuh"
 
 #define CHECK_CUDA(call)                                            \
 {                                                                   \
@@ -125,6 +126,11 @@ void computeFPA_cuda(
     CHECK_CUDA(cudaMalloc((void **) &paths.bestFitness, 1 * sizeof(float)));
 
     CHECK_CUDA(cudaMalloc((void **) &paths.N_wps, config.population * sizeof(float)));
+
+    CHECK_CUDA(cudaMalloc((void **) &paths.twoOptFinishedSolutions, config.population * sizeof(int)));
+
+    CHECK_CUDA(cudaMalloc((void **) &paths.twoOptCurrentI, config.population * sizeof(int)));
+    CHECK_CUDA(cudaMalloc((void **) &paths.twoOptCurrentJ, config.population * sizeof(int)));
 
     /*
         float** rawPaths;
@@ -240,8 +246,16 @@ void computeFPA_cuda(
 
             twoopt_start_time = omp_get_wtime();
 
+            dim3 twoOptBlock(32);
+            dim3 twoOptGrid(config.population);
+
             //create copy of smoothedpaths and fitnesses
 
+          //  compactAndCuda<<<twoOptGrid, twoOptBlock>>>(paths);
+
+            printf("threads for 2 opt: %i \n", 32 * config.population);
+
+            twoOptCuda<<<twoOptGrid, twoOptBlock>>>(paths);
 
             //start 32 threads with unique i, j values per path
             //evaluate them, if one is better than best fitness, set i,j to initial values and restart with new path

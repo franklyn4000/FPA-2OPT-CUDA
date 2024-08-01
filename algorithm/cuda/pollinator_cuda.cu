@@ -71,7 +71,7 @@ __global__ void pollinate_cuda(
                     pathIndex + 3 * paths.rawPaths.n_waypoints - 1];
 
 
-            for (float i = 1; i < paths.rawPaths.n_waypoints - 1; i++) {
+            for (int i = 1; i < paths.rawPaths.n_waypoints - 1; i++) {
                 coord.x = paths.rawPaths.elements[pathIndex + 3 * i + 0];
                 coord.y = paths.rawPaths.elements[pathIndex + 3 * i + 1];
                 coord.z = paths.rawPaths.elements[pathIndex + 3 * i + 2];
