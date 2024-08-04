@@ -13,8 +13,8 @@ float computeFitness(std::vector<float> path,
                      float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
 
 
-    float w1 = 0.40;
-    float w2 = 0.60;
+    float w1 = 0.30;
+    float w2 = 0.70;
 
     float d_ug = 0.0;
     float d_dz = 0.0;

@@ -16,4 +16,8 @@ std::vector<float> smoothPath(
         std::vector<float> &path,
         float turnRadius, int n_pi, float &N_wp);
 
+std::vector<float> smoothPath_fromArray(
+        float* path, int pathlength,
+        float turnRadius, int n_pi);
+
 #endif //ALGORITHM_PATHSMOOTHER_CUH

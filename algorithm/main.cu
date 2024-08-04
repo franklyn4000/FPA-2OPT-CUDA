@@ -18,20 +18,35 @@ int main() {
 
     std::string heightmap_path = "../heightMapper/" + (std::string)initFile["heightmap_file"];
 
-    Config config;
+    Config config_p;
+    Config config_c;
 
-    config.iter_max = (int)configFile["iter_max"];
-    config.population = (int)configFile["population"];
-    config.two_opt_freq = (int)configFile["two_opt_freq"];
-    config.path_length = (int)configFile["path_length"];
-    config.resolution = 1 / (float)configFile["resolution"];
-    config.p_switch = (float)configFile["p_switch"];
-    config.epsilon_init = (float)configFile["epsilon_init"];
-    config.epsilon_final = (float)configFile["epsilon_final"];
-    config.heightMap_cols = (int)initFile["width"];
-    config.heightMap_rows = (int)initFile["height"];
-    config.heightMap = load_height_map(heightmap_path);
-	float* heightMap_h = load_height_map_cuda(heightmap_path, config.heightMap_cols, config.heightMap_rows);
+    config_p.iter_max = (int)configFile["iter_max"];
+    config_p.population = (int)configFile["population_parallel"];
+    config_p.two_opt_freq = (int)configFile["two_opt_freq"];
+    config_p.path_length = (int)configFile["path_length"];
+    config_p.resolution = 1 / (float)configFile["resolution"];
+    config_p.p_switch = (float)configFile["p_switch"];
+    config_p.epsilon_init = (float)configFile["epsilon_init"];
+    config_p.epsilon_final = (float)configFile["epsilon_final"];
+    config_p.heightMap_cols = (int)initFile["width"];
+    config_p.heightMap_rows = (int)initFile["height"];
+    config_p.heightMap = load_height_map(heightmap_path);
+
+	config_c.iter_max = (int)configFile["iter_max"];
+	config_c.population = (int)configFile["population_cuda"];
+	config_c.two_opt_freq = (int)configFile["two_opt_freq"];
+	config_c.path_length = (int)configFile["path_length"];
+	config_c.resolution = 1 / (float)configFile["resolution"];
+	config_c.p_switch = (float)configFile["p_switch"];
+	config_c.epsilon_init = (float)configFile["epsilon_init"];
+	config_c.epsilon_final = (float)configFile["epsilon_final"];
+	config_c.heightMap_cols = (int)initFile["width"];
+	config_c.heightMap_rows = (int)initFile["height"];
+	config_c.heightMap = load_height_map(heightmap_path);
+
+
+	float* heightMap_h = load_height_map_cuda(heightmap_path, config_p.heightMap_cols, config_p.heightMap_rows);
 
     Drone drone;
 
@@ -55,13 +70,20 @@ int main() {
     init.yn = (float)initFile["yn"];
     init.zn = (float)initFile["zn"];
 
-    printf("%i\n",config.iter_max);
 
     printf("OMP\n");
-  // computeFPA_parallel(config, drone, init);
+  	computeFPA_parallel(config_p, drone, init);
     printf("--------------------------------------------\n");
     printf("CUDA\n");
-    computeFPA_cuda(config, heightMap_h, drone, init);
+    computeFPA_cuda(config_c, heightMap_h, drone, init);
+
+	free(heightMap_h);
+
+	for(auto &innerVec : config_c.heightMap) {
+		std::vector<double>().swap(innerVec);
+	}
+
+	std::vector<std::vector<double>>().swap(config_c.heightMap);
 
     return 0;
 }

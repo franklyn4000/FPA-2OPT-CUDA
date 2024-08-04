@@ -1,10 +1,11 @@
 {
-    "iter_max": 100,
-    "population": 600,
-    "two_opt_freq": 10,
-    "path_length": 7,
+    "iter_max": 500,
+    "population_parallel": 400,
+    "population_cuda": 80000,
+    "two_opt_freq": 20,
+    "path_length": 8,
     "resolution": 1,
-    "p_switch": 0.83,
+    "p_switch": 0.8,
     "epsilon_init": 0.25,
     "epsilon_final": 0.02
 }

@@ -22,6 +22,7 @@
 #include "pathSmoother_cuda.cuh"
 #include "pollinator_cuda.cuh"
 #include "twoOpt_cuda.cuh"
+#include "../parallel/pathSmoother_parallel.h"
 
 #define CHECK_CUDA(call)                                            \
 {                                                                   \
@@ -72,7 +73,6 @@ void computeFPA_cuda(
 
     printf("%i \n", config.population * config.path_length * 3 * sizeof(float));
 
-    float *hostPtr2 = new float[config.population * max_waypoints_smoothed * 3];
 
 
     paths.smoothedPaths.n_waypoints = max_waypoints_smoothed;
@@ -109,12 +109,8 @@ void computeFPA_cuda(
 
     CHECK_CUDA(cudaMalloc(&paths.tempPaths.elements, temp_paths_size));
     CHECK_CUDA(cudaMalloc(&paths.tempSmoothedPaths.elements, temp_smoothed_paths_size));
-   // cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, temp_paths_size,
-   //            cudaMemcpyHostToDevice);
 
     CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.elements, smoothed_paths_size));
-    cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, smoothed_paths_size,
-               cudaMemcpyHostToDevice);
 
     CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.used_waypoints, config.population * sizeof(int)));
 
@@ -158,14 +154,8 @@ void computeFPA_cuda(
         cudaMemcpy(paths.rawPaths, rawPaths, config.path_length * 3 * config.population * sizeof(float), cudaMemcpyHostToDevice);
 
     */
-    float *test_Nwps;
-    CHECK_CUDA(cudaMallocHost(&test_Nwps, config.population * sizeof(float)));
 
 
-    for (int i = 0; i < config.population; i++) {
-        test_Nwps[i] = i + 0.0;
-    }
-    CHECK_CUDA(cudaMemcpy(paths.fitnesses, test_Nwps, config.population * sizeof(float), cudaMemcpyHostToDevice));
 
 
     // allocate one curandState per thread on device
@@ -281,10 +271,10 @@ void computeFPA_cuda(
 
                 dim3 twoOptBlock(32);
                 dim3 twoOptGrid(twoOptCountFinishedSolutions_h[0]);
-                printf("threads: %i blocks: %i\n", 32 * twoOptCountFinishedSolutions_h[0], twoOptCountFinishedSolutions_h[0]);
+               // printf("threads: %i blocks: %i\n", 32 * twoOptCountFinishedSolutions_h[0], twoOptCountFinishedSolutions_h[0]);
 
 
-               twoOptCuda<<<twoOptGrid, twoOptBlock>>>(paths, config, drone, a_utopia, f_utopia);
+               twoOptCuda<<<twoOptGrid, twoOptBlock>>>(paths, config, drone, a_utopia, f_utopia, max_waypoints_smoothed);
                 cudaDeviceSynchronize();
                 computeBestFitness_cuda<<<dimBlock, dimGrid>>>(paths);
 
@@ -377,124 +367,19 @@ void computeFPA_cuda(
     CHECK_CUDA(cudaMemcpy(hostBestPath, paths.fittestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float),
                           cudaMemcpyDeviceToHost));
 
-    float *res;
-
-    cudaMallocHost(&res, config.population * sizeof(float));
-    if (res == NULL) {
-        fprintf(stderr, "bmemory allocation failed!\n");
-        return;
-    }
-
-    cudaMemcpy(res, paths.N_wps, config.population * sizeof(float), cudaMemcpyDeviceToHost);
-
-    save_to_csv_cuda(hostBestPath, paths.rawPaths.n_waypoints * 3, "../heightMapper/fittest5.csv");
-
-    for (int i = 0; i < config.population; i++) {
-      /*  printf("POLLINATED path: ");
-
-
-        for (int j = 0; j < paths.rawPaths.n_waypoints * 3; j++) {
-            if (hostPtr[i *  paths.rawPaths.n_waypoints * 3 + j] != 0.0) {
-                printf("%.2f ", hostPollinatedPaths[i * paths.rawPaths.n_waypoints * 3 + j]);
-            } else {
-                printf(".");
-            }
-
-        }*/
-        /*
-        printf("RAW path: ");
-
-
-        for (int j = 0; j < paths.rawPaths.n_waypoints * 3; j++) {
-            if (hostPtr[i *  paths.rawPaths.n_waypoints * 3 + j] != 0.0) {
-                printf("%.2f ", hostPtr[i * paths.rawPaths.n_waypoints * 3 + j]);
-            } else {
-                printf(".");
-            }
-
-        }*/
-        /*
-        //printf("%f  ", rawPaths[i][5]);
-         printf("\npath: ");
-
-        for (int j = 0; j < max_waypoints_smoothed * 3; j++) {
-            if (hostSmoothedPaths[i * max_waypoints_smoothed * 3 + j] != 0.0) {
-                printf("%.2f ", hostSmoothedPaths[i * max_waypoints_smoothed * 3 + j]);
-            } else {
-                printf(".");
-            }
-
-        }
-*/
-        //if (hostSmoothedPaths[i * paths.smoothedPaths.n_waypoints * 3] > -1.0) {
-
-        // }
-      //   printf("\n");
-    }
-
-    /*
-        std::vector<float> testPath;
-
-        testPath.push_back(0);
-        testPath.push_back(0);
-        testPath.push_back(550);
-
-        testPath.push_back(0);
-        testPath.push_back(120);
-        testPath.push_back(552);
-
-        testPath.push_back(0);
-        testPath.push_back(300);
-        testPath.push_back(400);
-
-        testPath.push_back(400);
-        testPath.push_back(300);
-        testPath.push_back(800);
-
-        testPath.push_back(0);
-        testPath.push_back(50);
-        testPath.push_back(500);
-
-        testPath.push_back(600);
-        testPath.push_back(600);
-        testPath.push_back(200);
-
-        double test_start_time;
-        double test_time_taken = 0;
-
-        std::vector<float> testSmoothed = smoothPath(
-                testPath,
-                100, 400, nwp);
-
-        for (int i = 0; i < 25000; i++) {
-            test_start_time = omp_get_wtime();
-
-            float F =
-                    computeFitness(testSmoothed,
-                                   config.heightMap,
-                                   nwp,
-                                   drone.max_asc_angle,
-                                   drone.max_desc_angle,
-                                   a_utopia, f_utopia, config.resolution);
-
-            test_time_taken += omp_get_wtime() - test_start_time;
-        }
 
 
 
+	std::vector<float> smoothedPath = smoothPath_fromArray(
+            hostBestPath, paths.rawPaths.n_waypoints,
+            drone.turn_radius, 10);
 
+        save_to_csv(smoothedPath, "../heightMapper/fittest5.csv");
+    //save_to_csv_cuda(hostBestPath, paths.rawPaths.n_waypoints * 3, "../heightMapper/fittest5.csv");
 
-        printf("Test Path Smoothing: %f\n", test_time_taken);
-    */
-
-
-    //delete[] hostPtr;
-    //delete[] hostPtr2;
-   // delete[] hostSmoothedPaths;
-    cudaFree(hostSmoothedPaths);
-    cudaFree(hostPtr);
-    cudaFree(hostPtr2);
-    cudaFree(hostBestPath);
+    cudaFreeHost(hostSmoothedPaths);
+    cudaFreeHost(hostPtr);
+    cudaFreeHost(hostBestPath);
     CHECK_CUDA(cudaFree(devPHILOXStates));
     CHECK_CUDA(cudaFree(paths.fittestPath));
     CHECK_CUDA(cudaFree(paths.rawPaths.elements));

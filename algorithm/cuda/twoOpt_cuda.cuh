@@ -9,6 +9,6 @@
 #include "../objects/config.h"
 #include "../objects/drone.h"
 
-__global__ void twoOptCuda(Paths_cuda paths, Config config, Drone drone, float a_utopia, float f_utopia);
+__global__ void twoOptCuda(Paths_cuda paths, Config config, Drone drone, float a_utopia, float f_utopia, int max_elements);
 
 #endif //ALGORITHM_TWOOPT_CUDA_CUH
