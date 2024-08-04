@@ -299,8 +299,8 @@ __global__ void twoOptCuda(
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     int path_index = paths.twoOptFinishedSolutions[blockIdx.x];
 
-    float* temp_route = new float[paths.rawPaths.n_waypoints * 3];
-    float* temp_route_smoothed = new float[paths.smoothedPaths.n_waypoints];
+    //float* temp_route = new float[paths.rawPaths.n_waypoints * 3];
+ //   float* temp_route_smoothed = new float[paths.smoothedPaths.n_waypoints];
 
     float priorfitness = paths.fitnesses[path_index];
 
@@ -339,15 +339,13 @@ __global__ void twoOptCuda(
     int smootedPathLength;
     float N_wp;
 
-    for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
-       temp_route[i] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + i];
-    }
-    /*
+   // temp_route[0] = 0.0;
 
-    if(threadIdx.x == 0) {
-        printf("%i  ", js[threadIdx.x]);
-    }
-*/
+   for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
+      paths.tempPaths.elements[path_index * threadIdx.x * paths.rawPaths.n_waypoints * 3 + i]  = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + i];
+   }
+
+
 /*
     temp_route[3 * is[threadIdx.x] + 0] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 0];
     temp_route[3 * is[threadIdx.x] + 1] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 1];
@@ -374,7 +372,7 @@ __global__ void twoOptCuda(
 		//if we are the thread with the best path and its better than unchanged, make the switch permanent.
 		//then start again with i, j = 0
 		if (f == temp_fitness) {
-
+/*
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 0] = temp_route[3 * is[threadIdx.x] + 0];
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 1] = temp_route[3 * is[threadIdx.x] + 1];
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 2] = temp_route[3 * is[threadIdx.x] + 2];
@@ -382,7 +380,7 @@ __global__ void twoOptCuda(
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 0] = temp_route[3 * js[threadIdx.x] + 0];
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 1] = temp_route[3 * js[threadIdx.x] + 1];
 			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 2] = temp_route[3 * js[threadIdx.x] + 2];
-
+*/
 		    paths.fitnesses[path_index] = f;
 
 		    paths.twoOptCurrentI[path_index] = 0;
@@ -421,6 +419,4 @@ __global__ void twoOptCuda(
 
     //computeBestFitness_cuda(paths);
 
-    free(temp_route);
-    free(temp_route_smoothed);
 }

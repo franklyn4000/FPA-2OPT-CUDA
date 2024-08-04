@@ -30,6 +30,8 @@ struct Paths_cuda {
     PathMatrix rawPaths;
     PathMatrix pollinatedPaths;
     PathMatrix smoothedPaths;
+    PathMatrix tempPaths;
+    PathMatrix tempSmoothedPaths;
 
     float* N_wps;
     float* fitnesses;

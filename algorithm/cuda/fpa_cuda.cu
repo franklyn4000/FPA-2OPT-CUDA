@@ -49,7 +49,7 @@ void computeFPA_cuda(
 
     curandStatePhilox4_32_10_t *devPHILOXStates;
 
-    int max_waypoints_smoothed = config.path_length * 10 * 2; // upper bound
+    int max_waypoints_smoothed = config.path_length * 10 + 1; // upper bound
 
     Paths_cuda paths;
    // paths.bestFitness = -1.0f;
@@ -83,8 +83,13 @@ void computeFPA_cuda(
 
     size_t raw_paths_size = paths.rawPaths.n_waypoints * 3 * paths.rawPaths.n_paths * sizeof(float);
     size_t smoothed_paths_size = config.population * max_waypoints_smoothed * 3 * sizeof(float);
+    size_t temp_paths_size = config.population * 32 * paths.rawPaths.n_waypoints * 3 * sizeof(float);
+    size_t temp_smoothed_paths_size = config.population * 32 * max_waypoints_smoothed * 3 * sizeof(float);
 
-    printf("size %lu \n", (unsigned long) smoothed_paths_size);
+    printf("raw size %lu \n", (unsigned long) raw_paths_size);
+    printf("smoothed size %lu \n", (unsigned long) smoothed_paths_size);
+    printf("temp size %lu \n", (unsigned long) temp_paths_size);
+    printf("temp smoothed size %lu \n", (unsigned long) temp_smoothed_paths_size);
 /*
     for (int i = 0; i < paths.rawPaths.n_paths; i++)
         for (int j = 0; j < paths.rawPaths.n_waypoints; j++) {
@@ -101,6 +106,11 @@ void computeFPA_cuda(
     CHECK_CUDA(cudaMalloc(&config.heightMap_cuda, config.heightMap_rows * config.heightMap_cols * sizeof(float)));
     cudaMemcpy(config.heightMap_cuda, heightMap_h, config.heightMap_rows * config.heightMap_cols * sizeof(float),
                cudaMemcpyHostToDevice);
+
+    CHECK_CUDA(cudaMalloc(&paths.tempPaths.elements, temp_paths_size));
+    CHECK_CUDA(cudaMalloc(&paths.tempSmoothedPaths.elements, temp_smoothed_paths_size));
+   // cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, temp_paths_size,
+   //            cudaMemcpyHostToDevice);
 
     CHECK_CUDA(cudaMalloc(&paths.smoothedPaths.elements, smoothed_paths_size));
     cudaMemcpy(paths.smoothedPaths.elements, hostPtr2, smoothed_paths_size,
@@ -490,4 +500,6 @@ void computeFPA_cuda(
     CHECK_CUDA(cudaFree(paths.rawPaths.elements));
     CHECK_CUDA(cudaFree(paths.pollinatedPaths.elements));
     CHECK_CUDA(cudaFree(paths.smoothedPaths.elements));
+    CHECK_CUDA(cudaFree(paths.tempPaths.elements));
+    CHECK_CUDA(cudaFree(paths.tempSmoothedPaths.elements));
 }
