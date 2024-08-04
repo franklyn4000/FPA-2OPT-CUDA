@@ -152,7 +152,7 @@ __global__ void computeFitnesses_cuda(
     }
 
 
-    computeBestFitness_cuda(paths);
+    //computeBestFitness_cuda(paths);
 
 
 }
@@ -161,8 +161,19 @@ __device__ __forceinline__ float atomicMaxFloat (float * addr, float value) {
     return __int_as_float(atomicMax((int *)addr, __float_as_int(value)));
 }
 
-__device__ void computeBestFitness_cuda(Paths_cuda paths) {
+__global__ void computeBestFitness_cuda(Paths_cuda paths) {
+
+
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
+/*
+	if (idx == 0) {
+        printf("\nfitnesses ");
+        for (int i = 0; i < paths.rawPaths.n_paths; i++) {
+			printf("%i %f ", paths.rawPaths.n_paths, paths.fitnesses[i]);
+		}
+		printf("\n");
+    }*/
+
 
     float fitness = idx < paths.rawPaths.n_paths ? paths.fitnesses[idx] : 0.0;
 
@@ -177,6 +188,7 @@ __device__ void computeBestFitness_cuda(Paths_cuda paths) {
 
     if (idx < paths.rawPaths.n_paths && __int_as_float(((int *) paths.bestFitness)[0]) == paths.fitnesses[idx]) {
 
+       // printf("\nbest fitness %f\n", paths.fitnesses[idx]);
         //possible race condition but extremely unlikely to happen
         for (int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
             paths.fittestPath[i] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints * 3 + i];

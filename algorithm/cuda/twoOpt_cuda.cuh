@@ -6,7 +6,9 @@
 #define ALGORITHM_TWOOPT_CUDA_CUH
 
 #include "../objects/paths.h"
+#include "../objects/config.h"
+#include "../objects/drone.h"
 
-__global__ void twoOptCuda(Paths_cuda paths);
+__global__ void twoOptCuda(Paths_cuda paths, Config config, Drone drone, float a_utopia, float f_utopia);
 
 #endif //ALGORITHM_TWOOPT_CUDA_CUH

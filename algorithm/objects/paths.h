@@ -39,6 +39,7 @@ struct Paths_cuda {
     float* bestFitness;
     int fittestPathThread;
 
+    int* twoOptCountFinishedSolutions;
     int* twoOptFinishedSolutions;
     int* twoOptCurrentI;
     int* twoOptCurrentJ;

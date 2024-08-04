@@ -75,7 +75,7 @@ void computeFPA_cuda(
     float *hostPtr2 = new float[config.population * max_waypoints_smoothed * 3];
 
 
-    paths.smoothedPaths.n_waypoints = config.path_length;
+    paths.smoothedPaths.n_waypoints = max_waypoints_smoothed;
     paths.smoothedPaths.n_paths = config.population;
 
     paths.rawPaths.n_waypoints = config.path_length;
@@ -181,6 +181,8 @@ void computeFPA_cuda(
                      );
     cudaDeviceSynchronize();
 
+    computeBestFitness_cuda<<<dimGrid, dimBlock>>>(paths);
+
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
 
 
@@ -215,6 +217,7 @@ void computeFPA_cuda(
                              config.resolution
                              );
         cudaDeviceSynchronize();
+        computeBestFitness_cuda<<<dimGrid, dimBlock>>>(paths);
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
@@ -246,16 +249,58 @@ void computeFPA_cuda(
 
             twoopt_start_time = omp_get_wtime();
 
-            dim3 twoOptBlock(32);
-            dim3 twoOptGrid(config.population);
+            int* initFinishedSolutions = new int[config.population];
+
+            for(int i = 0; i < config.population; i++) {
+                initFinishedSolutions[i] = i;
+            }
+
+            CHECK_CUDA(cudaMalloc(&paths.twoOptFinishedSolutions, config.population * sizeof(int)));
+            cudaMemcpy(paths.twoOptFinishedSolutions, initFinishedSolutions, config.population * sizeof(int), cudaMemcpyHostToDevice);
+
+            int* twoOptCountFinishedSolutions_h = new int[1];
+            twoOptCountFinishedSolutions_h[0] = config.population;
+
+            CHECK_CUDA(cudaMalloc(&paths.twoOptCountFinishedSolutions, 1 * sizeof(int)));
+            cudaMemcpy(paths.twoOptCountFinishedSolutions, twoOptCountFinishedSolutions_h, 1 * sizeof(int), cudaMemcpyHostToDevice);
+
+            int test = 1;
+
+            while(test > 0) {
+                //printf("COUNT %i \n", twoOptCountFinishedSolutions_h[0]);
+
+                dim3 twoOptBlock(32);
+                dim3 twoOptGrid(twoOptCountFinishedSolutions_h[0]);
+                printf("threads: %i blocks: %i\n", 32 * twoOptCountFinishedSolutions_h[0], twoOptCountFinishedSolutions_h[0]);
+
+
+               twoOptCuda<<<twoOptGrid, twoOptBlock>>>(paths, config, drone, a_utopia, f_utopia);
+                cudaDeviceSynchronize();
+                computeBestFitness_cuda<<<dimBlock, dimGrid>>>(paths);
+
+                cudaMemcpy(twoOptCountFinishedSolutions_h, paths.twoOptCountFinishedSolutions, 1 * sizeof(int), cudaMemcpyDeviceToHost);
+                test--;
+            }
+
+
+            free(initFinishedSolutions);
+            free(twoOptCountFinishedSolutions_h);
+            CHECK_CUDA(cudaFree(paths.twoOptCountFinishedSolutions));
+            CHECK_CUDA(cudaFree(paths.twoOptFinishedSolutions));
+
 
             //create copy of smoothedpaths and fitnesses
 
           //  compactAndCuda<<<twoOptGrid, twoOptBlock>>>(paths);
 
-            printf("threads for 2 opt: %i \n", 32 * config.population);
 
-            twoOptCuda<<<twoOptGrid, twoOptBlock>>>(paths);
+
+
+
+
+
+
+
 
             //start 32 threads with unique i, j values per path
             //evaluate them, if one is better than best fitness, set i,j to initial values and restart with new path
@@ -263,7 +308,10 @@ void computeFPA_cuda(
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
 
+
+
             //computeBestFitness(paths);
+            cudaDeviceSynchronize();
 
         }
         //   computeBestFitness(paths);

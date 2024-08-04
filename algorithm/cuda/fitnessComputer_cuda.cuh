@@ -22,6 +22,6 @@ __device__ void computeFitness_cuda(Paths_cuda paths,
      float N_wp, float max_asc_angle,
      float max_desc_angle, float a_utopia, float f_utopia, float resolution);
 
-__device__ void computeBestFitness_cuda(Paths_cuda paths);
+__global__ void computeBestFitness_cuda(Paths_cuda paths);
 
 #endif //FITNESSCOMPUTER_CUDA_CUH

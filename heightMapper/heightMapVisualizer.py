@@ -33,7 +33,7 @@ def load_array_from_csv(filename):
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('2D Top View of the Heightmap')
-    plt.show()
+    #plt.show()
 
     return z_2d_array_loaded
 
