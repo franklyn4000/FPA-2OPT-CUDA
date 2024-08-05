@@ -56,15 +56,20 @@ def visualize_3D(loaded, fittest_paths):
     surface = go.Surface(z=loaded, colorscale='Blues', lighting = lighting, cmin=1000,
             cmax=4000)
 
+    colors = ['red', 'orange', 'blue', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta',
+          'gray']
+
     data = [surface]
 
     # Create a Scatter3D plot for each path
-    for fittest_path in fittest_paths:
+    for i, fittest_path in enumerate(fittest_paths):
         fittest_path_x = [float(point[0]) for point in fittest_path]
         fittest_path_y = [float(point[1]) for point in fittest_path]
         fittest_path_z = [float(point[2]) for point in fittest_path]
 
-        scatter = go.Scatter3d(x=fittest_path_x, y=fittest_path_y, z=fittest_path_z, mode='lines')
+        current_color = colors[i % len(colors)]
+
+        scatter = go.Scatter3d(x=fittest_path_x, y=fittest_path_y, z=fittest_path_z, mode='lines', line=dict(width=8, color=current_color))
         data.append(scatter)
 
     fig = go.Figure(data=data)
