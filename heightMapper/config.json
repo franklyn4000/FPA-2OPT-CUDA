@@ -1,15 +1,15 @@
 {
     "runs": 5,
     "time_limit": 1,
-    "iter_max": 1000,
+    "iter_max": 50,
     "population_parallel": 200,
     "population_cuda": 20000,
     "two_opt_freq": 15,
     "path_length": 9,
     "n_pi": 10,
     "resolution": 1,
-    "w1": 0.20,
-    "w2": 0.80,
+    "w1": 0.2,
+    "w2": 0.8,
     "p_switch": 0.8,
     "epsilon_init": 0.25,
     "epsilon_final": 0.02

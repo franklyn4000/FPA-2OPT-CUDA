@@ -115,8 +115,8 @@ int main(int argc, char** argv) {
 
 
 	char* buffer = new char[100];
-	char* filename = new char[100];
-
+	char* filename_timings = new char[100];
+	char* filename_fitnesses = new char[100];
 
 	sprintf(filename_timings, "../data/OMP_timings-%s.dat", output_file_name);
 	sprintf(filename_fitnesses, "../data/OMP_filename_fitnesses-%s.dat", output_file_name);
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
 	}
 
 	free(buffer);
-	free(filename);
+	free(filename_fitnesses);
 	free(filename_timings);
 	free(heightMap_h);
 

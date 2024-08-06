@@ -155,6 +155,7 @@ Results computeFPA_parallel(
     results.fitness_time = fitness_time_taken;
     results.twoopt_time = twoopt_time_taken;
     results.total_time = total_time_taken;
+	results.best_fitness = paths.bestFitness;
 
 	return results;
 }

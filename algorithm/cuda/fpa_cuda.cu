@@ -67,6 +67,7 @@ Results computeFPA_cuda(
     double iteration_start_time = 0;
 	double iteration_time_taken = 0;
     int iterations = 0;
+	Results results;
 
 	total_start_time = omp_get_wtime();
 
@@ -287,10 +288,9 @@ printf("\n");
 		cudaFreeHost(smoothedPaths_h);
     cudaFreeHost(bestPath_h);
 	}
-f
 
 
-	Results results;
+
 	results.setup_and_transfer_time = data_transfer_time_taken;
     results.pollination_time = pollination_time_taken;
     results.smoothing_time = smoothing_time_taken;
