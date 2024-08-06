@@ -44,6 +44,13 @@
 # CMake
 cmake-build-*/
 
+algorithm/Makefile
+algorithm/algorithm
+heightMapper/*.csv
 heightMapper/height_map.csv
 heightMapper/height_map.npy
 algorithm/CMakeFiles/
+data/*.dat
+plotdata/*.dat
+algorithm/CMakeLists.txt
+algorithm/CMakeCache.txt

@@ -1,4 +1,4 @@
-# Install script for directory: /home/franklyn/Documents/PFA-Opt-2/algorithm
+# Install script for directory: /home/franklyn/Documents/Dev/PFA-Opt-2/algorithm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/franklyn/Documents/PFA-Opt-2/algorithm/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/franklyn/Documents/Dev/PFA-Opt-2/algorithm/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
