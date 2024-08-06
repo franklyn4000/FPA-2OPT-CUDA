@@ -18,7 +18,7 @@
 
 
 Results computeFPA_parallel(
-        Config &config, Drone &drone, InitialConditions &init) {
+        Config &config, Drone &drone, InitialConditions &init, bool t_flag) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -30,6 +30,8 @@ Results computeFPA_parallel(
     double pollination_start_time = 0;
     double pollination_time_taken = 0;
 
+    	double data_transfer_start_time = 0;
+    double data_transfer_time_taken = 0;
     double twoopt_start_time = 0;
     double twoopt_time_taken = 0;
     double total_start_time = 0;
@@ -43,6 +45,8 @@ Results computeFPA_parallel(
     float nwp = 0;
 
     Paths paths(config.population);
+
+    data_transfer_start_time = omp_get_wtime();
 
     //Initialize a population of n flowers/pollen gametes with random solutions
     paths.rawPaths = generateSolutions(init,
@@ -65,6 +69,8 @@ Results computeFPA_parallel(
 
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
     total_time_taken += omp_get_wtime() - total_start_time;
+
+    data_transfer_time_taken = omp_get_wtime() - data_transfer_start_time;
 
     printf("Iteration: ");
     while (iterations < config.iter_max && total_time_taken < config.time_limit) {
@@ -143,7 +149,12 @@ Results computeFPA_parallel(
     printf("PARA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, paths.bestFitness, iterations);
 
 	Results results;
-	results.total_time = total_time_taken;
+	results.setup_and_transfer_time = data_transfer_time_taken;
+    results.pollination_time = pollination_time_taken;
+    results.smoothing_time = smoothing_time_taken;
+    results.fitness_time = fitness_time_taken;
+    results.twoopt_time = twoopt_time_taken;
+    results.total_time = total_time_taken;
 
 	return results;
 }

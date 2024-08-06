@@ -12,6 +12,6 @@
 #include "../objects/results.h"
 
 Results computeFPA_cuda(
-        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init);
+        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init, bool t_flag);
 
 #endif //ALGORITHM_FPA_CUDA_CUH

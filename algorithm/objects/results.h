@@ -7,8 +7,13 @@
 
 class Results {
 public:
+    float setup_and_transfer_time;
+    float pollination_time;
+    float smoothing_time;
+    float fitness_time;
+    float twoopt_time;
     float total_time;
-    float reached_fitness;
+    float best_fitness;
 };
 
 

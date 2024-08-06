@@ -10,8 +10,43 @@
 #include "objects/initialConditions.h"
 #include "math.h"
 #include "json.hpp"
+#include <unistd.h>
+#include <cstdlib>
 
-int main() {
+int main(int argc, char** argv) {
+	int option;
+	bool t_flag = false;
+	bool cuda_flag = false;
+	bool omp_flag = false;
+	char* output_file_name;
+
+
+	for (int i = 1; i < argc; i++) {
+		std::string arg = argv[i];
+		if(arg=="-t"){
+			t_flag = true;
+		}
+		else if(arg=="-cuda"){
+			cuda_flag = true;
+		}
+		else if(arg=="-omp"){
+			omp_flag = true;
+		}
+		else if(arg=="-o" && i+1<argc){ // Make sure we do not go out of bounds
+			output_file_name = argv[++i];
+		}
+		else {
+			std::cerr << "Invalid argument: " << arg <<"\n";
+			return 1;
+		}
+	}
+
+	for (int index = optind; index < argc; index++) {
+		if(std::string(argv[index])=="-cuda") cuda_flag = true;
+		if(std::string(argv[index])=="-omp") omp_flag = true;
+		if(std::string(argv[index])=="-t") t_flag = true;
+	}
+
     nlohmann::json initFile = readJsonFile("../heightMapper/init.json");
     nlohmann::json droneFile = readJsonFile("../heightMapper/drone.json");
     nlohmann::json configFile = readJsonFile("../heightMapper/config.json");
@@ -79,23 +114,36 @@ int main() {
     init.zn = (float)initFile["zn"];
 
 
-	createEmptyFile("../data/OMP_timings.dat");
-	createEmptyFile("../data/CUDA_timings.dat");
-
-	Results omp_run_result = computeFPA_parallel(config_p, drone, init);
-	Results cuda_run_result = computeFPA_cuda(config_c, heightMap_h, drone, init);
+	char* buffer = new char[100];
+	char* filename = new char[100];
 
 
-	char* timing_buffer = new char[100];
-	sprintf(timing_buffer, "%f", omp_run_result.total_time);
-	appendLineToFile("../data/OMP_timings.dat", timing_buffer);
+	sprintf(filename_timings, "../data/OMP_timings-%s.dat", output_file_name);
+	sprintf(filename_fitnesses, "../data/OMP_filename_fitnesses-%s.dat", output_file_name);
 
-	sprintf(timing_buffer, "%f", cuda_run_result.total_time);
-	appendLineToFile("../data/CUDA_timings.dat", timing_buffer);
+	if(omp_flag) {
+		createEmptyFile(filename_timings);
+		createEmptyFile(filename_fitnesses);
+		Results omp_run_result = computeFPA_parallel(config_p, drone, init, t_flag);
+		sprintf(buffer, "%f %f %f %f %f %f", omp_run_result.total_time, omp_run_result.setup_and_transfer_time, omp_run_result.pollination_time, omp_run_result.smoothing_time, omp_run_result.fitness_time, omp_run_result.twoopt_time);
+		appendLineToFile(filename_timings, buffer);
+		sprintf(buffer, "%f", omp_run_result.best_fitness);
+		appendLineToFile(filename_fitnesses, buffer);
+	}
 
+	if(cuda_flag) {
+		createEmptyFile(filename_timings);
+		createEmptyFile(filename_fitnesses);
+		Results cuda_run_result = computeFPA_cuda(config_c, heightMap_h, drone, init, t_flag);
+		sprintf(buffer, "%f %f %f %f %f %f", cuda_run_result.total_time, cuda_run_result.setup_and_transfer_time, cuda_run_result.pollination_time, cuda_run_result.smoothing_time, cuda_run_result.fitness_time, cuda_run_result.twoopt_time);
+		appendLineToFile(filename_timings, buffer);
+		sprintf(buffer, "%f", cuda_run_result.best_fitness);
+		appendLineToFile(filename_fitnesses, buffer);
+	}
 
-
-	free(timing_buffer);
+	free(buffer);
+	free(filename);
+	free(filename_timings);
 	free(heightMap_h);
 
 	for(auto &innerVec : config_c.heightMap) {

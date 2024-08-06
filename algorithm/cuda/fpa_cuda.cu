@@ -48,7 +48,7 @@ struct is_not_zero
 };
 
 Results computeFPA_cuda(
-        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init) {
+        Config &config, float* heightMap_h, Drone &drone, InitialConditions &init, bool t_flag) {
     float a_utopia = drone.min_altitude;
     float f_utopia = calculateFUtopia(init);
 
@@ -231,11 +231,11 @@ Results computeFPA_cuda(
 		total_time_taken += iteration_time_taken;
     }
 	iteration_start_time = omp_get_wtime();
-    printf("\n");
 
 
-
-    float* bestFitness_h;
+	if(t_flag) {
+printf("\n");
+		float* bestFitness_h;
 
     CHECK_CUDA(cudaMallocHost(&bestFitness_h, 1 * sizeof(float)));
     CHECK_CUDA(cudaMemcpy(bestFitness_h, paths.bestFitness, 1 * sizeof(float), cudaMemcpyDeviceToHost));
@@ -282,11 +282,23 @@ Results computeFPA_cuda(
 
     save_to_csv(smoothedPath, "../heightMapper/fittest5.csv");
 
-	Results results;
-	results.total_time = total_time_taken;
+		results.best_fitness = bestFitness_h[0];
 
-    cudaFreeHost(smoothedPaths_h);
+		cudaFreeHost(smoothedPaths_h);
     cudaFreeHost(bestPath_h);
+	}
+f
+
+
+	Results results;
+	results.setup_and_transfer_time = data_transfer_time_taken;
+    results.pollination_time = pollination_time_taken;
+    results.smoothing_time = smoothing_time_taken;
+    results.fitness_time = fitness_time_taken;
+    results.twoopt_time = twoopt_time_taken;
+    results.total_time = total_time_taken;
+
+
     CHECK_CUDA(cudaFree(devPHILOXStates));
     CHECK_CUDA(cudaFree(paths.fittestPath));
     CHECK_CUDA(cudaFree(paths.rawPaths.elements));

@@ -12,7 +12,7 @@
 #include "../objects/results.h"
 
 Results computeFPA_parallel(
-        Config &config, Drone &drone, InitialConditions &init);
+        Config &config, Drone &drone, InitialConditions &init, bool t_flag);
 
 
 

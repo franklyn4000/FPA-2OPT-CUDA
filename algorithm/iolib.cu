@@ -136,14 +136,19 @@ json readJsonFile(const std::string& filePath) {
     return j;
 }
 
-void createEmptyFile(const std::string& filename) {
-    std::ofstream file(filename);
+bool file_exists(const std::string& filename) {
+    std::ifstream file(filename);
+    return file.good();
+}
 
-    if (file) {
-        // File successfully created/opened for writing, nothing else to do
-        file.close();
+void createEmptyFile(const std::string& filename) {
+    if (file_exists(filename)) {
+        return;
     } else {
-        std::cout << "Unable to create file.";
+        std::ofstream file(filename);
+        if (!file) {
+            std::cout << "Unable to create file.";
+        }
     }
 }
 
