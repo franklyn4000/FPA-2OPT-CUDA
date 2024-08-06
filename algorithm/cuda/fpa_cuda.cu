@@ -281,7 +281,7 @@ printf("\n");
 
     printf("CUDA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, bestFitness_h[0], iterations);
 
-    save_to_csv(smoothedPath, "../heightMapper/fittest5.csv");
+    save_to_csv(smoothedPath, "../data/paths/fittest_cuda.csv");
 
 		results.best_fitness = bestFitness_h[0];
 

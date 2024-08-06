@@ -24,17 +24,10 @@ def load_and_make_array(filename):
 
     return z_2d_array
 
-# Load the four height maps, remember to replace 'filename1.txt', ... with your file names.
-#data1 = np.loadtxt('switzerland3.xyz', skiprows=1)
-#data2 = np.loadtxt('switzerland4.xyz', skiprows=1)
-#data3 = np.loadtxt('switzerland5.xyz', skiprows=1)
-#data4 = np.loadtxt('switzerland6.xyz', skiprows=1)
-
-
-data1 = load_and_make_array('switzerland3.xyz')
-data2 = load_and_make_array('switzerland4.xyz')
-data3 = load_and_make_array('switzerland5.xyz')
-data4 = load_and_make_array('switzerland6.xyz')
+data1 = load_and_make_array('heightmaps/switzerland3.xyz')
+data2 = load_and_make_array('heightmaps/switzerland4.xyz')
+data3 = load_and_make_array('heightmaps/switzerland5.xyz')
+data4 = load_and_make_array('heightmaps/switzerland6.xyz')
 
 top_row = np.concatenate((data1, data2), axis=1)
 bottom_row = np.concatenate((data3, data4), axis=1)
@@ -42,10 +35,10 @@ bottom_row = np.concatenate((data3, data4), axis=1)
 # concatenate top_row and bottom_row along rows to get final 2000x2000 data
 final_data = np.concatenate((bottom_row, top_row), axis=0)
 
-np.savetxt("switzerland.csv", final_data, delimiter=",")
+np.savetxt("heightmaps/switzerland.csv", final_data, delimiter=",")
 
 
-with open('switzerland.json', 'r') as source_file:
+with open('heightmaps/switzerland.json', 'r') as source_file:
     data = json.load(source_file)
 
 with open('init.json', 'w') as destination_file:

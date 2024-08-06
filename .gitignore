@@ -52,5 +52,4 @@ heightMapper/height_map.npy
 algorithm/CMakeFiles/
 data/*.dat
 plotdata/*.dat
-algorithm/CMakeLists.txt
 algorithm/CMakeCache.txt

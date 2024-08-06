@@ -14,7 +14,6 @@
 #include <cstdlib>
 
 int main(int argc, char** argv) {
-	int option;
 	bool t_flag = false;
 	bool cuda_flag = false;
 	bool omp_flag = false;
@@ -47,11 +46,11 @@ int main(int argc, char** argv) {
 		if(std::string(argv[index])=="-t") t_flag = true;
 	}
 
-    nlohmann::json initFile = readJsonFile("../heightMapper/init.json");
-    nlohmann::json droneFile = readJsonFile("../heightMapper/drone.json");
-    nlohmann::json configFile = readJsonFile("../heightMapper/config.json");
+    nlohmann::json initFile = readJsonFile("../config/init.json");
+    nlohmann::json droneFile = readJsonFile("../config/drone.json");
+    nlohmann::json configFile = readJsonFile("../config/config.json");
 
-    std::string heightmap_path = "../heightMapper/" + (std::string)initFile["heightmap_file"];
+    std::string heightmap_path = "../heightMapper/heightmaps/" + (std::string)initFile["heightmap_file"];
 
     Config config_p;
     Config config_c;

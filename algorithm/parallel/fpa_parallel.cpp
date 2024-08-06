@@ -103,17 +103,17 @@ Results computeFPA_parallel(
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
                     drone.turn_radius,  config.n_pi, nwp);
-            save_to_csv(smoothedPath, "../heightMapper/fittest1.csv");
+            save_to_csv(smoothedPath, "../data/paths/fittest1.csv");
         } else if (iterations == quarter) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
                     drone.turn_radius,  config.n_pi, nwp);
-            save_to_csv(smoothedPath, "../heightMapper/fittest2.csv");
+            save_to_csv(smoothedPath, "../data/paths/fittest2.csv");
         } else if (iterations == half) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
                     drone.turn_radius,  config.n_pi, nwp);
-            save_to_csv(smoothedPath, "../heightMapper/fittest3.csv");
+            save_to_csv(smoothedPath, "../data/paths/fittest3.csv");
         }
 
 
@@ -140,7 +140,7 @@ Results computeFPA_parallel(
             paths.fittestPath,
             drone.turn_radius, config.n_pi, nwp);
 
-    save_to_csv(smoothedPath, "../heightMapper/fittest4.csv");
+    save_to_csv(smoothedPath, "../data/paths/fittest_omp.csv");
 
     double totalTime = pollination_time_taken + smoothing_time_taken + fitness_time_taken + twoopt_time_taken;
 
