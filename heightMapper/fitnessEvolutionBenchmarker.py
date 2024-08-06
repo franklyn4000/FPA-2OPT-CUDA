@@ -1,15 +1,19 @@
 import subprocess
-from utils import update_json_file
+import json
+from utils import update_json_file, write_array_to_file
 
-values = [1, 10, 50, 100, 250, 500, 1000, 2000, 4000]
-update_json_file("config.json", "time_limit", 10)
+values = [1, 5, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 3000, 5000]
+update_json_file("config.json", "time_limit", 1)
+
+averages = []
 
 for i in values:
-    update_json_file("config.json", "population", i)
+    update_json_file("config.json", "population_parallel", i)
     filename = "fitevo-pop-" + str(i)
 
-    subprocess.run(["../algorithm/algorithm", "-omp", "-o", filename], shell=False, stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL)
+    for _ in range(5):
+        subprocess.run(["../algorithm/algorithm", "-omp", "-o", filename], shell=False, stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL)
 
     data_filename = "../data/OMP_fitnesses-" + filename + ".dat"
 
@@ -21,9 +25,12 @@ for i in values:
             # Split line into float numbers
             numbers = list(map(float, line.split()))
             # Add each number to the appropriate sum
-            for i in range(1):
-                sums[i] += numbers[i]
+            for j in range(1):
+                sums[j] += numbers[j]
             count += 1
 
-    averages = [round(s / count, 5) for s in sums]
-    print(averages)
+    average = [round(s / count, 5) for s in sums]
+    average.insert(0, i)
+    averages.append(average)
+
+write_array_to_file("fitevo.dat", averages)

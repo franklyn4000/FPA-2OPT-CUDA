@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
 	char* filename_fitnesses = new char[100];
 
 	sprintf(filename_timings, "../data/OMP_timings-%s.dat", output_file_name);
-	sprintf(filename_fitnesses, "../data/OMP_filename_fitnesses-%s.dat", output_file_name);
+	sprintf(filename_fitnesses, "../data/OMP_fitnesses-%s.dat", output_file_name);
 
 	if(omp_flag) {
 		createEmptyFile(filename_timings);
