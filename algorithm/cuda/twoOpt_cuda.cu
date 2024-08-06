@@ -20,14 +20,13 @@ __device__ void computeFitness_cuda_single(
 
     float a_cum = 0;
     float a_avg = 0;
-    float f_avg = 0;
+    //float f_avg = 0;
 
     int n = smoothedPathLength;
 
     int totalSteps = 1;
 
     int underground = 0;
-    bool undergroundLast = false;
 
     float4 P1_v;
     float4 P2_v;
@@ -288,13 +287,12 @@ __global__ void twoOptCuda(
         Paths_cuda paths, Config config, Drone drone, float a_utopia, float f_utopia, int max_elements) {
 
     int n_points = paths.rawPaths.n_waypoints;
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
     int path_index = paths.twoOptFinishedSolutions[blockIdx.x];
 
     __shared__ int is[32];
     __shared__ int js[32];
 
-	float priorFitness = paths.fitnesses[path_index];
+	//float priorFitness = paths.fitnesses[path_index];
 
 	is[threadIdx.x] = 0;
     js[threadIdx.x] = 0;

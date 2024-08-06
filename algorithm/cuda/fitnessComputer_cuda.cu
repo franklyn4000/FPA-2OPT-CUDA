@@ -19,14 +19,13 @@ __device__ void computeFitness_cuda(Paths_cuda paths,
 
     float a_cum = 0;
     float a_avg = 0;
-    float f_avg = 0;
+    //float f_avg = 0;
 
     int n = paths.smoothedPaths.used_waypoints[path_index];
 
     int totalSteps = 1;
 
     int underground = 0;
-    bool undergroundLast = false;
 
     float4 P1_v;
     float4 P2_v;
