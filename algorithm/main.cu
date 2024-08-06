@@ -82,12 +82,12 @@ int main() {
 	createEmptyFile("../data/OMP_timings.dat");
 	createEmptyFile("../data/CUDA_timings.dat");
 
-	//Results omp_run_result = computeFPA_parallel(config_p, drone, init);
+	Results omp_run_result = computeFPA_parallel(config_p, drone, init);
 	Results cuda_run_result = computeFPA_cuda(config_c, heightMap_h, drone, init);
 
 
 	char* timing_buffer = new char[100];
-	//sprintf(timing_buffer, "%f", omp_run_result.total_time);
+	sprintf(timing_buffer, "%f", omp_run_result.total_time);
 	appendLineToFile("../data/OMP_timings.dat", timing_buffer);
 
 	sprintf(timing_buffer, "%f", cuda_run_result.total_time);
