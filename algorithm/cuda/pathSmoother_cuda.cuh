@@ -11,7 +11,7 @@
 __global__ void smoothPaths_cuda(
     Paths_cuda paths,
     int max_elements,
-    float turnRadius, int n_pi, size_t pitch);
+    float turnRadius, int n_pi);
 
 __device__ void smoothPath_cuda(
     Paths_cuda paths,

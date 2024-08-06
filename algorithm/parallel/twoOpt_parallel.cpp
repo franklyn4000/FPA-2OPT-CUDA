@@ -12,7 +12,7 @@ void twoOptParallel(
         Paths &paths,
         float turnRadius, int n_pi,
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
-        float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
+        float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1, float w2) {
 
 
 #pragma omp parallel for
@@ -57,7 +57,7 @@ void twoOptParallel(
                                                 N_wp,
                                                 max_asc_angle,
                                                 max_desc_angle,
-                                                a_utopia, f_utopia, resolution);
+                                                a_utopia, f_utopia, resolution, w1, w2);
 
 
                 // printf("iter: %i - current fitness: %f new fitness: %f\n", iter, fitness, newPathFitness);

@@ -12,11 +12,7 @@ __device__ void computeFitness_cuda_single(
                      const float* heightMap,
                      int heightMapWidth,
                      float N_wp, int smooth_startIndex, float max_asc_angle,
-                     float max_desc_angle, float a_utopia, float f_utopia, float resolution, float &fitness, int index) {
-
-    float w1 = 0.30;
-    float w2 = 0.70;
-
+                     float max_desc_angle, float a_utopia, float f_utopia, float resolution, float &fitness, int index, float w1, float w2) {
     float d_ug = 0.0;
     float d_dz = 0.0;
     float d_ea = 0.0;
@@ -298,26 +294,31 @@ __global__ void twoOptCuda(
     __shared__ int is[32];
     __shared__ int js[32];
 
+	float priorFitness = paths.fitnesses[path_index];
+
 	is[threadIdx.x] = 0;
     js[threadIdx.x] = 0;
+
+	int init_i = paths.twoOptCurrentI[path_index];
+	int init_j = paths.twoOptCurrentJ[path_index];
 
     if(threadIdx.x == 0) {
         int index = 0;
 
-        for (int i = 1; i < n_points - 2; i++) {
-            for(int j = i + 1; j < n_points - 1; j++) {
+        for (int i = max(1, init_i); i < n_points - 2; i++) {
+            for(int j = max(i + 1, init_j); j < n_points - 1; j++) {
                 is[index] = i;
                 js[index] = j;
                 index++;
 
-                if(index >= 32) {
+                if(index == 32) {
                     paths.twoOptCurrentI[path_index] = i;
                     paths.twoOptCurrentJ[path_index] = j;
                     break;
                 }
 
             }
-            if(index >= 32) {
+            if(index == 32) {
                 break;
             }
         }
@@ -344,9 +345,9 @@ __global__ void twoOptCuda(
     paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 1] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 1];
     paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 2] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 2];
 
-    smoothPath_cuda_single(paths, smootedPathLength, N_wp, smoothedIndex, startIndex, drone.turn_radius, 10);
+    smoothPath_cuda_single(paths, smootedPathLength, N_wp, smoothedIndex, startIndex, drone.turn_radius, config.n_pi);
 
-    computeFitness_cuda_single(paths, smootedPathLength, config.heightMap_cuda, config.heightMap_rows, N_wp, smoothedIndex, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution, temp_fitness, threadIdx.x);
+    computeFitness_cuda_single(paths, smootedPathLength, config.heightMap_cuda, config.heightMap_rows, N_wp, smoothedIndex, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution, temp_fitness, threadIdx.x, config.w1, config.w2);
 
 
 	float f = temp_fitness;
@@ -376,11 +377,12 @@ __global__ void twoOptCuda(
 
 			//printf("%f ", f);
     	}
-	} else {
-	    //paths.twoOptFinishedSolutions[blockIdx.x] = -1;
+	} else if (is[threadIdx.x] == n_points - 3 && js[threadIdx.x] == n_points - 2) {
+	    paths.twoOptFinishedSolutions[blockIdx.x] = -1;
+		atomicAdd(paths.twoOptCountFinishedSolutions, -1);
 	}
 
-  //  printf("%i %i %i %i %i %f %i %f %f %f %f\n", path_index, threadIdx.x, n_points, is[threadIdx.x], js[threadIdx.x], N_wp, smootedPathLength, temp_fitness, f, priorfitness, paths.fitnesses[path_index]);
+    //printf("%i %i %i %i %i %f %i %f %f %f %f\n", path_index, threadIdx.x, n_points, is[threadIdx.x], js[threadIdx.x], N_wp, smootedPathLength, temp_fitness, f, priorFitness, paths.fitnesses[path_index]);
 
 
 }

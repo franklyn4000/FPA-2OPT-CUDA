@@ -21,11 +21,15 @@ int main() {
     Config config_p;
     Config config_c;
 
+	config_p.time_limit = (float)configFile["time_limit"];
     config_p.iter_max = (int)configFile["iter_max"];
     config_p.population = (int)configFile["population_parallel"];
     config_p.two_opt_freq = (int)configFile["two_opt_freq"];
     config_p.path_length = (int)configFile["path_length"];
+	config_p.n_pi = (int)configFile["n_pi"];
     config_p.resolution = 1 / (float)configFile["resolution"];
+	config_p.w1 = (float)configFile["w1"];
+	config_p.w2 = (float)configFile["w2"];
     config_p.p_switch = (float)configFile["p_switch"];
     config_p.epsilon_init = (float)configFile["epsilon_init"];
     config_p.epsilon_final = (float)configFile["epsilon_final"];
@@ -33,11 +37,15 @@ int main() {
     config_p.heightMap_rows = (int)initFile["height"];
     config_p.heightMap = load_height_map(heightmap_path);
 
+	config_c.time_limit = (float)configFile["time_limit"];
 	config_c.iter_max = (int)configFile["iter_max"];
 	config_c.population = (int)configFile["population_cuda"];
 	config_c.two_opt_freq = (int)configFile["two_opt_freq"];
 	config_c.path_length = (int)configFile["path_length"];
+	config_c.n_pi = (int)configFile["n_pi"];
 	config_c.resolution = 1 / (float)configFile["resolution"];
+	config_c.w1 = (float)configFile["w1"];
+	config_c.w2 = (float)configFile["w2"];
 	config_c.p_switch = (float)configFile["p_switch"];
 	config_c.epsilon_init = (float)configFile["epsilon_init"];
 	config_c.epsilon_final = (float)configFile["epsilon_final"];

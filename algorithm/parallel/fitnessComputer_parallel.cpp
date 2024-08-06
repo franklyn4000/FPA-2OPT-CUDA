@@ -10,12 +10,7 @@
 float computeFitness(std::vector<float> path,
                      const std::vector <std::vector<double>> &heightMap,
                      float N_wp, float max_asc_angle,
-                     float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
-
-
-    float w1 = 0.30;
-    float w2 = 0.70;
-
+                     float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1, float w2) {
     float d_ug = 0.0;
     float d_dz = 0.0;
     float d_ea = 0.0;
@@ -167,7 +162,7 @@ float computeFitness(std::vector<float> path,
 void computeFitnesses(
         Paths &paths,
         const std::vector <std::vector<double>> &heightMap, float max_asc_angle,
-        float max_desc_angle, float a_utopia, float f_utopia, float resolution) {
+        float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1, float w2) {
 
 #pragma omp parallel for
     for (int index = 0; index < paths.population; index++) {
@@ -178,7 +173,7 @@ void computeFitnesses(
                                paths.N_wps[index],
                                max_asc_angle,
                                max_desc_angle,
-                               a_utopia, f_utopia, resolution);
+                               a_utopia, f_utopia, resolution, w1, w2);
 
         paths.fitnesses[index] = F;
 

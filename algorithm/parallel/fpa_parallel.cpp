@@ -32,6 +32,13 @@ void computeFPA_parallel(
 
     double twoopt_start_time = 0;
     double twoopt_time_taken = 0;
+    double total_start_time = 0;
+	double total_time_taken = 0;
+    double iteration_start_time = 0;
+	double iteration_time_taken = 0;
+    int iterations = 0;
+
+    total_start_time = omp_get_wtime();
 
     float nwp = 0;
 
@@ -47,21 +54,21 @@ void computeFPA_parallel(
 
     double smoothing_start_time = omp_get_wtime();
 
-    smoothPaths(paths, drone.turn_radius, 10);
+    smoothPaths(paths, drone.turn_radius, config.n_pi);
 
     double smoothing_time_taken = omp_get_wtime() - smoothing_start_time;
 
     double fitness_start_time = omp_get_wtime();
 
     computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
-                     config.resolution);
+                     config.resolution, config.w1, config.w2);
 
     double fitness_time_taken = omp_get_wtime() - fitness_start_time;
+    total_time_taken += omp_get_wtime() - total_start_time;
 
-
-    printf("Iteration:\n");
-    for (int i = 0; i < config.iter_max; i++) {
-
+    printf("Iteration: ");
+    while (iterations < config.iter_max && total_time_taken < config.time_limit) {
+        iteration_start_time = omp_get_wtime();
         pollination_start_time = omp_get_wtime();
 
         pollinate_parallel(paths, config.p_switch);
@@ -70,14 +77,14 @@ void computeFPA_parallel(
 
         smoothing_start_time = omp_get_wtime();
 
-        smoothPaths(paths, drone.turn_radius, 10);
+        smoothPaths(paths, drone.turn_radius, config.n_pi);
 
         smoothing_time_taken += omp_get_wtime() - smoothing_start_time;
 
         fitness_start_time = omp_get_wtime();
 
         computeFitnesses(paths, config.heightMap, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
-                         config.resolution);
+                         config.resolution, config.w1, config.w2);
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
@@ -86,42 +93,46 @@ void computeFPA_parallel(
         int half = std::ceil(config.iter_max / 2.0);
         int eight = std::ceil(config.iter_max / 8.0);
 
-        if (i == eight) {
+        if (iterations == eight) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, 10, nwp);
+                    drone.turn_radius,  config.n_pi, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest1.csv");
-        } else if (i == quarter) {
+        } else if (iterations == quarter) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, 10, nwp);
+                    drone.turn_radius,  config.n_pi, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest2.csv");
-        } else if (i == half) {
+        } else if (iterations == half) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
-                    drone.turn_radius, 10, nwp);
+                    drone.turn_radius,  config.n_pi, nwp);
             save_to_csv(smoothedPath, "../heightMapper/fittest3.csv");
         }
 
 
-        if (i % config.two_opt_freq == 0) {
-            printf("%i \n", i);
+        if (iterations % config.two_opt_freq == 0) {
+            printf("%i ", iterations);
             twoopt_start_time = omp_get_wtime();
 
-            twoOptParallel(paths, drone.turn_radius, 10, config.heightMap, drone.max_asc_angle,
-                           drone.max_desc_angle, a_utopia, f_utopia, config.resolution);
+            twoOptParallel(paths, drone.turn_radius, config.n_pi, config.heightMap, drone.max_asc_angle,
+                           drone.max_desc_angle, a_utopia, f_utopia, config.resolution, config.w1, config.w2);
 
             twoopt_time_taken += omp_get_wtime() - twoopt_start_time;
         }
 
         computeBestFitness(paths);
 
+        iterations++;
+        iteration_time_taken = omp_get_wtime() - iteration_start_time;
+		total_time_taken += iteration_time_taken;
+
     }
     printf("\n");
 
     std::vector<float> smoothedPath = smoothPath(
             paths.fittestPath,
-            drone.turn_radius, 10, nwp);
+            drone.turn_radius, config.n_pi, nwp);
 
     save_to_csv(smoothedPath, "../heightMapper/fittest4.csv");
 
@@ -129,7 +140,7 @@ void computeFPA_parallel(
 
     printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.2f, %.2f, %.2f, %.2f\n", pollination_time_taken / totalTime, smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
 
-    printf("PARA Algorithm time: %f Reached Fitness: %f\n", totalTime, paths.bestFitness);
+    printf("PARA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, paths.bestFitness, iterations);
 
 
 /*

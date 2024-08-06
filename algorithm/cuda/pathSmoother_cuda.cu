@@ -163,7 +163,7 @@ __device__ void smoothPath_cuda(
 __global__ void smoothPaths_cuda(
         Paths_cuda paths,
         int max_elements,
-        float turnRadius, int n_pi, size_t pitch) {
+        float turnRadius, int n_pi) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
 
     if (idx < paths.rawPaths.n_paths) {
