@@ -1,7 +1,7 @@
 {
     "runs": 5,
     "time_limit": 1,
-    "iter_max": 500,
+    "iter_max": 2,
     "population_parallel": 5000,
     "population_cuda": 20000,
     "two_opt_freq": 15,

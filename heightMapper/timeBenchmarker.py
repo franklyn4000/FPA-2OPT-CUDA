@@ -22,7 +22,7 @@ values3 = list(range(70, 401, 20))  # Twenty steps from 70 to 400
 iterations = values1 + values2
 
 for i in iterations:
-    update_json_file("config.json", "iter_max", i)
+    update_json_file("../config/config.json", "iter_max", i)
     filename = "iter-" + str(i)
 
 

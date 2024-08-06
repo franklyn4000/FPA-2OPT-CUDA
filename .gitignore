@@ -53,3 +53,5 @@ algorithm/CMakeFiles/
 data/*.dat
 plotdata/*.dat
 algorithm/CMakeCache.txt
+*.copy
+data/paths/*.csv

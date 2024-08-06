@@ -46,9 +46,9 @@ int main(int argc, char** argv) {
 		if(std::string(argv[index])=="-t") t_flag = true;
 	}
 
-    nlohmann::json initFile = readJsonFile("../config/init.json");
-    nlohmann::json droneFile = readJsonFile("../config/drone.json");
-    nlohmann::json configFile = readJsonFile("../config/config.json");
+    nlohmann::json initFile = readJsonFile("../config/init.json.copy");
+    nlohmann::json droneFile = readJsonFile("../config/drone.json.copy");
+    nlohmann::json configFile = readJsonFile("../config/config.json.copy");
 
     std::string heightmap_path = "../heightMapper/heightmaps/" + (std::string)initFile["heightmap_file"];
 
