@@ -17,7 +17,7 @@
 #include "../objects/paths.h"
 
 
-void computeFPA_parallel(
+Results computeFPA_parallel(
         Config &config, Drone &drone, InitialConditions &init) {
 
     std::random_device rd;
@@ -142,60 +142,9 @@ void computeFPA_parallel(
 
     printf("PARA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, paths.bestFitness, iterations);
 
+	Results results;
+	results.total_time = total_time_taken;
 
-/*
-    std::vector<float> testPath;
-
-    testPath.push_back(0);
-    testPath.push_back(0);
-    testPath.push_back(550);
-
-    testPath.push_back(0);
-    testPath.push_back(120);
-    testPath.push_back(552);
-
-    testPath.push_back(0);
-    testPath.push_back(300);
-    testPath.push_back(400);
-
-    testPath.push_back(400);
-    testPath.push_back(300);
-    testPath.push_back(800);
-
-    testPath.push_back(0);
-    testPath.push_back(50);
-    testPath.push_back(500);
-
-    testPath.push_back(600);
-    testPath.push_back(600);
-    testPath.push_back(200);
-
-    double test_start_time;
-    double test_time_taken = 0;
-
-    std::vector<float> testSmoothed = smoothPath(
-            testPath,
-            100, 400, nwp);
-
-    for (int i = 0; i < 25000; i++) {
-        test_start_time = omp_get_wtime();
-
-        float F =
-                computeFitness(testSmoothed,
-                               config.heightMap,
-                               nwp,
-                               drone.max_asc_angle,
-                               drone.max_desc_angle,
-                               a_utopia, f_utopia, config.resolution);
-
-        test_time_taken += omp_get_wtime() - test_start_time;
-    }
-
-
-
-
-
-    printf("Test Path Smoothing: %f\n", test_time_taken);
-*/
+	return results;
 }
 

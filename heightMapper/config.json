@@ -1,9 +1,10 @@
 {
-    "time_limit": 1.0,
-    "iter_max": 1250,
+    "runs": 5,
+    "time_limit": 60,
+    "iter_max": 20,
     "population_parallel": 500,
     "population_cuda": 30000,
-    "two_opt_freq": 40,
+    "two_opt_freq": 5,
     "path_length": 7,
     "n_pi": 10,
     "resolution": 1,

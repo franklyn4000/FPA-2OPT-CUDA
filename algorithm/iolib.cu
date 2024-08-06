@@ -135,3 +135,29 @@ json readJsonFile(const std::string& filePath) {
     i >> j;
     return j;
 }
+
+void createEmptyFile(const std::string& filename) {
+    std::ofstream file(filename);
+
+    if (file) {
+        // File successfully created/opened for writing, nothing else to do
+        file.close();
+    } else {
+        std::cout << "Unable to create file.";
+    }
+}
+
+void appendLineToFile(const std::string& filename, const std::string& line) {
+    std::ofstream file;
+
+    file.open(filename, std::ios_base::app); // Use 'app' for appending
+    if (file.is_open())
+    {
+        file << line << "\n";
+        file.close();
+    }
+    else
+    {
+        std::cout << "Unable to open file.";
+    }
+}

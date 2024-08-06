@@ -9,8 +9,9 @@
 #include "../objects/config.h"
 #include "../objects/drone.h"
 #include "../objects/initialConditions.h"
+#include "../objects/results.h"
 
-void computeFPA_parallel(
+Results computeFPA_parallel(
         Config &config, Drone &drone, InitialConditions &init);
 
 

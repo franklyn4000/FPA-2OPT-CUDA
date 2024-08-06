@@ -15,4 +15,7 @@ void save_to_csv_cuda(float* data, int length, const std::string &file_name);
 
 nlohmann::json readJsonFile(const std::string& filePath);
 
+void appendLineToFile(const std::string& filename, const std::string& line);
+void createEmptyFile(const std::string& filename);
+
 #endif //IOLIB_H_INCLUDED

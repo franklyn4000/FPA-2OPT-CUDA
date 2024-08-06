@@ -9,8 +9,9 @@
 #include "../objects/config.h"
 #include "../objects/drone.h"
 #include "../objects/initialConditions.h"
+#include "../objects/results.h"
 
-void computeFPA_cuda(
+Results computeFPA_cuda(
         Config &config, float* heightMap_h, Drone &drone, InitialConditions &init);
 
 #endif //ALGORITHM_FPA_CUDA_CUH
