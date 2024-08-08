@@ -43,7 +43,7 @@ float* load_height_map_cuda(const std::string &filename, int cols, int rows) {
         std::string val;
 
         while (std::getline(ss, val, ',')) {
-            height_map[rowIndex * rows + colIndex] = std::stof(val);
+            height_map[colIndex * rows + rowIndex] = std::stof(val);
             colIndex++;
             //row.push_back(std::stof(val));
         }
@@ -150,6 +150,15 @@ void createEmptyFile(const std::string& filename) {
             std::cout << "Unable to create file.";
         }
     }
+}
+
+void createAndReplaceEmptyFile(const std::string& filename) {
+
+    std::ofstream file(filename);
+    if (!file) {
+        std::cout << "Unable to create file.";
+    }
+
 }
 
 void appendLineToFile(const std::string& filename, const std::string& line) {

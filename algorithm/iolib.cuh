@@ -18,4 +18,5 @@ nlohmann::json readJsonFile(const std::string& filePath);
 void appendLineToFile(const std::string& filename, const std::string& line);
 void createEmptyFile(const std::string& filename);
 
+void createAndReplaceEmptyFile(const std::string& filename);
 #endif //IOLIB_H_INCLUDED

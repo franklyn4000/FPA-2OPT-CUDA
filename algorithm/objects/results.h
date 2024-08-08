@@ -5,6 +5,8 @@
 #ifndef RESULTS_H
 #define RESULTS_H
 
+#include <vector>
+
 class Results {
 public:
     float setup_and_transfer_time;
@@ -14,6 +16,7 @@ public:
     float twoopt_time;
     float total_time;
     float best_fitness;
+    std::vector<float> fitnesses;
 };
 
 

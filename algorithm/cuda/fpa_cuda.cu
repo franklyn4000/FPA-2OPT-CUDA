@@ -23,9 +23,12 @@
 #include "pollinator_cuda.cuh"
 #include "twoOpt_cuda.cuh"
 #include "../parallel/pathSmoother_parallel.h"
+#include "../parallel/fitnessComputer_parallel.h"
 
 #include <thrust/copy.h>
 #include <thrust/device_ptr.h>
+
+#include <vector>
 
 #define CHECK_CUDA(call)                                            \
 {                                                                   \
@@ -175,6 +178,7 @@ Results computeFPA_cuda(
         computeFitnesses_cuda<<<dimGrid, dimBlock>>>(paths, max_waypoints_smoothed * 3, config.heightMap_cuda, config.heightMap_rows, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution, config.w1, config.w2);
         cudaDeviceSynchronize();
         computeBestFitness_cuda<<<dimGrid, dimBlock>>>(paths);
+    	cudaDeviceSynchronize();
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
@@ -230,64 +234,78 @@ Results computeFPA_cuda(
         iterations++;
         iteration_time_taken = omp_get_wtime() - iteration_start_time;
 		total_time_taken += iteration_time_taken;
+
+    	if(t_flag) {
+    		float* bestFitness_h;
+    		CHECK_CUDA(cudaMallocHost(&bestFitness_h, 1 * sizeof(float)));
+    		CHECK_CUDA(cudaMemcpy(bestFitness_h, paths.bestFitness, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+
+    		results.fitnesses.push_back(bestFitness_h[0]);
+    	}
+
     }
 	iteration_start_time = omp_get_wtime();
 
 
+	float* bestFitness_h;
+	CHECK_CUDA(cudaMallocHost(&bestFitness_h, 1 * sizeof(float)));
+	CHECK_CUDA(cudaMemcpy(bestFitness_h, paths.bestFitness, 1 * sizeof(float), cudaMemcpyDeviceToHost));
+	results.best_fitness = bestFitness_h[0];
+
 	if(t_flag) {
-printf("\n");
-		float* bestFitness_h;
-
-    CHECK_CUDA(cudaMallocHost(&bestFitness_h, 1 * sizeof(float)));
-    CHECK_CUDA(cudaMemcpy(bestFitness_h, paths.bestFitness, 1 * sizeof(float), cudaMemcpyDeviceToHost));
-
-    float* fitnesses_h;
-
-    CHECK_CUDA(cudaMallocHost(&fitnesses_h, paths.rawPaths.n_paths * sizeof(float)));
-    CHECK_CUDA(cudaMemcpy(fitnesses_h, paths.fitnesses, paths.rawPaths.n_paths * sizeof(float), cudaMemcpyDeviceToHost));
-
-    double totalTime = data_transfer_time_taken + pollination_time_taken + smoothing_time_taken + fitness_time_taken + twoopt_time_taken;
-
-	iteration_time_taken = omp_get_wtime() - iteration_start_time;
-		total_time_taken += iteration_time_taken;
+		printf("\n");
 
 
-	float *hostPollinatedPaths = new float[raw_paths_size];
+	    float* fitnesses_h;
 
-    CHECK_CUDA(cudaMallocHost(&hostPollinatedPaths, raw_paths_size));
-    CHECK_CUDA(cudaMemcpy(hostPollinatedPaths, paths.pollinatedPaths.elements, raw_paths_size,
-                          cudaMemcpyDeviceToHost));
+	    CHECK_CUDA(cudaMallocHost(&fitnesses_h, paths.rawPaths.n_paths * sizeof(float)));
+	    CHECK_CUDA(cudaMemcpy(fitnesses_h, paths.fitnesses, paths.rawPaths.n_paths * sizeof(float), cudaMemcpyDeviceToHost));
 
-    float *smoothedPaths_h = new float[smoothed_paths_size];
+	    double totalTime = data_transfer_time_taken + pollination_time_taken + smoothing_time_taken + fitness_time_taken + twoopt_time_taken;
 
-    CHECK_CUDA(cudaMallocHost(&smoothedPaths_h, smoothed_paths_size));
-    CHECK_CUDA(cudaMemcpy(smoothedPaths_h, paths.smoothedPaths.elements, smoothed_paths_size,
-                          cudaMemcpyDeviceToHost));
-
-    float *bestPath_h = new float[paths.rawPaths.n_waypoints * 3 * sizeof(float)];
-
-    CHECK_CUDA(cudaMallocHost(&bestPath_h, paths.rawPaths.n_waypoints * 3 * sizeof(float)));
-    CHECK_CUDA(cudaMemcpy(bestPath_h, paths.fittestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float),
-                          cudaMemcpyDeviceToHost));
-
-	std::vector<float> smoothedPath = smoothPath_fromArray(
-            bestPath_h, paths.rawPaths.n_waypoints,
-            drone.turn_radius, config.n_pi);
+		iteration_time_taken = omp_get_wtime() - iteration_start_time;
+			total_time_taken += iteration_time_taken;
 
 
+		float *hostPollinatedPaths = new float[raw_paths_size];
 
-    printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.3f, %.3f, %.3f, %.3f, %.3f\n", data_transfer_time_taken / totalTime, pollination_time_taken / totalTime,
-           smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
+	    CHECK_CUDA(cudaMallocHost(&hostPollinatedPaths, raw_paths_size));
+	    CHECK_CUDA(cudaMemcpy(hostPollinatedPaths, paths.pollinatedPaths.elements, raw_paths_size,
+	                          cudaMemcpyDeviceToHost));
 
-    printf("CUDA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, bestFitness_h[0], iterations);
+	    float *smoothedPaths_h = new float[smoothed_paths_size];
 
-    save_to_csv(smoothedPath, "../data/paths/fittest_cuda.csv");
+	    CHECK_CUDA(cudaMallocHost(&smoothedPaths_h, smoothed_paths_size));
+	    CHECK_CUDA(cudaMemcpy(smoothedPaths_h, paths.smoothedPaths.elements, smoothed_paths_size,
+	                          cudaMemcpyDeviceToHost));
 
-		results.best_fitness = bestFitness_h[0];
+	    float *bestPath_h = new float[paths.rawPaths.n_waypoints * 3 * sizeof(float)];
 
-		cudaFreeHost(smoothedPaths_h);
-    cudaFreeHost(bestPath_h);
+	    CHECK_CUDA(cudaMallocHost(&bestPath_h, paths.rawPaths.n_waypoints * 3 * sizeof(float)));
+	    CHECK_CUDA(cudaMemcpy(bestPath_h, paths.fittestPath, paths.rawPaths.n_waypoints * 3 * sizeof(float),
+	                          cudaMemcpyDeviceToHost));
+
+		float final_nwp = 0.0;
+
+		std::vector<float> smoothedPath = smoothPath_fromArray(
+	            bestPath_h, paths.rawPaths.n_waypoints,
+	            drone.turn_radius, config.n_pi, final_nwp);
+
+
+
+	    printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.3f, %.3f, %.3f, %.3f, %.3f\n", data_transfer_time_taken / totalTime, pollination_time_taken / totalTime,
+	           smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
+
+	    printf("CUDA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, bestFitness_h[0], iterations);
+
+	    save_to_csv(smoothedPath, "../data/paths/fittest_cuda.csv");
+
+
+
+			cudaFreeHost(smoothedPaths_h);
+	    cudaFreeHost(bestPath_h);
 	}
+
 
 
 

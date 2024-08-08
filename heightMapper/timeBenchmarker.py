@@ -1,6 +1,6 @@
 import subprocess
 import json
-
+from utils import copy_configs
 
 def update_json_file(filename, key, new_value):
     # Read the existing file into a dictionary
@@ -20,6 +20,8 @@ values2 = list(range(10, 51, 5))  # Five steps from 10 to 50
 values3 = list(range(70, 401, 20))  # Twenty steps from 70 to 400
 
 iterations = values1 + values2
+
+copy_configs()
 
 for i in iterations:
     update_json_file("../config/config.json", "iter_max", i)

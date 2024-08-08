@@ -12,6 +12,7 @@
 #include "json.hpp"
 #include <unistd.h>
 #include <cstdlib>
+#include <vector>
 
 int main(int argc, char** argv) {
 	bool t_flag = false;
@@ -114,35 +115,58 @@ int main(int argc, char** argv) {
 
 
 	char* buffer = new char[100];
-	char* filename_timings = new char[100];
-	char* filename_fitnesses = new char[100];
+	char* omp_filename_timings = new char[100];
+	char* omp_filename_fitnesses = new char[100];
+	char* omp_filename_fitness_evolution = new char[100];
 
-	sprintf(filename_timings, "../data/OMP_timings-%s.dat", output_file_name);
-	sprintf(filename_fitnesses, "../data/OMP_fitnesses-%s.dat", output_file_name);
+	char* cuda_filename_timings = new char[100];
+	char* cuda_filename_fitnesses = new char[100];
+	char* cuda_filename_fitness_evolution = new char[100];
+
+	sprintf(omp_filename_timings, "../data/OMP_timings-%s.dat", output_file_name);
+	sprintf(omp_filename_fitnesses, "../data/OMP_fitnesses-%s.dat", output_file_name);
+	sprintf(omp_filename_fitness_evolution, "../plotdata/OMP_fitness_evolution-%s.dat", output_file_name);
+
+	sprintf(cuda_filename_timings, "../data/CUDA_timings-%s.dat", output_file_name);
+	sprintf(cuda_filename_fitnesses, "../data/CUDA_fitnesses-%s.dat", output_file_name);
+	sprintf(cuda_filename_fitness_evolution, "../plotdata/CUDA_fitness_evolution-%s.dat", output_file_name);
 
 	if(omp_flag) {
-		createEmptyFile(filename_timings);
-		createEmptyFile(filename_fitnesses);
+		createEmptyFile(omp_filename_timings);
+		createEmptyFile(omp_filename_fitnesses);
 		Results omp_run_result = computeFPA_parallel(config_p, drone, init, t_flag);
 		sprintf(buffer, "%f %f %f %f %f %f", omp_run_result.total_time, omp_run_result.setup_and_transfer_time, omp_run_result.pollination_time, omp_run_result.smoothing_time, omp_run_result.fitness_time, omp_run_result.twoopt_time);
-		appendLineToFile(filename_timings, buffer);
+		appendLineToFile(omp_filename_timings, buffer);
 		sprintf(buffer, "%f", omp_run_result.best_fitness);
-		appendLineToFile(filename_fitnesses, buffer);
+		appendLineToFile(omp_filename_fitnesses, buffer);
 	}
 
 	if(cuda_flag) {
-		createEmptyFile(filename_timings);
-		createEmptyFile(filename_fitnesses);
+		createEmptyFile(cuda_filename_timings);
+		createEmptyFile(cuda_filename_fitnesses);
 		Results cuda_run_result = computeFPA_cuda(config_c, heightMap_h, drone, init, t_flag);
 		sprintf(buffer, "%f %f %f %f %f %f", cuda_run_result.total_time, cuda_run_result.setup_and_transfer_time, cuda_run_result.pollination_time, cuda_run_result.smoothing_time, cuda_run_result.fitness_time, cuda_run_result.twoopt_time);
-		appendLineToFile(filename_timings, buffer);
+		appendLineToFile(cuda_filename_timings, buffer);
 		sprintf(buffer, "%f", cuda_run_result.best_fitness);
-		appendLineToFile(filename_fitnesses, buffer);
+		appendLineToFile(cuda_filename_fitnesses, buffer);
+		if(t_flag) {
+			createAndReplaceEmptyFile(cuda_filename_fitness_evolution);
+			for (int i = 0; i < cuda_run_result.fitnesses.size(); i++) {
+				sprintf(buffer, "%i %f", i, cuda_run_result.fitnesses[i]);
+				appendLineToFile(cuda_filename_fitness_evolution, buffer);
+			}
+		}
 	}
 
 	free(buffer);
-	free(filename_fitnesses);
-	free(filename_timings);
+	free(omp_filename_timings);
+	free(omp_filename_fitnesses);
+	free(omp_filename_fitness_evolution);
+
+	free(cuda_filename_timings);
+	free(cuda_filename_fitnesses);
+	free(cuda_filename_fitness_evolution);
+
 	free(heightMap_h);
 
 	for(auto &innerVec : config_c.heightMap) {

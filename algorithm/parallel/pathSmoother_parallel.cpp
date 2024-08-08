@@ -150,7 +150,7 @@ std::vector<float> smoothPath(
 
 std::vector<float> smoothPath_fromArray(
         float* path, int pathlength,
-        float turnRadius, int n_pi) {
+        float turnRadius, int n_pi, float &N_wp) {
 
     std::vector<float> smoothedPath;
 
@@ -277,6 +277,8 @@ std::vector<float> smoothPath_fromArray(
     smoothedPath.push_back(path[3 * n - 3]);
     smoothedPath.push_back(path[3 * n - 2]);
     smoothedPath.push_back(path[3 * n - 1]);
+
+    N_wp = unsmoothedVertices / n;
 
     return smoothedPath;
 }

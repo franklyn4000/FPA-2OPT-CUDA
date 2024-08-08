@@ -85,7 +85,7 @@ __device__ void computeFitness_cuda(Paths_cuda paths,
             pointXY.y = __float2int_rn(P1_v.y + interval.y * j);
             pointZ = P1_v.z + interval.z * j;
 
-            currentAltitude = pointZ - heightMap[pointXY.y * heightMapWidth + pointXY.x];
+            currentAltitude = pointZ - heightMap[pointXY.x * heightMapWidth + pointXY.y];
             underground = currentAltitude < a_utopia;
 
             d_ug += step_length_P1P2 * underground;
@@ -95,7 +95,7 @@ __device__ void computeFitness_cuda(Paths_cuda paths,
         pointXY.x = __float2int_rn(P2_v.x);
         pointXY.y = __float2int_rn(P2_v.y);
 
-        currentAltitude = P2_v.z - heightMap[pointXY.y * heightMapWidth + pointXY.x];
+        currentAltitude = P2_v.z - heightMap[pointXY.x * heightMapWidth + pointXY.y];
 
         underground = currentAltitude < a_utopia;
         d_ug += step_length_P1P2 * underground;

@@ -1,6 +1,6 @@
 {
-    "max_asc_angle": 20,
-    "max_desc_angle": -50,
-    "turn_radius": 30.0,
-    "min_altitude": 20.0
+    "max_asc_angle": 15,
+    "max_desc_angle": -40,
+    "turn_radius": 45.0,
+    "min_altitude": 25.0
 }

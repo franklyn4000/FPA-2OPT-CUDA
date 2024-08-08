@@ -39,7 +39,7 @@ __global__ void pollinate_cuda(
     float heightMapWidth_f = __int2float_rd(heightMapWidth) - 1.0f;
     float heightMapHeight_f = __int2float_rd(heightMapHeight) - 1.0f;
 
-    float beta = 1.5;
+    float beta =  1.5;
     float oneOverBeta = 1.0 / beta;
     float sig_p = pow(tgamma(1.0 + beta) * sin(M_PI * beta / 2.0) /
                       (tgamma((1.0 + beta) / 2.0) * beta * pow(2.0, (beta - 1.0) / 2.0)), oneOverBeta);
@@ -47,6 +47,8 @@ __global__ void pollinate_cuda(
     float4 coord;
     float4 val;
     float4 bounded;
+
+    float s = 2.0;
 
     if (idx < paths.rawPaths.n_paths) {
         curandStatePhilox4_32_10_t localState = curandState[idx];
@@ -76,13 +78,13 @@ __global__ void pollinate_cuda(
                 coord.y = paths.rawPaths.elements[pathIndex + 3 * i + 1];
                 coord.z = paths.rawPaths.elements[pathIndex + 3 * i + 2];
 
-                val.x = coord.x + L.x * (paths.fittestPath[3 * i + 0] - coord.x);
-                val.y = coord.y + L.y * (paths.fittestPath[3 * i + 1] - coord.y);
-                val.z = coord.z + L.z * (paths.fittestPath[3 * i + 2] - coord.z);
+                val.x = coord.x + L.x * s * (paths.fittestPath[3 * i + 0] - coord.x);
+                val.y = coord.y + L.y * s * (paths.fittestPath[3 * i + 1] - coord.y);
+                val.z = coord.z + L.z * s * (paths.fittestPath[3 * i + 2] - coord.z);
 
                 bounded.x = max(min(val.x, heightMapWidth_f), 0.0f);
                 bounded.y = max(min(val.y, heightMapHeight_f), 0.0f);
-                bounded.z = max(min(val.z, 2799.9f), 1900.0f); //TODO get vlues from config!
+                bounded.z = max(min(val.z, 2899.9f), 1900.0f); //TODO get vlues from config!
 
                 paths.pollinatedPaths.elements[pathIndex + 3 * i + 0] = bounded.x;
                 paths.pollinatedPaths.elements[pathIndex + 3 * i + 1] = bounded.y;
