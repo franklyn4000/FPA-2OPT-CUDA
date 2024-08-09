@@ -55,5 +55,5 @@ def parse_switzerland2():
     with open('../config/init.json', 'w') as destination_file:
         json.dump(data, destination_file)
 
-parse_switzerland1()
+parse_switzerland2()
 copy_configs()

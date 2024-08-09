@@ -75,7 +75,7 @@ def visualize_3D(loaded, fittest_paths):
     fig = go.Figure(data=data)
 
     fig.update_layout(scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', camera=camera,aspectmode='manual',
-            aspectratio=dict(x=2.2, y=2.2, z=1)),
+            aspectratio=dict(x=8.8, y=2.2, z=1)),
                       width=1800, margin=dict(r=20, l=10, b=10, t=10),
                       paper_bgcolor='rgba(0,0,0,0)',
                       plot_bgcolor='rgba(0,0,0,0)')
