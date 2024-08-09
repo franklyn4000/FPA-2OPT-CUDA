@@ -7,8 +7,8 @@
 #include <random>
 #include <math.h>
 #include "omp.h"
-#include "../iolib.cuh"
-#include "../initialSolutionGenerator.cuh"
+#include "../iolib.h"
+#include "init_generator_parallel.h"
 #include "pathSmoother_parallel.h"
 #include "fitnessComputer_parallel.h"
 #include "../utils.cuh"

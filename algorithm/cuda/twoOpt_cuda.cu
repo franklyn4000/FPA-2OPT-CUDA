@@ -3,16 +3,15 @@
 //
 
 #include "twoOpt_cuda.cuh"
-#include "fitnessComputer_cuda.cuh"
-#include <iostream>
 
 __device__ void computeFitness_cuda_single(
-                    Paths_cuda paths,
-                    int smoothedPathLength,
-                     const float* heightMap,
-                     int heightMapWidth,
-                     float N_wp, int smooth_startIndex, float max_asc_angle,
-                     float max_desc_angle, float a_utopia, float f_utopia, float resolution, float &fitness, int index, float w1, float w2) {
+        Paths_cuda paths,
+        int smoothedPathLength,
+        const float *heightMap,
+        int heightMapWidth,
+        float N_wp, int smooth_startIndex, float max_asc_angle,
+        float max_desc_angle, float a_utopia, float f_utopia, float resolution, float &fitness, int index, float w1,
+        float w2) {
     float d_ug = 0.0;
     float d_dz = 0.0;
     float d_ea = 0.0;
@@ -41,8 +40,6 @@ __device__ void computeFitness_cuda_single(
     float pointZ;
     float currentAltitude;
 
-
-
     for (int i = 0; i < n - 1; i++) {
         P1_v.x = paths.tempSmoothedPaths.elements[smooth_startIndex + i * 3 + 0];
         P1_v.y = paths.tempSmoothedPaths.elements[smooth_startIndex + i * 3 + 1];
@@ -62,7 +59,6 @@ __device__ void computeFitness_cuda_single(
         );
 
         steps_P1P2 = floor(distance_P1P2 * resolution);
-
 
         if (steps_P1P2 > 0) {
             inv_steps = 1 / steps_P1P2;
@@ -111,7 +107,6 @@ __device__ void computeFitness_cuda_single(
         totalSteps++;
     }
 
-
     //Penaly term P
     float P = d_ug + d_dz + d_ea + (N_wp * l_traj);
 
@@ -121,7 +116,7 @@ __device__ void computeFitness_cuda_single(
         a_avg = a_cum / totalSteps;
         float C = w1 * (a_avg / a_utopia) + w2 * (l_traj / f_utopia);
 
-       fitness = 1 + 1 / (1 + C);
+        fitness = 1 + 1 / (1 + C);
     } else {
         fitness = 0 + 1 / (1 + P);
     }
@@ -132,7 +127,7 @@ __device__ void smoothPath_cuda_single(
         Paths_cuda paths,
         int &smoothedPathLength_r,
         float &N_wps,
-		int smooth_startIndex,
+        int smooth_startIndex,
         int raw_startIndex,
         float turnRadius, int n_pi) {
 
@@ -141,7 +136,7 @@ __device__ void smoothPath_cuda_single(
 
     float unsmoothedVertices = 0;
 
-	paths.tempSmoothedPaths.elements[smooth_startIndex] = paths.tempPaths.elements[raw_startIndex];
+    paths.tempSmoothedPaths.elements[smooth_startIndex] = paths.tempPaths.elements[raw_startIndex];
     paths.tempSmoothedPaths.elements[smooth_startIndex + 1] = paths.tempPaths.elements[raw_startIndex + 1];
     paths.tempSmoothedPaths.elements[smooth_startIndex + 2] = paths.tempPaths.elements[raw_startIndex + 2];
 
@@ -165,7 +160,7 @@ __device__ void smoothPath_cuda_single(
     float mag_2_inv;
 
     for (int i = 1; i < n - 1; i++) {
-       P1[0] = paths.tempPaths.elements[raw_startIndex + 3 * (i - 1)];
+        P1[0] = paths.tempPaths.elements[raw_startIndex + 3 * (i - 1)];
         P1[1] = paths.tempPaths.elements[raw_startIndex + 3 * (i - 1) + 1];
         P1[2] = paths.tempPaths.elements[raw_startIndex + 3 * (i - 1) + 2];
 
@@ -271,7 +266,7 @@ __device__ void smoothPath_cuda_single(
 
     }
 
-     paths.tempSmoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = paths.tempPaths.elements[
+    paths.tempSmoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 0] = paths.tempPaths.elements[
             raw_startIndex + paths.rawPaths.n_waypoints * 3 - 3];
     paths.tempSmoothedPaths.elements[smooth_startIndex + smoothedPathLength * 3 + 1] = paths.tempPaths.elements[
             raw_startIndex + paths.rawPaths.n_waypoints * 3 - 2];
@@ -292,95 +287,101 @@ __global__ void twoOptCuda(
     __shared__ int is[32];
     __shared__ int js[32];
 
-	//float priorFitness = paths.fitnesses[path_index];
+    //float priorFitness = paths.fitnesses[path_index];
 
-	is[threadIdx.x] = 0;
+    is[threadIdx.x] = 0;
     js[threadIdx.x] = 0;
 
-	int init_i = paths.twoOptCurrentI[path_index];
-	int init_j = paths.twoOptCurrentJ[path_index];
+    int init_i = paths.twoOptCurrentI[path_index];
+    int init_j = paths.twoOptCurrentJ[path_index];
 
-    if(threadIdx.x == 0) {
+    if (threadIdx.x == 0) {
         int index = 0;
 
         for (int i = max(1, init_i); i < n_points - 2; i++) {
-            for(int j = max(i + 1, init_j); j < n_points - 1; j++) {
+            for (int j = max(i + 1, init_j); j < n_points - 1; j++) {
                 is[index] = i;
                 js[index] = j;
                 index++;
 
-                if(index == 32) {
+                if (index == 32) {
                     paths.twoOptCurrentI[path_index] = i;
                     paths.twoOptCurrentJ[path_index] = j;
                     break;
                 }
 
             }
-            if(index == 32) {
+            if (index == 32) {
                 break;
             }
         }
-        //paths.twoOptFinishedSolutions[blockIdx.x] = -1;
-
     }
 
     float temp_fitness = 0.0f;
     int smootedPathLength;
     float N_wp;
 
-	int startIndex = path_index * 32 * paths.rawPaths.n_waypoints * 3 + threadIdx.x * paths.rawPaths.n_waypoints * 3;
+    int startIndex = path_index * 32 * paths.rawPaths.n_waypoints * 3 + threadIdx.x * paths.rawPaths.n_waypoints * 3;
     int smoothedIndex = path_index * 32 * max_elements * 3 + threadIdx.x * max_elements * 3;
 
-   for(int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
-      paths.tempPaths.elements[startIndex + i]  = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + i];
-   }
+    for (int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
+        paths.tempPaths.elements[startIndex + i] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 +i];
+    }
 
-	paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 0] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 0];
-    paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 1] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 1];
-    paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 2] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 2];
+    paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 0] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 0];
+    paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 1] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 1];
+    paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 2] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 2];
 
-    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 0] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 0];
-    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 1] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 1];
-    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 2] = paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 2];
+    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 0] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 0];
+    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 1] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 1];
+    paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 2] = paths.rawPaths.elements[
+            path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 2];
 
     smoothPath_cuda_single(paths, smootedPathLength, N_wp, smoothedIndex, startIndex, drone.turn_radius, config.n_pi);
 
-    computeFitness_cuda_single(paths, smootedPathLength, config.heightMap_cuda, config.heightMap_rows, N_wp, smoothedIndex, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia, config.resolution, temp_fitness, threadIdx.x, config.w1, config.w2);
+    computeFitness_cuda_single(paths, smootedPathLength, config.heightMap_cuda, config.heightMap_rows, N_wp,
+                               smoothedIndex, drone.max_asc_angle, drone.max_desc_angle, a_utopia, f_utopia,
+                               config.resolution, temp_fitness, threadIdx.x, config.w1, config.w2);
 
+    float f = temp_fitness;
 
-	float f = temp_fitness;
-
-	for (int i = 1; i < 32; i *= 2) {
+    for (int i = 1; i < 32; i *= 2) {
         f = max(f, __shfl_xor_sync(0xffffffff, f, i));
     }
 
+    if (f > paths.fitnesses[path_index]) {
+        //if we are the thread with the best path and its better than unchanged, make the switch permanent.
+        //then start again with i, j = 0
+        if (f == temp_fitness) {
 
-	if(f > paths.fitnesses[path_index]) {
-		//if we are the thread with the best path and its better than unchanged, make the switch permanent.
-		//then start again with i, j = 0
-		if (f == temp_fitness) {
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] +
+                                    0] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 0];
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] +
+                                    1] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 1];
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] +
+                                    2] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 2];
 
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 0] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 0];
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 1] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 1];
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * is[threadIdx.x] + 2] = paths.tempPaths.elements[startIndex + 3 * is[threadIdx.x] + 2];
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] +
+                                    0] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 0];
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] +
+                                    1] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 1];
+            paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] +
+                                    2] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 2];
 
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 0] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 0];
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 1] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 1];
-			paths.rawPaths.elements[path_index * paths.rawPaths.n_waypoints * 3 + 3 * js[threadIdx.x] + 2] = paths.tempPaths.elements[startIndex + 3 * js[threadIdx.x] + 2];
-
-		    paths.fitnesses[path_index] = f;
-
-		    paths.twoOptCurrentI[path_index] = 0;
-		    paths.twoOptCurrentJ[path_index] = 0;
-
-			//printf("%f ", f);
-    	}
-	} else if (is[threadIdx.x] == n_points - 3 && js[threadIdx.x] == n_points - 2) {
-	    paths.twoOptFinishedSolutions[blockIdx.x] = -1;
-		atomicAdd(paths.twoOptCountFinishedSolutions, -1);
-	}
+            paths.fitnesses[path_index] = f;
+            paths.twoOptCurrentI[path_index] = 0;
+            paths.twoOptCurrentJ[path_index] = 0;
+        }
+    } else if (is[threadIdx.x] == n_points - 3 && js[threadIdx.x] == n_points - 2) {
+        paths.twoOptFinishedSolutions[blockIdx.x] = -1;
+        atomicAdd(paths.twoOptCountFinishedSolutions, -1);
+    }
 
     //printf("%i %i %i %i %i %f %i %f %f %f %f\n", path_index, threadIdx.x, n_points, is[threadIdx.x], js[threadIdx.x], N_wp, smootedPathLength, temp_fitness, f, priorFitness, paths.fitnesses[path_index]);
-
 
 }

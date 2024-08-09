@@ -11,9 +11,9 @@ find_package(OpenMP REQUIRED)
 
 
 add_executable(algorithm main.cu
-        iolib.cu
+        iolib.cpp
         parallel/fpa_parallel.cpp
-        initialSolutionGenerator.cu
+        parallel/init_generator_parallel.cpp
         parallel/pathSmoother_parallel.cpp
         utils.cu
         parallel/pollinator_parallel.cpp

@@ -7,7 +7,7 @@
 
 
 #include <vector>
-#include "objects/initialConditions.h"
+#include "../objects/initialConditions.h"
 
 std::vector <std::vector<float>> generateSolutions(
         InitialConditions &init,

@@ -19,4 +19,6 @@ void appendLineToFile(const std::string& filename, const std::string& line);
 void createEmptyFile(const std::string& filename);
 
 void createAndReplaceEmptyFile(const std::string& filename);
+
+void createDirectory(const std::string& dirPath);
 #endif //IOLIB_H_INCLUDED

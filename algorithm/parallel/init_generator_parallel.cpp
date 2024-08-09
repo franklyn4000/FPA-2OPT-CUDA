@@ -2,7 +2,7 @@
 // Created by franklyn on 3/20/24.
 //
 
-#include "initialSolutionGenerator.cuh"
+#include "init_generator_parallel.h"
 #include <random>
 
 std::vector <std::vector<float>> generateSolutions(

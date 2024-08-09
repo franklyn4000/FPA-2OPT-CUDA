@@ -23,7 +23,6 @@ __device__ float4 levy_device(curandStatePhilox4_32_10_t localState, float sig_p
     levy.y = abs(0.2 * norm.w * sig_p / pow(abs(norm.z), oneOverBeta));
     levy.z = abs(0.2 * norm2.x * sig_p / pow(abs(norm2.y), oneOverBeta));
 
-
     return levy;
 }
 
@@ -39,7 +38,7 @@ __global__ void pollinate_cuda(
     float heightMapWidth_f = __int2float_rd(heightMapWidth) - 1.0f;
     float heightMapHeight_f = __int2float_rd(heightMapHeight) - 1.0f;
 
-    float beta =  1.5;
+    float beta = 1.5;
     float oneOverBeta = 1.0 / beta;
     float sig_p = pow(tgamma(1.0 + beta) * sin(M_PI * beta / 2.0) /
                       (tgamma((1.0 + beta) / 2.0) * beta * pow(2.0, (beta - 1.0) / 2.0)), oneOverBeta);
@@ -114,8 +113,6 @@ __global__ void pollinate_cuda(
                       dis.x * (paths.rawPaths.elements[j + 3 * i + 2] - paths.rawPaths.elements[l + 3 * i + 2]);
                 boundedInc = max(min(inc, 2799.9f), 1900.0f);
                 paths.pollinatedPaths.elements[pathIndex + 3 * i + 2] = boundedInc;
-
-                //  paths.pollinatedPaths.elements[0] = 1.0;// + dis.x * (paths.rawPaths.elements[j + 3 * i + k] - paths.rawPaths.elements[k + 3 * i + k]);}
             }
 
             paths.pollinatedPaths.elements[pathIndex + 3 * paths.rawPaths.n_waypoints - 3] = paths.rawPaths.elements[
@@ -127,8 +124,6 @@ __global__ void pollinate_cuda(
 
         }
 
-
-        //  paths.rawPaths = paths.pollinatedPaths;
         curandState[idx] = localState;
     }
 }

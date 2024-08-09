@@ -1,5 +1,5 @@
 
-#include "iolib.cuh"
+#include "iolib.h"
 #include <iostream>
 #include <iomanip>  // for std::setprecision and std::fixed
 #include "parallel/fpa_parallel.h"
@@ -53,6 +53,10 @@ int main(int argc, char** argv) {
 
     std::string heightmap_path = "../heightMapper/heightmaps/" + (std::string)initFile["heightmap_file"];
 
+    createDirectory("../plotdata");
+    createDirectory("../data");
+    createDirectory("../data/paths");
+
     Config config_p;
     Config config_c;
 
@@ -66,8 +70,6 @@ int main(int argc, char** argv) {
 	config_p.w1 = (float)configFile["w1"];
 	config_p.w2 = (float)configFile["w2"];
     config_p.p_switch = (float)configFile["p_switch"];
-    config_p.epsilon_init = (float)configFile["epsilon_init"];
-    config_p.epsilon_final = (float)configFile["epsilon_final"];
     config_p.heightMap_cols = (int)initFile["width"];
     config_p.heightMap_rows = (int)initFile["height"];
     config_p.heightMap = load_height_map(heightmap_path);
@@ -82,8 +84,6 @@ int main(int argc, char** argv) {
 	config_c.w1 = (float)configFile["w1"];
 	config_c.w2 = (float)configFile["w2"];
 	config_c.p_switch = (float)configFile["p_switch"];
-	config_c.epsilon_init = (float)configFile["epsilon_init"];
-	config_c.epsilon_final = (float)configFile["epsilon_final"];
 	config_c.heightMap_cols = (int)initFile["width"];
 	config_c.heightMap_rows = (int)initFile["height"];
 	config_c.heightMap = load_height_map(heightmap_path);

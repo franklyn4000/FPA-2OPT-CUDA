@@ -1,12 +1,13 @@
 //
 // Created by franklyn on 3/15/24.
 //
-#include "iolib.cuh"
+#include "iolib.h"
 #include <fstream>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <filesystem>
 
 std::vector<std::vector<double>> load_height_map(const std::string &filename) {
     std::vector<std::vector<double>> height_map;
@@ -173,5 +174,20 @@ void appendLineToFile(const std::string& filename, const std::string& line) {
     else
     {
         std::cout << "Unable to open file.";
+    }
+}
+
+void createDirectory(const std::string& dirPath) {
+    std::filesystem::path dir(dirPath);
+
+    if (!std::filesystem::exists(dir)) {
+        std::cout << "Directory does not exist, creating now" << std::endl;
+
+        // Create the directory
+        if (std::filesystem::create_directory(dir)) {
+            std::cout << "Directory created successfully" << std::endl;
+        } else {
+            std::cout << "Failed to create directory" << std::endl;
+        }
     }
 }

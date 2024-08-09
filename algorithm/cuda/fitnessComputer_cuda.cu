@@ -6,12 +6,13 @@
 #include <iostream>
 
 __device__ void computeFitness_cuda(Paths_cuda paths,
-                     const float* heightMap,
-                                     int heightMapWidth,
-                     int path_index,
-                     int startIndex,
-                     float N_wp, float max_asc_angle,
-                     float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1, float w2) {
+                                    const float *heightMap,
+                                    int heightMapWidth,
+                                    int path_index,
+                                    int startIndex,
+                                    float N_wp, float max_asc_angle,
+                                    float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1,
+                                    float w2) {
     float d_ug = 0.0;
     float d_dz = 0.0;
     float d_ea = 0.0;
@@ -128,28 +129,24 @@ __device__ void computeFitness_cuda(Paths_cuda paths,
 __global__ void computeFitnesses_cuda(
         Paths_cuda paths,
         int max_elements,
-        const float* heightMap,
+        const float *heightMap,
         int heightMapWidth, float max_asc_angle,
         float max_desc_angle, float a_utopia, float f_utopia, float resolution, float w1, float w2) {
 
-
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < paths.rawPaths.n_paths) {
-
-
-
-        computeFitness_cuda(paths, heightMap, heightMapWidth,idx, idx * max_elements, paths.N_wps[idx],
-                                       max_asc_angle,
-                                       max_desc_angle,
-                                       a_utopia, f_utopia, resolution, w1, w2);
+        computeFitness_cuda(paths, heightMap, heightMapWidth, idx, idx * max_elements, paths.N_wps[idx],
+                            max_asc_angle,
+                            max_desc_angle,
+                            a_utopia, f_utopia, resolution, w1, w2);
 
 
     }
 
 }
 
-__device__ __forceinline__ float atomicMaxFloat (float * addr, float value) {
-    return __int_as_float(atomicMax((int *)addr, __float_as_int(value)));
+__device__ __forceinline__ float atomicMaxFloat(float *addr, float value) {
+    return __int_as_float(atomicMax((int *) addr, __float_as_int(value)));
 }
 
 __global__ void computeBestFitness_cuda(Paths_cuda paths) {
@@ -169,8 +166,6 @@ __global__ void computeBestFitness_cuda(Paths_cuda paths) {
         for (int i = 0; i < paths.rawPaths.n_waypoints * 3; i++) {
             paths.fittestPath[i] = paths.rawPaths.elements[idx * paths.rawPaths.n_waypoints * 3 + i];
         }
-
-
     }
 
 }

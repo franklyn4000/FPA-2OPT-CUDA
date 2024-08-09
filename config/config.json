@@ -1,5 +1,4 @@
 {
-    "runs": 10,
     "time_limit": 120,
     "iter_max": 200,
     "population_parallel": 1000,
@@ -10,8 +9,5 @@
     "resolution": 1,
     "w1": 0.2,
     "w2": 0.8,
-    "p_switch": 0.78,
-    "epsilon_init": 0.25,
-    "epsilon_final": 0.02,
-    "population": 100
+    "p_switch": 0.78
 }
