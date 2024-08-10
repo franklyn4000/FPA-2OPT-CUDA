@@ -1,13 +1,14 @@
 # FPA-2OPT-CUDA
-### Efficient trajectory planning algorithm using the Flower Pollination Algorithm for Global Optimization [^1]. augmented with some 2-OPT iterations.
+### Efficient trajectory planning algorithm using the Flower Pollination Algorithm for Global Optimization [1]. augmented with some 2-OPT iterations.
 
+![Showcase of the alforithm](assets/showcase.png)
 
 
 ## Overview
 
 Vincent Roberge & Mohammed Tarbouchi proposed this algorithm in their paper 
 **Hybrid deterministic non-deterministic data-parallel algorithm for real-time 
-unmanned aerial vehicle trajectory planning in CUDA** [^2]. This projects tries to re-recreate 
+unmanned aerial vehicle trajectory planning in CUDA** [2]. This projects tries to re-recreate 
 their results with a special focus on finding ways to optimize the CUDA implementation and
 exploring possibilities of deploying it on current mobile hardware. We also include scripts
 for parsing .xyz heightmaps and visualizing the generated trajectories as well as benchmarking
@@ -97,6 +98,6 @@ Use the visualizer to show a browser-based 3D representation of the generated pa
 
 ## References
 
-[^1] Yang, Xin-She. "Flower pollination algorithm for global optimization." International conference on unconventional computing and natural computation. Berlin, Heidelberg: Springer Berlin Heidelberg, 2012.
+[1] Yang, Xin-She. "Flower pollination algorithm for global optimization." International conference on unconventional computing and natural computation. Berlin, Heidelberg: Springer Berlin Heidelberg, 2012.
 
-[^2] Roberge, Vincent, and Mohammed Tarbouchi. "Hybrid deterministic non-deterministic data-parallel algorithm for real-time unmanned aerial vehicle trajectory planning in CUDA." e-Prime-Advances in Electrical Engineering, Electronics and Energy 2 (2022): 100085.
+[2] Roberge, Vincent, and Mohammed Tarbouchi. "Hybrid deterministic non-deterministic data-parallel algorithm for real-time unmanned aerial vehicle trajectory planning in CUDA." e-Prime-Advances in Electrical Engineering, Electronics and Energy 2 (2022): 100085.
