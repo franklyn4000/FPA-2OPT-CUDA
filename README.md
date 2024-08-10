@@ -35,6 +35,10 @@ Edit config files (and their copies!) as needed. Parameters are explained in the
 `config/init.json`
 `config/drone.json`
 
+Compile the algorithm:
+
+`cmake .` `make`
+
 Run the algorithm:
 
 `algorithm [-cuda] [-omp] [-t] [-o output_file_name]`
