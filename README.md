@@ -1,5 +1,5 @@
 # FPA-2OPT-CUDA
-### Efficient trajectory planning algorithm using the Flower Pollination Algorithm for Global Optimization [1]. augmented with some 2-OPT iterations.
+### Efficient trajectory planning algorithm using the Flower Pollination Algorithm for Global Optimization [1]. augmented with sporadic 2-OPT iterations.
 
 ![Showcase of the alforithm](assets/showcase.png)
 
