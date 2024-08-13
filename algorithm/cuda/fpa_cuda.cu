@@ -74,7 +74,7 @@ Results computeFPA_cuda(
 
     curandStatePhilox4_32_10_t *devPHILOXStates;
 
-    int max_waypoints_smoothed = config.path_length * config.n_pi + 1; // upper bound
+    int max_waypoints_smoothed = (config.path_length - 2) * config.n_pi + 2; // upper bound
 
     Paths_cuda paths;
 
@@ -180,7 +180,7 @@ Results computeFPA_cuda(
 
         fitness_time_taken += omp_get_wtime() - fitness_start_time;
 
-        if (iterations % config.two_opt_freq == 0) {
+        if (iterations % config.two_opt_freq ==  0) {
 
             printf("%i ", iterations);
 

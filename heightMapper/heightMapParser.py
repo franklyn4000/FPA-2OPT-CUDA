@@ -3,6 +3,7 @@ import json
 
 from utils import copy_configs, load_and_make_array
 
+
 def parse_switzerland1():
     data1 = load_and_make_array('heightmaps/switzerland3.xyz')
     data2 = load_and_make_array('heightmaps/switzerland4.xyz')
@@ -22,6 +23,7 @@ def parse_switzerland1():
 
     with open('../config/init.json', 'w') as destination_file:
         json.dump(data, destination_file)
+
 
 def parse_switzerland2():
     data1 = load_and_make_array('heightmaps/s1.xyz')
@@ -55,5 +57,6 @@ def parse_switzerland2():
     with open('../config/init.json', 'w') as destination_file:
         json.dump(data, destination_file)
 
-parse_switzerland2()
+
+parse_switzerland1()
 copy_configs()

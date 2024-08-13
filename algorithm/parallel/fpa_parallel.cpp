@@ -98,7 +98,7 @@ Results computeFPA_parallel(
         int quarter = std::ceil(config.iter_max / 4.0);
         int half = std::ceil(config.iter_max / 2.0);
         int eight = std::ceil(config.iter_max / 8.0);
-
+/*
         if (iterations == eight) {
             std::vector<float> smoothedPath = smoothPath(
                     paths.fittestPath,
@@ -116,7 +116,7 @@ Results computeFPA_parallel(
             save_to_csv(smoothedPath, "../data/paths/fittest3.csv");
         }
 
-
+*/
         if (iterations % config.two_opt_freq == 0) {
             printf("%i ", iterations);
             twoopt_start_time = omp_get_wtime();
@@ -145,6 +145,8 @@ Results computeFPA_parallel(
     double totalTime = pollination_time_taken + smoothing_time_taken + fitness_time_taken + twoopt_time_taken;
 
     printf("\nPollination, Smoothing, Fitness, 2-opt:\n%.2f, %.2f, %.2f, %.2f\n", pollination_time_taken / totalTime, smoothing_time_taken / totalTime, fitness_time_taken / totalTime, twoopt_time_taken / totalTime);
+
+    printf("%.2f, %.2f, %.2f, %.2f\n", pollination_time_taken, smoothing_time_taken, fitness_time_taken, twoopt_time_taken);
 
     printf("PARA Algorithm time: %f %f Reached Fitness: %f after %i iterations\n", total_time_taken, totalTime, paths.bestFitness, iterations);
 
