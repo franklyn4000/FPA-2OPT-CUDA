@@ -1,5 +1,5 @@
 # FPA-2OPT-CUDA
-### Efficient trajectory planning algorithm using the Flower Pollination Algorithm for Global Optimization [1]. augmented with sporadic 2-OPT iterations.
+### Efficient planning of flyable trajectories using the Flower Pollination Algorithm for Global Optimization [1] augmented with sporadic 2-OPT iterations.
 
 ![Showcase of the alforithm](assets/showcase.png)
 
@@ -34,6 +34,10 @@ Edit config files (and their copies!) as needed. Parameters are explained in the
 `config/config.json`
 `config/init.json`
 `config/drone.json`
+
+Compile the algorithm:
+
+`cmake .` `make`
 
 Run the algorithm:
 
