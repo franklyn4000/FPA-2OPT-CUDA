@@ -1,16 +1,16 @@
 import subprocess
 import json
-from utils import update_json_file, write_array_to_file
+from utils import copy_configs, update_json_file, write_array_to_file
 
 copy_configs()
-values = [3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+values = [4, 5, 6, 7, 8, 9, 10, 11, 12]
 update_json_file("config.json", "iter_max", 200)
 
 averages = []
 
 for i in values:
     update_json_file("config.json", "path_length", i)
-    filename = "pathevo-pop-" + str(i)
+    filename = "2length-val-" + str(i)
 
     for _ in range(5):
         subprocess.run(["../algorithm/algorithm", "-omp", "-o", filename], shell=False, stdout=subprocess.DEVNULL,

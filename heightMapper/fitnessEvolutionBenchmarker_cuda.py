@@ -1,9 +1,10 @@
 import subprocess
 import json
 from utils import copy_configs, update_json_file, write_array_to_file
+import time
 
 copy_configs()
-values = [1, 10, 100, 500, 800, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 25000, 40000, 50000, 70000, 100000,
+values = [1, 10, 100, 250, 500, 800, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 25000, 40000, 50000, 70000, 100000,
           150000, 200000, 300000, 400000, 500000, 600000]
 update_json_file("config.json", "time_limit", 1)
 
@@ -11,9 +12,13 @@ averages = []
 
 for i in values:
     update_json_file("config.json", "population_cuda", i)
-    filename = "fitevocuda-pop-" + str(i)
+    filename = "pops-cuda-pop-" + str(i)
 
     for _ in range(5):
+        if i > 10000:
+            time.sleep(5)
+        if i > 50000:
+            time.sleep(15)
         subprocess.run(["../algorithm/algorithm", "-cuda", "-o", filename], shell=False, stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
 

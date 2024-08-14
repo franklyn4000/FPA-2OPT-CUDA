@@ -4,7 +4,7 @@
 
 
 # Different values for OMP_NUM_THREADS
-THREAD_VALUES=(1 2 4 8 16)
+THREAD_VALUES=(1 2 4 6 14)
 
 for threads in "${THREAD_VALUES[@]}"; 
 do

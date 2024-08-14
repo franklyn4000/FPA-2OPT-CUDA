@@ -58,5 +58,5 @@ def parse_switzerland2():
         json.dump(data, destination_file)
 
 
-parse_switzerland1()
+parse_switzerland2()
 copy_configs()

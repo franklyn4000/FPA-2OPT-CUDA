@@ -1,20 +1,23 @@
 import subprocess
 import json
 from utils import copy_configs, update_json_file, write_array_to_file
+import time
 
 copy_configs()
-values = [1, 5, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 3000, 5000]
-update_json_file("config.json", "time_limit", 10)
+values = [1, 5, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 3000, 5000, 10000]
+update_json_file("config.json", "time_limit", 5)
 
 averages = []
 
 for i in values:
     update_json_file("config.json", "population_parallel", i)
-    filename = "fitevo10-pop-" + str(i)
+    filename = "pops-omp-5-pop-" + str(i)
 
     for _ in range(5):
+        if i > 1000:
+            time.sleep(5)
         subprocess.run(["../algorithm/algorithm", "-omp", "-o", filename], shell=False, stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL)
+                       stderr=subprocess.DEVNULL)
 
     data_filename = "../data/OMP_fitnesses-" + filename + ".dat"
 
@@ -30,8 +33,11 @@ for i in values:
                 sums[j] += numbers[j]
             count += 1
 
+    if count == 0:
+        break
+
     average = [round(s / count, 5) for s in sums]
     average.insert(0, i)
     averages.append(average)
 
-write_array_to_file("fitevo.dat", averages)
+write_array_to_file("fitevoomp5.dat", averages)

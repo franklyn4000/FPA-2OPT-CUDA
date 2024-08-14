@@ -89,10 +89,10 @@ Results computeFPA_cuda(
     paths.rawPaths.n_waypoints = config.path_length;
     paths.rawPaths.n_paths = config.population;
 
-    size_t raw_paths_size = paths.rawPaths.n_waypoints * 3 * paths.rawPaths.n_paths * sizeof(float);
-    size_t smoothed_paths_size = config.population * max_waypoints_smoothed * 3 * sizeof(float);
-    size_t temp_paths_size = config.population * 32 * paths.rawPaths.n_waypoints * 3 * sizeof(float);
-    size_t temp_smoothed_paths_size = config.population * 32 * max_waypoints_smoothed * 3 * sizeof(float);
+    size_t raw_paths_size = 1l * paths.rawPaths.n_waypoints * 3 * paths.rawPaths.n_paths * sizeof(float);
+    size_t smoothed_paths_size = 1l * config.population * max_waypoints_smoothed * 3 * sizeof(float);
+    size_t temp_paths_size = 1l * config.population * 32 * paths.rawPaths.n_waypoints * 3 * sizeof(float);
+    size_t temp_smoothed_paths_size = 1l * config.population * 32 * max_waypoints_smoothed * 3 * sizeof(float);
 
     printf("VRAM allocated ~%lu\n",
            (unsigned long) raw_paths_size + smoothed_paths_size + temp_paths_size + temp_smoothed_paths_size);
